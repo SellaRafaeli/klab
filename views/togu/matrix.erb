@@ -5,8 +5,11 @@
   border:1px solid black;
   /*margin:2px;*/
 }
-.cell-left {
+.giveup {
   background-color: blue;
+}
+.try {
+  background-color: grey;
 }
 </style>
 
@@ -14,7 +17,7 @@
   <div class='col-md-5 matrix'>
     <% (0..11).to_a.each do |i| %>
       <div class='col-md-4'>
-        <div class='btn btn-info btn-wide cell cell-left' data-key="<%=i%>" data-type=<%=type%>></div>
+        <button class='btn btn-info btn-wide cell <%=type%>' data-key="<%=i%>" data-type=<%=type%>></button>
         <br/>
       </div>    
     <% end %>

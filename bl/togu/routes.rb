@@ -7,7 +7,7 @@ def togu_default_consts
     PH: 0.1,
     MH: 2,
     PMH: 0.5,
-    F: 2
+    F: 2,
   }
 end
 

@@ -4,11 +4,18 @@
 
 <script>
 $('.cell').click(function(){
-  var key  = $(event.target).data('key');
-  var type = $(event.target).data('type');
+  var cells  = $('.cell');
+  var target = $(event.target);
+  var key    = target.data('key');
+  var type   = target.data('type');
   $.get('/togu/click_cell?key='+key+'&type='+type)
    .success(function(res){
-      alert('val is '+res.val)
+      target.html(`<b style="color:black">${res.val}</b>`);
+      cells.attr('disabled',true);
+      setTimeout(()=>{
+        target.html('');
+        cells.attr('disabled',false);
+      },1000)
    })
 })
 
