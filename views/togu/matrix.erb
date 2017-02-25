@@ -1,0 +1,22 @@
+<style>
+.cell {
+  height:100px;
+  width:100px;
+  border:1px solid black;
+  /*margin:2px;*/
+}
+.cell-left {
+  background-color: blue;
+}
+</style>
+
+<% ['giveup','try'].each do |type| %>
+  <div class='col-md-5 matrix'>
+    <% (0..11).to_a.each do |i| %>
+      <div class='col-md-4'>
+        <div class='btn btn-info btn-wide cell cell-left' data-key="<%=i%>" data-type=<%=type%>></div>
+        <br/>
+      </div>    
+    <% end %>
+  </div>
+<% end %>

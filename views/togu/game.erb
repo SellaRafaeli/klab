@@ -1,0 +1,15 @@
+<h1> Game </h1>
+
+<%= erb :'togu/matrix' %>
+
+<script>
+$('.cell').click(function(){
+  var key  = $(event.target).data('key');
+  var type = $(event.target).data('type');
+  $.get('/togu/click_cell?key='+key+'&type='+type)
+   .success(function(res){
+      alert('val is '+res.val)
+   })
+})
+
+</script>
