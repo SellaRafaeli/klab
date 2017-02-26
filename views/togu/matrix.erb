@@ -15,9 +15,9 @@
 
 <% ['giveup','try'].each do |type| %>
   <div class='col-md-5 matrix'>
-    <% (0..11).to_a.each do |i| %>
+    <% (1..NUM_CELLS).to_a.each do |i| %>
       <div class='col-md-4'>
-        <button class='btn btn-info btn-wide cell <%=type%>' data-key="<%=i%>" data-type=<%=type%>></button>
+        <button class='btn btn-info btn-wide cell <%=type%>' data-key="<%=type%>-<%=i%>" data-type=<%=type%>></button>
         <br/>
       </div>    
     <% end %>

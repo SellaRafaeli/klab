@@ -13,7 +13,7 @@ Bundler.require
 
 Dotenv.load
 
-$app_name   = 'my-app'
+$app_name   = 'klab'
 
 require './setup'
 require './my_lib'
