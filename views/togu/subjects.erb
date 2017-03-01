@@ -1,0 +1,8 @@
+<h1> List of Subjects </h1>
+<%
+  subj_ids = $togu.get_many({}, {projection: {_id:1}}).mapo('_id')
+%>
+
+<% subj_ids.each do |id| %>
+  <div> <a class='btn btn-raised btn-primary' href='/togu/subject_results/<%=id%>'> <%= id %> </a> </div>
+<% end %>

@@ -1,0 +1,33 @@
+<%
+  data      = $togu.get(params[:id])
+  all_moves = data[:moves]
+%>
+
+<h1> User Results: Subject <%=params[:id]%> </h1>
+<div> <%=data[:user_data][:sex] %>, <%=data[:user_data][:age] %></div>
+<hr/>
+<table class='table'>
+  <thead>
+    <% ['Game','Round','Type','Key','Val'].each do |k| %>
+      <th><%= k %></th>  
+    <% end %>
+  </thead>
+  <tbody>
+      <% all_moves.each do |game, rounds| %>
+        <% rounds.each do |round, round_moves| %>          
+          <% round_moves.each do |move| %>
+          <tr style='border:1px solid black'>
+            <td> <%= game %> </td>
+            <td> <%= round %> </td>
+            <td> <%= move[:type] %></td>
+            <td> <%= move[:key] %></td>
+            <td> <%= move[:val] %></td>
+          </tr>
+          <% end %>
+        <% end %>
+      <% end %>
+  </tbody>
+</table>
+
+
+

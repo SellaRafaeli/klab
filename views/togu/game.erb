@@ -1,21 +1,36 @@
 <h1> Game </h1>
 
+<h3>
+  <div> Trial number <span id='trial_num'%>1</span> out of <%= T %> trials per round </div> 
+  <div> Round number <%= session[:round_number] %> out of <%= R %> rounds per game </div>
+  <div>Game number <%=session[:order]+1%> out of <%=G%> games</div>
+  <div>Game ID is <%=session[:g]%></div>
+</h3>
+
 <%= erb :'togu/matrix' %>
 
 <script>
+var trialNum=1;
 $('.cell').click(function(){
   var cells  = $('.cell');
   var target = $(event.target);
   var key    = target.data('key');
   var type   = target.data('type');
+  
   $.get('/togu/click_cell?key='+key+'&type='+type)
    .success(function(res){
       target.html(`<b style="color:black; font-size:30px">${res.val}</b>`);
-      cells.attr('disabled',true);
+      cells.attr('disabled',true);      
       setTimeout(()=>{
         target.html('');
-        cells.attr('disabled',false);
-      },1000)
+        if (trialNum==<%=T%>) {
+          document.location = '/togu/between_rounds';
+        } else {
+          trialNum+=1;
+          $('#trial_num').html(trialNum);
+          cells.attr('disabled',false);  
+        }        
+      },500)
    })
 })
 
