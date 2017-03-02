@@ -13,7 +13,7 @@ p {
 
     <%= erb :'header' %>   
     <div class='container' style='min-height: 500px'>
-      <%= sesh.to_json %>
+      <%= sesh.to_json if false%>
       <%= yield %> 
     </div>
     <%#= erb :"footer" %>           
