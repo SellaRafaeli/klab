@@ -1,14 +1,16 @@
 <%
   data      = $togu.get(params[:id])
   all_moves = data[:moves]
+  move_keys = [:type, :key, :val, :order, :g, :r, :t, :is_explore, :key_type, :key_val, :feedback, :final_pay]
 %>
 
 <h1> User Results: Subject <%=params[:id]%> </h1>
 <div> <%=data[:user_data][:sex] %>, <%=data[:user_data][:age] %></div>
 <hr/>
-<table class='table'>
+<button onclick=tableToExcel('table','data','data.xls') class='btn btn-primary btn-raised'>Download as excel</button>
+<table id='table' class='table'>
   <thead>
-    <% ['Game','Round','Type','Key','Val'].each do |k| %>
+    <% (['Subj_Number','Sex','Age','Game','Round'] + move_keys).each do |k| %>
       <th><%= k %></th>  
     <% end %>
   </thead>
@@ -16,12 +18,15 @@
       <% all_moves.each do |game, rounds| %>
         <% rounds.each do |round, round_moves| %>          
           <% round_moves.each do |move| %>
-          <tr style='border:1px solid black'>
+          <tr>
+            <td> <%=data[:user_data][:subject_number] %> </td>
+            <td> <%=data[:user_data][:sex] %> </td>
+            <td> <%=data[:user_data][:age] %> </td>
             <td> <%= game %> </td>
             <td> <%= round %> </td>
-            <td> <%= move[:type] %></td>
-            <td> <%= move[:key] %></td>
-            <td> <%= move[:val] %></td>
+            <% move_keys.each do |key| %>
+            <td> <%= move[key] %></td>
+            <% end %>
           </tr>
           <% end %>
         <% end %>

@@ -17,7 +17,7 @@ $('.cell').click(function(){
   var key    = target.data('key');
   var type   = target.data('type');
   
-  $.get('/togu/click_cell?key='+key+'&type='+type)
+  $.get('/togu/click_cell?key='+key+'&type='+type+'&trial_number='+trialNum)
    .success(function(res){
       target.html(`<b style="color:black; font-size:30px">${res.val}</b>`);
       cells.attr('disabled',true);      

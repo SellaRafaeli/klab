@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html>
     <%= erb :'layout/doc_head' %>
+
 <body style='overflow-x: hidden;'>  
+<style>
+p {
+  font-size: 20px;
+}
+</style>
   <div class='' style='background-color: whitesmoke;'>    
     <%= erb :"layout/flash" %>        
 
     <%= erb :'header' %>   
     <div class='container' style='min-height: 500px'>
-      <%= sesh.to_json if params[:sesh] %>
+      <%= sesh.to_json %>
       <%= yield %> 
     </div>
     <%#= erb :"footer" %>           

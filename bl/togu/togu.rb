@@ -1,5 +1,5 @@
 NUM_CELLS        = 2 # 12
-NUM_GAMES        = G = 2
+NUM_GAMES        = G = 2 #4
 NUM_ROUNDS       = R = 2 #20
 TRIALS_PER_ROUND = T = 2 #12number of trials per round.
 COINSIGN         = '$'
@@ -18,7 +18,7 @@ def togu_default_consts
     MH: 2,
     PMH: 0.5,
     F: 2,
-  }
+  }.hwia
 end
 
 def get_games_order
@@ -45,9 +45,9 @@ def explore_cell(type)
   mh, c, pmh, ml = data[:MH], data[:C], data[:PMH], data[:ML]
   h, ph, l = data[:H], data[:PH], data[:L]
   if type.to_sym == :giveup
-    val = get_cell_val(mh-c, pmh, ml-c)
+    val_type = get_cell_val(:MH, pmh, :ML)
   else 
-    val = get_cell_val(h-c, ph, l-c)
+    val_type = get_cell_val(:H, ph, :L)
   end
 end
 
@@ -91,15 +91,34 @@ namespace '/togu' do
 
   get '/click_cell' do    
     type, key    = params[:type], params[:key]
-    existing_val = sesh[:cur_game_payoffs][type][key] 
+    existing_type= sesh[:cur_game_payoffs][type][key] 
+    new_type     = explore_cell(type) if !existing_type
+    key_type     = existing_type || new_type
+    cell_val     = togu_default_consts[key_type]
+
     explore_cost = sesh[:consts][:C]
-    val = existing_val || explore_cell(type) + explore_cost
-    sesh[:cur_game_payoffs][type][key] = val
+    val          = existing_type ? cell_val : cell_val - explore_cost
+        
+    sesh[:cur_game_payoffs][type][key] = key_type
 
     game_num               = sesh[:g]
-    move = {type: type, key: key, val: val}
+
+    move_data = {
+      type: type, 
+      key: key, 
+      val: val, 
+      order: sesh[:order]+1, 
+      g: sesh[:g], 
+      r: sesh[:round_number], 
+      t: params[:trial_number], 
+      is_explore: !existing_type, 
+      key_type: key_type, 
+      key_val: cell_val,
+      feedback: 'N/A',
+      final_pay: val
+    }
     round= sesh[:round_number]
-    sesh[:moves]["game-#{game_num}"]["round-#{round}"].push(move)
+    sesh[:moves]["game-#{game_num}"]["round-#{round}"].push(move_data)
     {val: val}
   end
 
@@ -120,7 +139,7 @@ namespace '/togu' do
   end
 
   get '/next_game' do
-    redirect '/togu/last_payment' if (sesh[:g] > NUM_GAMES) 
+    redirect '/togu/last_payment' if (sesh[:g] >= NUM_GAMES) 
     set_new_game
     erb :'togu/between_games', default_layout
   end
