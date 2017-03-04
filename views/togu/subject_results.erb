@@ -1,16 +1,34 @@
 <%
   data      = $togu.get(params[:id])
   all_moves = data[:moves]
-  move_keys = [:type, :key, :val, :order, :g, :r, :t, :is_explore, :key_type, :key_val, :feedback, :final_pay]
+  move_keys = [:type, :key, :val_before_feedback, :order, :g, :r, :t, :is_explore, :key_type, :key_val, :feedback, :final_pay]
 %>
 
 <h1> User Results: Subject <%=params[:id]%> </h1>
 <div> <%=data[:user_data][:sex] %>, <%=data[:user_data][:age] %></div>
 <hr/>
 <button onclick=tableToExcel('table','data','data.xls') class='btn btn-primary btn-raised'>Download as excel</button>
+
+<ul class='guide'>
+  <li><b> key </b> - which cell was clicked.</li>
+  <li><b> val before feedback </b> - the value received from that cell, including cost but not including feedback. </li>
+  <li><b> order </b> - which game, from user's POV.</li>
+  <li><b> g </b> - which game, from our games (1-6).</li>
+  <li><b> r </b> - which round, from user's POV, in this game.</li>
+  <li><b> t </b> - which trial, from user's POV, in this round.</li>
+  <li><b> is_explore </b> - was this move an 'exploration' of a new cell. If true, exploration cost was deducted from cell value. </li>
+  <li><b> key_type </b> - L, MH, etc.</li>
+  <li><b> key_val </b> - the default value for this key type. For example L is 1, H is 11. </li>
+  <li><b> feedback </b> - how much feedback was applied to value.</li>
+  <li><b> final_pay </b> - the final payoff from this cell.</li>
+
+
+</ul>
+
+
 <table id='table' class='table'>
   <thead>
-    <% (['Subj_Number','Sex','Age','Game','Round'] + move_keys).each do |k| %>
+    <% (['Subj_Number','Sex','Age'] + move_keys).each do |k| %>
       <th><%= k %></th>  
     <% end %>
   </thead>
@@ -22,8 +40,7 @@
             <td> <%=data[:user_data][:subject_number] %> </td>
             <td> <%=data[:user_data][:sex] %> </td>
             <td> <%=data[:user_data][:age] %> </td>
-            <td> <%= game %> </td>
-            <td> <%= round %> </td>
+            
             <% move_keys.each do |key| %>
             <td> <%= move[key] %></td>
             <% end %>

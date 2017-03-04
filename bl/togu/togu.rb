@@ -120,13 +120,15 @@ namespace '/togu' do
     sesh[:cur_game_payoffs][type][key] = key_type
     game_num               = sesh[:g]
 
+    val_before_feedback = val
     feedback = compute_feedback(game_num, type, existing_type, key_type)
-    val+=feedback
     
+    val+=feedback
+
     move_data = {
       type: type, 
       key: key, 
-      val: val, 
+      val_before_feedback: val_before_feedback,
       order: sesh[:order]+1, 
       g: sesh[:g], 
       r: sesh[:round_number], 
@@ -134,7 +136,7 @@ namespace '/togu' do
       is_explore: !existing_type, 
       key_type: key_type, 
       key_val: cell_val,
-      feedback: 'N/A',
+      val: val, 
       final_pay: val,
       feedback: feedback
     }
