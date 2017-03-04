@@ -35,4 +35,25 @@
 </table>
 
 
+<% if false %>
+in each every line I also need:
+- sex
+- age
+- Order,
+- g   (game number)
+- r  (round number)
+- t, (trial number)
+- type (GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
+- Explore? (1=selecting a key for the first time in this round; 0=otherwise), 
 
+- KeyType (1= H or MH key, 0=L or ML key), 
+- KeyType (1= H or MH key, 0=L or ML key), 
+- ExploreL (1= if GiveUp=0 and Explore=1 and KeyType=0), 
+- ExploitL (1= if GiveUp=0 and Explore=0 and KeyType=0, zero otherwise), 
+- KeyNumber^2 ???
+- KeyValue (H/L/MH/ML), 
+- Cost (1= if C was implemented because Explore=1, 0=if C was not implemented because Explore=0), 
+- PayNoFeedback (KeyValue-Cost), 
+- Feedback (+F/0/-F),
+- FinalPay (KeyValue-Cost+Feedback).
+<% end %>

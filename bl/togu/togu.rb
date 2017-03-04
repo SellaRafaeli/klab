@@ -5,6 +5,7 @@ TRIALS_PER_ROUND = T = 2 #12number of trials per round.
 COINSIGN         = '$'
 SHOWUP           = 1.0
 EXCHANGE_RATIO   = 0.5
+F                = 2
 
 $togu = $mongo.collection('togu')
 
@@ -46,9 +47,26 @@ def explore_cell(type)
   h, ph, l = data[:H], data[:PH], data[:L]
   if type.to_sym == :giveup
     val_type = get_cell_val(:MH, pmh, :ML)
-  else 
+  else #type == :try 
     val_type = get_cell_val(:H, ph, :L)
   end
+end
+
+def compute_feedback(game_num, type, existing_type, key_type)
+  #guidance_val (f)
+  feedback = 0
+  if (game_num==2 && type==:giveup)
+    feedback = -F
+  elsif (game_num == 3 && existing_type && key_type== :L)
+    feedback = -F
+  elsif (game_num==4 && ((existing_type && key_type== :L) || (type==:giveup)))
+    feedback = -F
+  elsif (game_num==5 && !existing_type && type==:try)
+    feedback = F
+  elsif (game_num==6 && type==:try)
+    feedback = F
+  end
+  feedback
 end
 
 def set_new_game
@@ -90,7 +108,7 @@ namespace '/togu' do
   end
 
   get '/click_cell' do    
-    type, key    = params[:type], params[:key]
+    type, key    = params[:type].to_sym, params[:key]
     existing_type= sesh[:cur_game_payoffs][type][key] 
     new_type     = explore_cell(type) if !existing_type
     key_type     = existing_type || new_type
@@ -98,11 +116,13 @@ namespace '/togu' do
 
     explore_cost = sesh[:consts][:C]
     val          = existing_type ? cell_val : cell_val - explore_cost
-        
-    sesh[:cur_game_payoffs][type][key] = key_type
 
+    sesh[:cur_game_payoffs][type][key] = key_type
     game_num               = sesh[:g]
 
+    feedback = compute_feedback(game_num, type, existing_type, key_type)
+    val+=feedback
+    
     move_data = {
       type: type, 
       key: key, 
@@ -115,7 +135,8 @@ namespace '/togu' do
       key_type: key_type, 
       key_val: cell_val,
       feedback: 'N/A',
-      final_pay: val
+      final_pay: val,
+      feedback: feedback
     }
     round= sesh[:round_number]
     sesh[:moves]["game-#{game_num}"]["round-#{round}"].push(move_data)
