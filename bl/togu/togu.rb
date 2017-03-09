@@ -1,7 +1,7 @@
-NUM_CELLS        = 2 # 12
+NUM_CELLS        = 12 # 12
 NUM_GAMES        = G = 2 #4
 NUM_ROUNDS       = R = 2 #20
-TRIALS_PER_ROUND = T = 2 #12number of trials per round.
+TRIALS_PER_ROUND = T = 5 #12number of trials per round.
 COINSIGN         = '$'
 SHOWUP           = 1.0
 EXCHANGE_RATIO   = 0.5

@@ -89,6 +89,7 @@ ExploreLTotal (sum of ExploreL over all T trials)
 </pre>
 
 
+
 <table id='per-round' class='table'>
   <thead>
     <% (['Subj_Number','Sex','Age','Game','Round'] + ["SumKeyValue", "SumPayNoFeedback", "SumFinalPay", "High", "Thigh", "GiveUpTotal", "ExploreTotal", "ExploitLTotal", "ExploreLTotal"]).each do |k| %>
@@ -97,7 +98,7 @@ ExploreLTotal (sum of ExploreL over all T trials)
   </thead>
   <tbody>
       <% all_moves.each do |game, rounds| %>
-        <% [rounds.first].each do |round, round_moves| %>          
+        <% rounds.each do |round, round_moves| %>          
 
           <%
             sumKeyVal        = round_moves.mapo(:key_val).sum
@@ -130,5 +131,68 @@ ExploreLTotal (sum of ExploreL over all T trials)
           </tr>
           <% end %>
         <% end %>
+  </tbody>
+</table>
+
+<h2> Per Game </h2>
+<button onclick=tableToExcel('per-game','data','data.xls') class='btn btn-primary btn-raised'>Download as excel</button>
+
+<pre>
+Per game: ID, gender, age, Order, g, 
+MeanSumKeyValue 
+MeanSumPayNoFeedback
+mean_sumFinalPay
+mean_giveUpTotal
+mean_exploreTotal
+mean_exploitLTotal
+mean_exploreLTotal
+</pre>
+
+<table id='per-game' class='table'>
+  <thead>
+    <% (['Subj_Number','Sex','Age','Game'] + ['MeanSumKeyValue', 'MeanSumPayNoFeedback', 'mean_sumFinalPay', 'mean_giveUpTotal', 'mean_exploreTotal', 'mean_exploitLTotal', 'mean_exploreLTotal']).each do |k| %>
+      <th><%= k %></th>  
+    <% end %>
+  </thead>
+  <tbody>
+      <% all_moves.each do |game, rounds| %>
+          <%
+            # sumKeyVal        = round_moves.mapo(:key_val).sum
+            # sumPayNoFeedback = round_moves.mapo(:pay_no_feedback).sum
+            # sumFinalPay      = round_moves.mapo(:final_pay).sum
+            # high             = round_moves.mapo(:orig_key_type).include?(:H) ? 1 : 0
+            # Thigh            = round_moves.mapo(:orig_key_type).include?(:H) ? round_moves.mapo(:orig_key_type).find_index(:H)+1 : 0
+            # giveUpTotal      = round_moves.mapo(:give_up).sum
+            # exploreTotal     = round_moves.mapo(:is_explore).sum
+            # exploitLTotal    = round_moves.mapo(:exploit_l).sum
+            # exploreLTotal    = round_moves.mapo(:explore_l).sum
+            #bp
+            game_trials = rounds.values.flatten
+            MeanSumKeyValue      = game_trials.mapo(:key_val).avg
+            MeanSumPayNoFeedback = game_trials.mapo(:pay_no_feedback).avg 
+            mean_sumFinalPay = game_trials.mapo(:final_pay).avg
+            # mean_high = game_trials.mapo(:orig_key_type).count(:H).to_f / game_trials.size
+            # mean_Thigh = 'tbd' 
+            mean_giveUpTotal = game_trials.mapo(:give_up).avg
+            mean_exploreTotal = game_trials.mapo(:is_explore).avg
+            mean_exploitLTotal = game_trials.mapo(:exploit_l).avg
+            mean_exploreLTotal = game_trials.mapo(:explore_l).avg
+          %>
+
+
+          <tr>
+            <td> <%=data[:user_data][:subject_number] %> </td>
+            <td> <%=data[:user_data][:sex] %> </td>
+            <td> <%=data[:user_data][:age] %> </td>
+            <td> <%=game %></td>
+            <td> <%= MeanSumKeyValue  %> </td>
+            <td> <%= MeanSumPayNoFeedback %> </td>
+            <td> <%= mean_sumFinalPay %> </td>
+            <td> <%= mean_giveUpTotal %> </td>
+            <td> <%= mean_exploreTotal %> </td>
+            <td> <%= mean_exploitLTotal %> </td>
+            <td> <%= mean_exploreLTotal %> </td>
+          </tr>
+          <% end %>
   </tbody>
 </table>
