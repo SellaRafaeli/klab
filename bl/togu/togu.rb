@@ -125,21 +125,48 @@ namespace '/togu' do
     
     val+=feedback
 
+    md_key_type = ((key_type.in?([:H,:MH])) ? 1 : 0),
+    md_explore  = (!existing_type ? 1 : 0)
+    md_cost     = (existing_type ? 1 : 0)
+    md_give_up  = (type.to_s == 'giveup' ? 1 : 0)
+    md_explore_l= ((md_give_up == 0) && (md_explore == 1) && (md_key_type == 0)) ? 1 : 0 
+    md_exploit_l= ((md_give_up == 0) && (md_explore == 0) && (md_key_type == 0)) ? 1 : 0 
+
     move_data = {
-      type: type, 
       key: key, 
-      val_before_feedback: val_before_feedback,
       order: sesh[:order]+1, 
       g: sesh[:g], 
       r: sesh[:round_number], 
       t: params[:trial_number], 
-      is_explore: !existing_type, 
-      key_type: key_type, 
-      key_val: cell_val,
-      val: val, 
+      give_up: md_give_up,
+      #type: type, 
+      is_explore: md_explore, 
+      key_type: md_key_type
+      explore_l: md_explore_l,
+      exploit_l: md_exploit_l,
+      key_number_squared: key.to_i**2,
+      key_val: cell_val,      
+      cost: md_cost,
+      pay_no_feedback: val_before_feedback,
+      feedback: feedback,     
       final_pay: val,
-      feedback: feedback
+      val: val, 
+      # val_before_feedback: val_before_feedback,
     }
+
+#   Per trial: ID, gender, age, Order, g, r, t, 
+# - GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
+# - Explore (1=selecting a key for the first time in this round; 0=otherwise), 
+# - KeyType (1= H or MH key, 0=L or ML key), 
+# - ExploreL (1= if GiveUp=0 and Explore=1 and KeyType=0), 
+# - ExploitL (1= if GiveUp=0 and Explore=0 and KeyType=0, zero otherwise), 
+# - KeyNumber^2 , 
+# - KeyValue (H/L/MH/ML), 
+# - Cost (1= if C was implemented because Explore=1, 0=if C was not implemented because Explore=0), 
+# - PayNoFeedback (KeyValue-Cost), 
+# - Feedback (+F/0/-F),
+# - FinalPay (KeyValue-Cost+Feedback).
+
     round= sesh[:round_number]
     sesh[:moves]["game-#{game_num}"]["round-#{round}"].push(move_data)
     {val: val}

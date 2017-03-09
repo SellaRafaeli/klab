@@ -1,8 +1,23 @@
 <%
   data      = $togu.get(params[:id])
   all_moves = data[:moves]
-  move_keys = [:type, :key, :val_before_feedback, :order, :g, :r, :t, :is_explore, :key_type, :key_val, :feedback, :final_pay]
+  move_keys = [:key, :order, :g, :r, :t, :type, :is_explore, :key_type, :explore_l, :exploit_l, :key_number_squared, :key_val, :cost, :pay_no_feedback, :feedback, :final_pay]
+#   Per trial: ID, gender, age, Order, g, r, t, 
+# - GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
+# - Explore (1=selecting a key for the first time in this round; 0=otherwise), 
+# - KeyType (1= H or MH key, 0=L or ML key), 
+# - ExploreL (1= if GiveUp=0 and Explore=1 and KeyType=0), 
+# - ExploitL (1= if GiveUp=0 and Explore=0 and KeyType=0, zero otherwise), 
+# - KeyNumber^2 , 
+# - KeyValue (H/L/MH/ML), 
+# - Cost (1= if C was implemented because Explore=1, 0=if C was not implemented because Explore=0), 
+# - PayNoFeedback (KeyValue-Cost), 
+# - Feedback (+F/0/-F),
+# - FinalPay (KeyValue-Cost+Feedback).
+
 %>
+
+
 
 <h1> User Results: Subject <%=params[:id]%> </h1>
 <div> <%=data[:user_data][:sex] %>, <%=data[:user_data][:age] %></div>
@@ -21,10 +36,7 @@
   <li><b> key_val </b> - the default value for this key type. For example L is 1, H is 11. </li>
   <li><b> feedback </b> - how much feedback was applied to value.</li>
   <li><b> final_pay </b> - the final payoff from this cell.</li>
-
-
 </ul>
-
 
 <table id='table' class='table'>
   <thead>
