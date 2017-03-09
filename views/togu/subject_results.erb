@@ -1,7 +1,7 @@
 <%
   data      = $togu.get(params[:id])
   all_moves = data[:moves]
-  move_keys = [:key, :order, :g, :r, :t, :type, :is_explore, :key_type, :explore_l, :exploit_l, :key_number_squared, :key_val, :cost, :pay_no_feedback, :feedback, :final_pay]
+  move_keys = [:key, :order, :g, :r, :t, :type, :is_explore, :key_type, :explore_l, :exploit_l, :key_number_squared, :key_val, :cost, :pay_no_feedback, :feedback, :final_pay, :orig_key_type]
 #   Per trial: ID, gender, age, Order, g, r, t, 
 # - GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
 # - Explore (1=selecting a key for the first time in this round; 0=otherwise), 
@@ -17,15 +17,25 @@
 
 %>
 
-
-
 <h1> User Results: Subject <%=params[:id]%> </h1>
-<div> <%=data[:user_data][:sex] %>, <%=data[:user_data][:age] %></div>
-<hr/>
-<button onclick=tableToExcel('table','data','data.xls') class='btn btn-primary btn-raised'>Download as excel</button>
+<button onclick=tableToExcel('per-trial','data','data.xls') class='btn btn-primary btn-raised'>Download as excel</button>
 
-<ul class='guide'>
-  <li><b> key </b> - which cell was clicked.</li>
+<h2> Per Trial </h2>
+  <pre>
+  #   Per trial: ID, gender, age, Order, g, r, t, 
+  # - GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
+  # - Explore (1=selecting a key for the first time in this round; 0=otherwise), 
+  # - KeyType (1= H or MH key, 0=L or ML key), 
+  # - ExploreL (1= if GiveUp=0 and Explore=1 and KeyType=0), 
+  # - ExploitL (1= if GiveUp=0 and Explore=0 and KeyType=0, zero otherwise), 
+  # - KeyNumber^2 , 
+  # - KeyValue (H/L/MH/ML), 
+  # - Cost (1= if C was implemented because Explore=1, 0=if C was not implemented because Explore=0), 
+  # - PayNoFeedback (KeyValue-Cost), 
+  # - Feedback (+F/0/-F),
+  # - FinalPay (KeyValue-Cost+Feedback).
+  </pre>
+  <!-- <li><b> key </b> - which cell was clicked.</li>
   <li><b> val before feedback </b> - the value received from that cell, including cost but not including feedback. </li>
   <li><b> order </b> - which game, from user's POV.</li>
   <li><b> g </b> - which game, from our games (1-6).</li>
@@ -35,10 +45,9 @@
   <li><b> key_type </b> - L, MH, etc.</li>
   <li><b> key_val </b> - the default value for this key type. For example L is 1, H is 11. </li>
   <li><b> feedback </b> - how much feedback was applied to value.</li>
-  <li><b> final_pay </b> - the final payoff from this cell.</li>
-</ul>
+  <li><b> final_pay </b> - the final payoff from this cell.</li> -->
 
-<table id='table' class='table'>
+<table id='per-trial' class='table' style='display: znone'>
   <thead>
     <% (['Subj_Number','Sex','Age'] + move_keys).each do |k| %>
       <th><%= k %></th>  
@@ -63,26 +72,63 @@
   </tbody>
 </table>
 
+<h2> Per Round </h2>
+<button onclick=tableToExcel('per-round','data','data.xls') class='btn btn-primary btn-raised'>Download as excel</button>
 
-<% if false %>
-in each every line I also need:
-- sex
-- age
-- Order,
-- g   (game number)
-- r  (round number)
-- t, (trial number)
-- type (GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
-- Explore? (1=selecting a key for the first time in this round; 0=otherwise), 
+<pre>
+Per round: ID, gender, age, Order, g, r, 
+SumKeyValue (sum of KeyValue over all T trials),
+SumPayNoFeedback (sum of PayNoFeedback over all T trials), 
+SumFinalPay (sum of FinalPay over all T trials), 
+High (1=if an H key was found; 0= if it was not found), 
+Thigh (trial’s number of when the high value matrix key was found, 0= if it was not found), 
+GiveUpTotal (sum of GiveUp over all T trials), 
+ExploreTotal (sum of Explore over all T trials), 
+ExploitLTotal (sum of ExploitL over all T trials)
+ExploreLTotal (sum of ExploreL over all T trials)
+</pre>
 
-- KeyType (1= H or MH key, 0=L or ML key), 
-- KeyType (1= H or MH key, 0=L or ML key), 
-- ExploreL (1= if GiveUp=0 and Explore=1 and KeyType=0), 
-- ExploitL (1= if GiveUp=0 and Explore=0 and KeyType=0, zero otherwise), 
-- KeyNumber^2 ???
-- KeyValue (H/L/MH/ML), 
-- Cost (1= if C was implemented because Explore=1, 0=if C was not implemented because Explore=0), 
-- PayNoFeedback (KeyValue-Cost), 
-- Feedback (+F/0/-F),
-- FinalPay (KeyValue-Cost+Feedback).
-<% end %>
+
+<table id='per-round' class='table'>
+  <thead>
+    <% (['Subj_Number','Sex','Age','Game','Round'] + ["SumKeyValue", "SumPayNoFeedback", "SumFinalPay", "High", "Thigh", "GiveUpTotal", "ExploreTotal", "ExploitLTotal", "ExploreLTotal"]).each do |k| %>
+      <th><%= k %></th>  
+    <% end %>
+  </thead>
+  <tbody>
+      <% all_moves.each do |game, rounds| %>
+        <% [rounds.first].each do |round, round_moves| %>          
+
+          <%
+            sumKeyVal        = round_moves.mapo(:key_val).sum
+            sumPayNoFeedback = round_moves.mapo(:pay_no_feedback).sum
+            sumFinalPay      = round_moves.mapo(:final_pay).sum
+            high             = round_moves.mapo(:orig_key_type).include?(:H) ? 1 : 0
+            Thigh            = round_moves.mapo(:orig_key_type).include?(:H) ? round_moves.mapo(:orig_key_type).find_index(:H)+1 : 0
+            giveUpTotal      = round_moves.mapo(:give_up).sum
+            exploreTotal     = round_moves.mapo(:is_explore).sum
+            exploitLTotal    = round_moves.mapo(:exploit_l).sum
+            exploreLTotal    = round_moves.mapo(:explore_l).sum
+          %>
+
+
+          <tr>
+            <td> <%=data[:user_data][:subject_number] %> </td>
+            <td> <%=data[:user_data][:sex] %> </td>
+            <td> <%=data[:user_data][:age] %> </td>
+            <td> <%=game %></td>
+            <td> <%=round %></td>
+            <td> <%= sumKeyVal %> </td>
+            <td> <%= sumPayNoFeedback %> </td>
+            <td> <%= sumFinalPay %> </td>            
+            <td> <%= high %> </td>
+            <td> <%= Thigh %> </td>
+            <td> <%= giveUpTotal %> </td>
+            <td> <%= exploreTotal %> </td>
+            <td> <%= exploitLTotal %> </td>
+            <td> <%= exploreLTotal %> </td>
+          </tr>
+          <% end %>
+        <% end %>
+  </tbody>
+</table>

@@ -73,8 +73,8 @@ def set_new_game
   sesh[:order]            = sesh[:order]+1
   game_num = sesh[:g]     = sesh[:games][sesh[:order]]
   round    = sesh[:round_number]     = 1
-  sesh[:moves]["game-#{game_num}"]  = {}
-  sesh[:moves]["game-#{game_num}"]["round-#{round}"] = []
+  sesh[:moves]["#{game_num}"]  = {}
+  sesh[:moves]["#{game_num}"]["#{round}"] = []
   sesh[:cur_game_payoffs] = {giveup: {}, try: {}}.hwia
 end
 
@@ -125,7 +125,7 @@ namespace '/togu' do
     
     val+=feedback
 
-    md_key_type = ((key_type.in?([:H,:MH])) ? 1 : 0),
+    md_key_type = ((key_type.in?([:H,:MH])) ? 1 : 0)
     md_explore  = (!existing_type ? 1 : 0)
     md_cost     = (existing_type ? 1 : 0)
     md_give_up  = (type.to_s == 'giveup' ? 1 : 0)
@@ -141,7 +141,8 @@ namespace '/togu' do
       give_up: md_give_up,
       #type: type, 
       is_explore: md_explore, 
-      key_type: md_key_type
+      orig_key_type: key_type, #:H, :MH, etc
+      key_type: md_key_type,
       explore_l: md_explore_l,
       exploit_l: md_exploit_l,
       key_number_squared: key.to_i**2,
@@ -154,21 +155,8 @@ namespace '/togu' do
       # val_before_feedback: val_before_feedback,
     }
 
-#   Per trial: ID, gender, age, Order, g, r, t, 
-# - GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
-# - Explore (1=selecting a key for the first time in this round; 0=otherwise), 
-# - KeyType (1= H or MH key, 0=L or ML key), 
-# - ExploreL (1= if GiveUp=0 and Explore=1 and KeyType=0), 
-# - ExploitL (1= if GiveUp=0 and Explore=0 and KeyType=0, zero otherwise), 
-# - KeyNumber^2 , 
-# - KeyValue (H/L/MH/ML), 
-# - Cost (1= if C was implemented because Explore=1, 0=if C was not implemented because Explore=0), 
-# - PayNoFeedback (KeyValue-Cost), 
-# - Feedback (+F/0/-F),
-# - FinalPay (KeyValue-Cost+Feedback).
-
     round= sesh[:round_number]
-    sesh[:moves]["game-#{game_num}"]["round-#{round}"].push(move_data)
+    sesh[:moves]["#{game_num}"]["#{round}"].push(move_data)
     {val: val}
   end
 
@@ -184,7 +172,7 @@ namespace '/togu' do
     sesh[:round_number] = sesh[:round_number]+1    
     redirect '/togu/next_game' if (sesh[:round_number] > NUM_ROUNDS) 
     
-    sesh[:moves]["game-#{sesh[:g]}"]["round-#{sesh[:round_number]}"] = []
+    sesh[:moves]["#{sesh[:g]}"]["#{sesh[:round_number]}"] = []
     erb :'togu/between_rounds', default_layout
   end
 
