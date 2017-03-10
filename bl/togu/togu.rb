@@ -145,7 +145,7 @@ namespace '/togu' do
       key_type: md_key_type,
       explore_l: md_explore_l,
       exploit_l: md_exploit_l,
-      key_number_squared: key.to_i**2,
+      key_number: key.to_i,
       key_val: cell_val,      
       cost: md_cost,
       pay_no_feedback: val_before_feedback,
