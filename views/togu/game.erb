@@ -1,11 +1,10 @@
 <h1> Game </h1>
 
-<h3>
-  <div> Trial number <span id='trial_num'%>1</span> out of <%= T %> trials per round </div> 
-  <div> Round number <%= session[:round_number] %> out of <%= R %> rounds per game </div>
-  <div>Game number <%=session[:order]+1%> out of <%=G%> games</div>
-  <div>Game ID is <%=session[:g]%></div>
-</h3>
+<h5>
+  <div> Trial number <span id='trial_num'%>1</span> out of <%= T %> trials per round; Round number <%= session[:round_number] %> out of <%= R %> rounds per game </div>
+  <div>Game number <%=session[:order]+1%> out of <%=G%> games; Game ID is <%=session[:g]%>
+  </div>
+</h5>
 
 <%= erb :'togu/matrix' %>
 

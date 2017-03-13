@@ -5,6 +5,9 @@
   border:1px solid black;
   /*margin:2px;*/
 }
+.cell[disabled] {
+    cursor:none;
+}
 .giveup {
   background-color: blue;
 }
@@ -14,7 +17,7 @@
 </style>
 
 <% ['giveup','try'].each do |type| %>
-  <div class='col-md-5 matrix'>
+  <div class='col-md-4 <%="col-md-offset-4" if type=='try' %> matrix'>
     <% (1..NUM_CELLS).to_a.each do |i| %>
       <div class='col-md-4'>
         <button class='btn btn-info btn-wide cell <%=type%>' data-key="<%= type == 'giveup' ? i : 100+i %>" data-type=<%=type%>></button>
