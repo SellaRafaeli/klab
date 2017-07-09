@@ -1,7 +1,11 @@
 <h1> Try-Or-Give-Up Game: Please enter your details </h1>
 
 <form action='/togu/start' method=post>
-<label> Subject Number: <br><input name='subject_number' type=number value=123 /></label>
+
+<input name='subject_number' type='hidden' value="<%=$togu.count+1%>" /s>
+
+<label> Please enter your MTurk ID. If you do not enter your ID correctly we will not be able to identify that you did the study and you will not be paid. <br><input name='mturk_id' type=number value=123 /></label>
+
 
 <br/>
 <label> Sex: </label><br/>

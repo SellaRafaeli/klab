@@ -23,11 +23,10 @@ def togu_default_consts
 end
 
 def get_games_order
-  if session[:user_data][:subject_number].to_i % 2 == 1
-    games = [1] + [2,3,4].shuffle
-  else
-    games = [1] + [2,5,6].shuffle
-  end
+  subject_number    = session[:user_data][:subject_number].to_i
+  game_combinations = [[1,2],[1,3],[1,4],[1,5],[1,6]]
+  spot              = subject_number % game_combinations.size
+  games             = game_combinations[spot]
   games
 end
 
