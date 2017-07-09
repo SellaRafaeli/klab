@@ -2,20 +2,62 @@
 
 <form action='/togu/start' method=post>
 
-<input name='subject_number' type='hidden' value="<%=$togu.count+1%>" /s>
+    <input name='subject_number' type='hidden' value="<%=$togu.count+1%>" /s>
 
-<label> Please enter your MTurk ID. If you do not enter your ID correctly we will not be able to identify that you did the study and you will not be paid. <br><input name='mturk_id' type=number value=123 /></label>
+    <label> Please enter your MTurk ID. If you do not enter your ID correctly we will not be able to identify that you did the study and you will not be paid. <input required name='mturk_id' type=number /></label>
 
 
-<br/>
-<label> Sex: </label><br/>
-  <input type="radio" name="sex" value="m" checked=""> Male<br>
-  <input type="radio" name="sex" value="f"> Female<br>
+    <br/>
+    <label> Sex: </label><br/>
+      <input required type="radio" name="sex" value="m" checked=""> Male<br>
+      <input required type="radio" name="sex" value="f"> Female<br>
 
-  <br/>
-<label> 
-  Age:<br>
-  <input type=number name=age required value=30 />
-</label>
+      <br/>
+    <label> 
+      Age:
+      <input required type=number name=age />
+    </label>
+      
+
+    <br>
+    <label>Education Level
+    <select required name=education>
+      <option value="less_than_highschool">Less than High School</option>
+      <option value="highschool_equivalent">High School or Equivalent (e.g., GED)</option>
+      <option value="some_college">Some College</option>
+      <option value="2year_college">2-year College Degree</option>
+      <option value="4year_college">4-year College Degree</option>
+      <option value="masters_degree">Masters Degree</option>
+      <option value="doctoral_degree">Doctoral Degree</option>
+      <option value="professional_degree">Professional Degree (JD MD)</option>
+      <option value="other">Other</option>
+    </select>
+    </label>
+
+    <br>
+    <label>What is your average monthly income? <input name=income required /> </label>
+    
+    <label>
+      <select  name=income_type>
+        <option value="USD">USD</option>
+        <option value="GBP">GBP</option>
+        <option value="CAD">CAD</option>
+        <option value="AUD">AUD</option>
+        <option value="NZD">NZD</option>
+      </select>
+    </label>
+<br>
+    <label>Nationality 
+      <select name=location>
+        <option value="USA">USA</option>
+        <option value="UK">UK</option>
+        <option value="Canada">Canada</option>
+        <option value="Australia">Australia</option>
+        <option value="New Zealand">New Zealand</option>
+      </select>
+    </label>
+    
+<br>
   <button class='btn btn-primary btn-raised'> Submit </button>
 </form>
+

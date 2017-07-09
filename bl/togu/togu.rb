@@ -96,7 +96,7 @@ namespace '/togu' do
 
   post '/start' do
     sesh.clear
-    sesh[:user_data] = params.just(:subject_number,:sex,:age)
+    sesh[:user_data] = params.just(:subject_number,:sex,:age,:mturk_id,:education,:income,:income_type,:location)
     sesh[:consts]    = togu_default_consts
     sesh[:games]     = get_games_order
     sesh[:moves]     = {}

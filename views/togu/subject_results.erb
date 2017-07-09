@@ -1,6 +1,8 @@
 <%
+#bp
   data      = $togu.get(params[:id])
   all_moves = data[:moves]
+  data_keys = ['Subj_Number','Sex','Age','MturkID','Education','Income','Income_Type','Location']
   move_keys = [:key, :order, :g, :r, :t, :type, :is_explore, :key_type, :explore_l, :exploit_l, :key_number, :key_val, :cost, :pay_no_feedback, :feedback, :final_pay, :orig_key_type]
 #   Per trial: ID, gender, age, Order, g, r, t, 
 # - GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
@@ -49,7 +51,7 @@
 
 <table id='per-trial' class='table' style='display: znone'>
   <thead>
-    <% (['Subj_Number','Sex','Age'] + move_keys).each do |k| %>
+    <% (data_keys + move_keys).each do |k| %>
       <th><%= k %></th>  
     <% end %>
   </thead>
@@ -61,7 +63,12 @@
             <td> <%=data[:user_data][:subject_number] %> </td>
             <td> <%=data[:user_data][:sex] %> </td>
             <td> <%=data[:user_data][:age] %> </td>
-            
+            <td> <%=data[:user_data][:mturk_id] %> </td>
+            <td> <%=data[:user_data][:education] %> </td>
+            <td> <%=data[:user_data][:income] %> </td>
+            <td> <%=data[:user_data][:income_type] %> </td>
+            <td> <%=data[:user_data][:location] %> </td>
+
             <% move_keys.each do |key| %>
             <td> <%= move[key] %></td>
             <% end %>
@@ -92,7 +99,7 @@ ExploreLTotal (sum of ExploreL over all T trials)
 
 <table id='per-round' class='table'>
   <thead>
-    <% (['Subj_Number','Sex','Age','Game','Round'] + ["SumKeyValue", "SumPayNoFeedback", "SumFinalPay", "High", "Thigh", "GiveUpTotal", "ExploreTotal", "ExploitLTotal", "ExploreLTotal"]).each do |k| %>
+    <% (data_keys + ['Game','Round'] + ["SumKeyValue", "SumPayNoFeedback", "SumFinalPay", "High", "Thigh", "GiveUpTotal", "ExploreTotal", "ExploitLTotal", "ExploreLTotal"]).each do |k| %>
       <th><%= k %></th>  
     <% end %>
   </thead>
@@ -117,6 +124,11 @@ ExploreLTotal (sum of ExploreL over all T trials)
             <td> <%=data[:user_data][:subject_number] %> </td>
             <td> <%=data[:user_data][:sex] %> </td>
             <td> <%=data[:user_data][:age] %> </td>
+            <td> <%=data[:user_data][:mturk_id] %> </td>
+            <td> <%=data[:user_data][:education] %> </td>
+            <td> <%=data[:user_data][:income] %> </td>
+            <td> <%=data[:user_data][:income_type] %> </td>
+            <td> <%=data[:user_data][:location] %> </td>
             <td> <%=game %></td>
             <td> <%=round %></td>
             <td> <%= sumKeyVal %> </td>
@@ -150,7 +162,7 @@ mean_exploreLTotal
 
 <table id='per-game' class='table'>
   <thead>
-    <% (['Subj_Number','Sex','Age','Game'] + ['MeanSumKeyValue', 'MeanSumPayNoFeedback', 'mean_sumFinalPay', 'mean_giveUpTotal', 'mean_exploreTotal', 'mean_exploitLTotal', 'mean_exploreLTotal']).each do |k| %>
+    <% (data_keys + ['Game'] + ['MeanSumKeyValue', 'MeanSumPayNoFeedback', 'mean_sumFinalPay', 'mean_giveUpTotal', 'mean_exploreTotal', 'mean_exploitLTotal', 'mean_exploreLTotal']).each do |k| %>
       <th><%= k %></th>  
     <% end %>
   </thead>
@@ -184,6 +196,11 @@ mean_exploreLTotal
             <td> <%=data[:user_data][:subject_number] %> </td>
             <td> <%=data[:user_data][:sex] %> </td>
             <td> <%=data[:user_data][:age] %> </td>
+            <td> <%=data[:user_data][:mturk_id] %> </td>
+            <td> <%=data[:user_data][:education] %> </td>
+            <td> <%=data[:user_data][:income] %> </td>
+            <td> <%=data[:user_data][:income_type] %> </td>
+            <td> <%=data[:user_data][:location] %> </td>
             <td> <%=game %></td>
             <td> <%= MeanSumKeyValue  %> </td>
             <td> <%= MeanSumPayNoFeedback %> </td>
