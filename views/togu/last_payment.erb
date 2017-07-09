@@ -4,10 +4,21 @@
 
 </p>
 <p>
-One round from one game you played was selected randomly. This was <%= rand_game %> , <%= rand_round %>. In this round you earned <%= sum %> points. 
+One round from each game you played was selected randomly, as follows: This was round number <%= rand_round_from_game_one+1%> from game one, and round number <%= rand_round_from_game_two+1 %> from game two. Altogether you earned <%= sum %> points, at an exchange ratio of <%= EXCHANGE_RATIO %>.
 </p>
+
+<p>
+The participation fee is <%= COINSIGN %><%= SHOWUP.to_f %>.
+</p>
+
+<% if sum > 0 %>
 <p>
 Thus your total
 payment for this experiment is <%= COINSIGN %><%=SHOWUP.to_f + (sum/EXCHANGE_RATIO.to_f)%>.
 </p>
+<% else %>
+<p>
+You will get the participation fee, which is <%= COINSIGN %><%=SHOWUP.to_f %>.
+</p>
+<% end %>
 

@@ -1,10 +1,10 @@
 NUM_CELLS        = 12 # 12
 NUM_GAMES        = G = 2 #4
 NUM_ROUNDS       = R = $prod ? 20 : 2
-TRIALS_PER_ROUND = T = $prod ? 12 : 5 
+TRIALS_PER_ROUND = T = $prod ? 12 : 2
 COINSIGN         = '$'
-SHOWUP           = 1.0
-EXCHANGE_RATIO   = 0.5
+SHOWUP           = 1.5
+EXCHANGE_RATIO   = 20
 F                = 2
 
 $togu = $mongo.collection('togu')
@@ -188,9 +188,21 @@ namespace '/togu' do
 
   get '/last_payment' do
     save_data_to_db
-    rand_game = sesh[:moves].keys.sample
-    rand_round= sesh[:moves][rand_game].keys.sample
-    sum       = sesh[:moves][rand_game][rand_round].mapo(:val).sum.to_f
-    erb :'togu/last_payment', default_layout.merge(locals: {rand_game: rand_game, rand_round: rand_round, sum: sum}) 
+    
+    num_games = sesh[:moves].values #for future sella
+
+    game_one                  = sesh[:moves].values[0]
+    game_one_random_round_num = rand(game_one.values.size)
+    game_one_rand_round       = game_one.values[game_one_random_round_num]
+
+    game_two                  = sesh[:moves].values[1]
+    game_two_random_round_num = rand(game_two.values.size)
+    game_two_rand_round       = game_two.values[game_two_random_round_num]
+
+    sum       = game_one_rand_round.mapo(:val).sum.to_f + game_two_rand_round.mapo(:val).sum.to_f + SHOWUP
+
+    final_payment = [sum, SHOWUP].max
+
+    erb :'togu/last_payment', default_layout.merge(locals: {rand_round_from_game_one: game_one_random_round_num, rand_round_from_game_two: game_two_random_round_num, sum: sum}) 
   end
 end
