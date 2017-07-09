@@ -47,3 +47,9 @@ end
 get '/about' do
   erb :'other/about'
 end
+
+get '/logout' do
+  session.clear
+  flash.message = 'You have left.'
+  redirect '/'
+end
