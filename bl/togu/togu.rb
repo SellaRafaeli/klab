@@ -87,10 +87,14 @@ end
 
 namespace '/togu' do 
   get '' do
-    erb :'togu/subject_number', default_layout
+    erb :'togu/consent', default_layout
   end
 
   get '/' do
+    erb :'togu/consent', default_layout
+  end
+
+  get '/info' do
     erb :'togu/subject_number', default_layout
   end
 

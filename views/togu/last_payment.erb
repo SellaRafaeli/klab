@@ -1,12 +1,12 @@
 <h1> Last Payment </h1>
 
-<p>Thanks you for participating in this study! 
 
-</p>
-<p>
+<p>Thank you for participating in this study! One round from each game has been selected at random. You earned <%= sum %> points in these rounds. Thus your bonus payment will be (<%=sum/EXCHANGE_RATIO.to_f%>).</p>
+
+<!-- <p>
 One round from each game you played was selected randomly, as follows: This was round number <%= rand_round_from_game_one+1%> from game one, and round number <%= rand_round_from_game_two+1 %> from game two. Altogether you earned <%= sum %> points, at an exchange ratio of <%= EXCHANGE_RATIO %>.
 </p>
-
+ -->
 <p>
 The participation fee is <%= COINSIGN %><%= SHOWUP.to_f %>.
 </p>
