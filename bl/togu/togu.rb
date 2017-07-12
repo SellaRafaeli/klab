@@ -73,8 +73,7 @@ def set_new_game
   game_num = sesh[:g]     = sesh[:games][sesh[:order]]
   round    = sesh[:round_number]     = 1
   sesh[:moves]["#{game_num}"]  = {}
-  sesh[:moves]["#{game_num}"]["#{round}"] = []
-  sesh[:cur_game_payoffs] = {giveup: {}, try: {}}.hwia
+  sesh[:moves]["#{game_num}"]["#{round}"] = []  
 end
 
 get '/togu/subjects' do
@@ -111,7 +110,8 @@ namespace '/togu' do
     erb :'togu/general_instructions', default_layout
   end
 
-  get '/click_cell' do    
+  get '/click_cell' do   
+
     type, key    = params[:type].to_sym, params[:key]
     existing_type= sesh[:cur_game_payoffs][type][key] 
     new_type     = explore_cell(type) if !existing_type
@@ -174,9 +174,11 @@ namespace '/togu' do
 
   get '/between_rounds' do
     sesh[:round_number] = sesh[:round_number]+1    
+    sesh[:cur_game_payoffs] = {giveup: {}, try: {}}.hwia
     redirect '/togu/next_game' if (sesh[:round_number] > NUM_ROUNDS) 
     
     sesh[:moves]["#{sesh[:g]}"]["#{sesh[:round_number]}"] = []
+
     erb :'togu/between_rounds', default_layout
   end
 
