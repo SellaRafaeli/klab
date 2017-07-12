@@ -105,6 +105,7 @@ namespace '/togu' do
     sesh[:games]     = get_games_order
     sesh[:moves]     = {}
     sesh[:order]     = -1
+    session[:should_flip_order] = rand > 0.5 
     set_new_game
     
     erb :'togu/general_instructions', default_layout

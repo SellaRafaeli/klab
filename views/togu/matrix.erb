@@ -16,8 +16,13 @@
 }
 </style>
 
-<% ['giveup','try'].each do |type| %>
-  <div class='col-md-4 <%="col-md-offset-4" if type=='try' %> matrix'>
+<%
+  keys_order = ['giveup','try'] 
+  keys_order = keys_order.reverse if session[:should_flip_order] 
+%>
+
+<% keys_order.each_with_index do |type,idx| %>
+  <div class='col-md-4 matrix'>
     <% (1..NUM_CELLS).to_a.each do |i| %>
       <div class='col-md-4'>
         <button class='btn btn-info btn-wide cell <%=type%>' data-key="<%= type == 'giveup' ? i : 100+i %>" data-type=<%=type%>></button>
@@ -25,4 +30,8 @@
       </div>    
     <% end %>
   </div>
+  <% if idx==0 %>
+  <div class='col-md-4'>
+  </div>
+  <% end %>
 <% end %>

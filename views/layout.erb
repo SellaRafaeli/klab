@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html style='height:100%'>
     <%= erb :'layout/doc_head' %>
-
-<body style='overflow-x: hidden;'>  
 <style>
 p {
   font-size: 20px;
 }
-body, html: {height: 100%; border:1px solid red;}
+label { color: black; }
+body, html: {border:1px solid red;}
 </style>
 
-  <a href='/logout' class='btn btn-danger' style='position: absolute; z-index: 999; right: 100px; bottom: 0px; height:100px'>Quit without pay</a>  
+<body style='overflow-x: hidden; height:100%'>  
 
-  <div class='' style='background-color: whitesmoke;'>    
+  <a href='/logout' class='btn btn-danger' style='position: absolute; z-index: 999; right: 0px; top: 0px; height:40px' onclick='if (!confirm("Are you sure?")) return false;'>Quit without pay</a>  
+
+  <div class='' style='background-color: whitesmoke; height: 100%'>    
     <%= erb :"layout/flash" %>        
 
     <%= erb :'header' %>   
