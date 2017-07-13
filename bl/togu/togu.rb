@@ -91,7 +91,7 @@ def compute_feedback(game_num, type, existing_type, key_type)
     feedback = -F
   elsif (game_num == 3 && existing_type && key_type== :L)
     feedback = -F
-  elsif (game_num==4 && ((existing_type && key_type== :L) || (type.t_s=='giveup')))
+  elsif (game_num==4 && ((existing_type && key_type== :L) || (type.to_s=='giveup')))
     feedback = -F
   elsif (game_num==5 && !existing_type && type.to_s=='try')
     feedback = F

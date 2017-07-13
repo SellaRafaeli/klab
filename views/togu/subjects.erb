@@ -1,5 +1,6 @@
 <h1> List of Subjects </h1>
 <%
+#bp
   subj_ids = $togu.get_many({}, {projection: {_id:1}}).mapo('_id')
 %>
 
