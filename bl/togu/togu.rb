@@ -1,7 +1,7 @@
 NUM_CELLS        = 12 # 12
 NUM_GAMES        = G = 2 #4
 NUM_ROUNDS       = R = $prod ? 20 : 2
-TRIALS_PER_ROUND = T = $prod ? 12 : 2
+TRIALS_PER_ROUND = T = $prod ? 12 : 12
 COINSIGN         = '$'
 SHOWUP           = 1.5
 EXCHANGE_RATIO   = 20
@@ -11,7 +11,7 @@ $togu = $mongo.collection('togu')
 
 def togu_default_consts
   {
-    C: 1,
+    C: 0.2,
     L: 1,
     ML: 1,
     H: 11,
