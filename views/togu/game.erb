@@ -1,8 +1,8 @@
-<h1> Game <%= session[:order]+1 %></h1>
+<h1> Game <%= sesh[:order]+1 %></h1>
 
 <h5>
-  <div> You are on trial number <span id='trial_num'%>1</span> out of <%= T %> trials in this round (Round number <%= session[:round_number] %> out of <%= R %> rounds in this game) Game number <%=%>.</div>
-  <!-- out of <%=G%> games; Game ID is <%=session[:g]%> -->
+  <div> You are on trial number <span id='trial_num'%>1</span> out of <%= T %> trials in this round (Round number <%= sesh[:round_number] %> out of <%= R %> rounds in this game) Game number <%=%>.</div>
+  <!-- out of <%=G%> games; Game ID is <%=sesh[:g]%> -->
   
 </h5>
 
@@ -19,6 +19,7 @@ $('.cell').click(function(){
   $.get('/togu/click_cell?key='+key+'&type='+type+'&trial_number='+trialNum)
    .success(function(res){
       target.html(`<b style="color:black; font-size:30px">${res.val}</b>`);
+      $("#map").html(JSON.stringify(res.map));
       cells.attr('disabled',true);      
       setTimeout(()=>{
         target.html('');

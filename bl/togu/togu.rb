@@ -1,3 +1,30 @@
+# $sesh = $mongo.collection('sesh')
+
+# $cur_sesh = {}
+
+# def sesh
+#   $cur_sesh
+# end
+
+# before do #on the way in - load the session from DB 
+#   user_id = session[:user_id]
+#   $cur_sesh = $sesh.get(user_id) || {}
+# end
+
+# after do #on the way out - save the session to DB
+#   user_id = session[:user_id]
+#   $sesh.update_id(user_id, $cur_sesh)
+# end
+
+#require 'rack/session/abstract/id'
+
+# configure do
+#     use Rack::Session::Pool, :key => 'session_id'
+#   end
+# session.options[:cookie_only] = false
+# session.options[:defer] = true
+
+
 NUM_CELLS        = 12 # 12
 NUM_GAMES        = G = 2 #4
 NUM_ROUNDS       = R = $prod ? 20 : 2
@@ -23,7 +50,7 @@ def togu_default_consts
 end
 
 def get_games_order
-  subject_number    = session[:user_data][:subject_number].to_i
+  subject_number    = sesh[:user_data][:subject_number].to_i
   game_combinations = [[1,2],[1,3],[1,4],[1,5],[1,6]]
   spot              = subject_number % game_combinations.size
   games             = game_combinations[spot]
@@ -44,9 +71,9 @@ def explore_cell(type)
   data = sesh[:consts]
   mh, c, pmh, ml = data[:MH], data[:C], data[:PMH], data[:ML]
   h, ph, l = data[:H], data[:PH], data[:L]
-  if type.to_sym == :giveup
+  if type.to_s == 'giveup'
     val_type = get_cell_val(:MH, pmh, :ML)
-  else #type == :try 
+  else #type.to_s == 'try' 
     val_type = get_cell_val(:H, ph, :L)
   end
 end
@@ -54,15 +81,15 @@ end
 def compute_feedback(game_num, type, existing_type, key_type)
   #guidance_val (f)
   feedback = 0
-  if (game_num==2 && type==:giveup)
+  if (game_num==2 && type.to_s=='giveup')
     feedback = -F
   elsif (game_num == 3 && existing_type && key_type== :L)
     feedback = -F
-  elsif (game_num==4 && ((existing_type && key_type== :L) || (type==:giveup)))
+  elsif (game_num==4 && ((existing_type && key_type== :L) || (type.t_s=='giveup')))
     feedback = -F
-  elsif (game_num==5 && !existing_type && type==:try)
+  elsif (game_num==5 && !existing_type && type.to_s=='try')
     feedback = F
-  elsif (game_num==6 && type==:try)
+  elsif (game_num==6 && type.to_s=='try')
     feedback = F
   end
   feedback
@@ -98,13 +125,15 @@ namespace '/togu' do
   end
 
   post '/start' do
-    sesh.clear
+    session.clear
+    session[:user_id] = pr[:subject_number]
+    $cur_sesh = {}
     sesh[:user_data] = params.just(:subject_number,:sex,:age,:mturk_id,:education,:income,:income_type,:location)
     sesh[:consts]    = togu_default_consts
     sesh[:games]     = get_games_order
     sesh[:moves]     = {}
     sesh[:order]     = -1
-    session[:should_flip_order] = rand > 0.5 
+    sesh[:should_flip_order] = rand > 0.5 
     set_new_game
     
     erb :'togu/general_instructions', default_layout
@@ -112,7 +141,7 @@ namespace '/togu' do
 
   get '/click_cell' do   
 
-    type, key    = params[:type].to_sym, params[:key]
+    type, key    = params[:type].to_s, params[:key].to_s
     existing_type= sesh[:cur_game_payoffs][type][key] 
     new_type     = explore_cell(type) if !existing_type
     key_type     = existing_type || new_type
@@ -161,7 +190,7 @@ namespace '/togu' do
 
     round= sesh[:round_number]
     sesh[:moves]["#{game_num}"]["#{round}"].push(move_data)
-    {val: val}
+    {val: val, map: sesh[:cur_game_payoffs]}
   end
 
   get '/game_instructions' do
@@ -169,13 +198,13 @@ namespace '/togu' do
   end
 
   get '/game' do
-    sesh[:cur_game_payoffs] = {giveup: {}, try: {}}.hwia
+    sesh[:cur_game_payoffs] = {'giveup' => {}, 'try' => {}}.hwia
     erb :'togu/game', default_layout
   end
 
   get '/between_rounds' do
     sesh[:round_number] = sesh[:round_number]+1    
-    sesh[:cur_game_payoffs] = {giveup: {}, try: {}}.hwia
+    sesh[:cur_game_payoffs] = {'giveup' => {}, 'try' => {}}.hwia
     redirect '/togu/next_game' if (sesh[:round_number] > NUM_ROUNDS) 
     
     sesh[:moves]["#{sesh[:g]}"]["#{sesh[:round_number]}"] = []
