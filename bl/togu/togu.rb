@@ -11,7 +11,7 @@ $togu = $mongo.collection('togu')
 
 def togu_default_consts
   {
-    C: 0.2,
+    C: 1,
     L: 1,
     ML: 1,
     H: 11,
