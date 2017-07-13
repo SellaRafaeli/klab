@@ -2,7 +2,8 @@ $prod       = settings.production? #RACK_ENV==production?
 $prod_url   = 'http://app.herokuapp.com'
 $root_url   = $prod ? $prod_url : 'http://localhost:9090'
 
-enable :sessions
+#enable :sessions
+use Rack::Session::Pool
 set :session_secret, '&a*n31994@'
 set :raise_errors,          false
 set :show_exceptions,       false
