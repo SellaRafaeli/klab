@@ -19,7 +19,7 @@ $('.cell').click(function(){
   $.get('/togu/click_cell?key='+key+'&type='+type+'&trial_number='+trialNum)
    .success(function(res){
       target.html(`<b style="color:black; font-size:30px">${res.val}</b>`);
-      $("#map").html(JSON.stringify(res.map));
+      //$("#map").html(JSON.stringify(res.map));
       cells.attr('disabled',true);      
       setTimeout(()=>{
         target.html('');
