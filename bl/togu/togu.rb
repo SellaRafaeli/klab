@@ -169,6 +169,7 @@ namespace '/togu' do
   end
 
   get '/game' do
+    sesh[:cur_game_payoffs] = {giveup: {}, try: {}}.hwia
     erb :'togu/game', default_layout
   end
 
