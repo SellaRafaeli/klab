@@ -1,3 +1,9 @@
+before do
+  x=1
+#  bp
+  z=2
+end
+
 # $sesh = $mongo.collection('sesh')
 
 # $cur_sesh = {}
