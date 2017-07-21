@@ -2,7 +2,7 @@
 #bp
   data      = $togu.get(params[:id])
   all_moves = data[:moves]
-  data_keys = ['Subj_Number','Sex','Age','MturkID','Education','Income','Income_Type','Location']
+  data_keys = ['Subj_Number','Sex','Age','Prolific_ID','Education','Income','Income_Type','Location']
   move_keys = [:key, :order, :g, :r, :t, :type, :is_explore, :key_type, :explore_l, :exploit_l, :key_number, :key_val, :cost, :pay_no_feedback, :feedback, :final_pay, :orig_key_type]
 #   Per trial: ID, gender, age, Order, g, r, t, 
 # - GiveUp (1=a GiveUp matrix key, 0= a Try matrix key),
@@ -63,7 +63,7 @@
             <td> <%=data[:user_data][:subject_number] %> </td>
             <td> <%=data[:user_data][:sex] %> </td>
             <td> <%=data[:user_data][:age] %> </td>
-            <td> <%=data[:user_data][:mturk_id] %> </td>
+            <td> <%=data[:user_data][:prolific_id] %> </td>
             <td> <%=data[:user_data][:education] %> </td>
             <td> <%=data[:user_data][:income] %> </td>
             <td> <%=data[:user_data][:income_type] %> </td>
@@ -124,7 +124,7 @@ ExploreLTotal (sum of ExploreL over all T trials)
             <td> <%=data[:user_data][:subject_number] %> </td>
             <td> <%=data[:user_data][:sex] %> </td>
             <td> <%=data[:user_data][:age] %> </td>
-            <td> <%=data[:user_data][:mturk_id] %> </td>
+            <td> <%=data[:user_data][:prolific_id] %> </td>
             <td> <%=data[:user_data][:education] %> </td>
             <td> <%=data[:user_data][:income] %> </td>
             <td> <%=data[:user_data][:income_type] %> </td>
@@ -162,7 +162,7 @@ mean_exploreLTotal
 
 <table id='per-game' class='table'>
   <thead>
-    <% (data_keys + ['Game'] + ['MeanSumKeyValue', 'MeanSumPayNoFeedback', 'mean_sumFinalPay', 'mean_giveUpTotal', 'mean_exploreTotal', 'mean_exploitLTotal', 'mean_exploreLTotal']).each do |k| %>
+    <% (data_keys + ['Game'] + ['MeanSumKeyValue', 'MeanSumPayNoFeedback', 'mean_sumFinalPay', 'mean_giveUpTotal', 'mean_exploreTotal', 'mean_exploitLTotal', 'mean_exploreLTotal','Game Time (mins)', 'Random Round Selected', 'Payment Sum for Random Round Selected']).each do |k| %>
       <th><%= k %></th>  
     <% end %>
   </thead>
@@ -180,6 +180,7 @@ mean_exploreLTotal
             # exploreLTotal    = round_moves.mapo(:explore_l).sum
             #bp
             game_trials = rounds.values.flatten
+
             MeanSumKeyValue      = game_trials.mapo(:key_val).avg
             MeanSumPayNoFeedback = game_trials.mapo(:pay_no_feedback).avg 
             mean_sumFinalPay = game_trials.mapo(:final_pay).avg
@@ -189,14 +190,16 @@ mean_exploreLTotal
             mean_exploreTotal = game_trials.mapo(:is_explore).avg
             mean_exploitLTotal = game_trials.mapo(:exploit_l).avg
             mean_exploreLTotal = game_trials.mapo(:explore_l).avg
+
+            game_num    = game_trials[0]['order']-1
           %>
 
 
-          <tr>
+          <tr>          
             <td> <%=data[:user_data][:subject_number] %> </td>
             <td> <%=data[:user_data][:sex] %> </td>
             <td> <%=data[:user_data][:age] %> </td>
-            <td> <%=data[:user_data][:mturk_id] %> </td>
+            <td> <%=data[:user_data][:prolific_id] %> </td>
             <td> <%=data[:user_data][:education] %> </td>
             <td> <%=data[:user_data][:income] %> </td>
             <td> <%=data[:user_data][:income_type] %> </td>
@@ -208,7 +211,10 @@ mean_exploreLTotal
             <td> <%= mean_giveUpTotal %> </td>
             <td> <%= mean_exploreTotal %> </td>
             <td> <%= mean_exploitLTotal %> </td>
-            <td> <%= mean_exploreLTotal %> </td>
+            <td> <%= mean_exploreLTotal %> </td>            
+            <td> <%= data['game_lengths'].to_a[game_num] rescue 'N/A' %> </td>
+            <td> <%= data['game_random_rounds_chosen'].to_a[game_num] rescue 'N/A' %> </td>
+            <td> <%= data['game_payments_for_random_round_chosen'].to_a[game_num] rescue 'N/A' %> </td>
           </tr>
           <% end %>
   </tbody>

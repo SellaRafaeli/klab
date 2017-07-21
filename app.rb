@@ -50,6 +50,6 @@ end
 
 get '/logout' do
   session.clear
-  flash.message = 'You have left.'
-  redirect '/'
+#  flash.message = 'You have left.'
+  redirect 'https://www.google.com'
 end

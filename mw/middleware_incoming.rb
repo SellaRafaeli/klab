@@ -4,14 +4,15 @@ use Rack::Parser, :content_types => {
 
 helpers do
   def protected!
-    return if authorized? || !$prod
+    return if authorized?# || !$prod
     headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
     halt 401, "Not authorized\n"
   end
 
   def authorized?
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-    @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == [ENV['ADMIN_USERNAME'], ENV['ADMIN_PASSWORD']]
+    # @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == [ENV['ADMIN_USERNAME'], ENV['ADMIN_PASSWORD']]
+    @auth.provided? and @auth.basic? and @auth.credentials and @auth.credentials == ['kinneret','1776']
   end
 end
 

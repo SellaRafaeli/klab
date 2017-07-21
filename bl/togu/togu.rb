@@ -34,7 +34,7 @@ end
 NUM_CELLS        = 12 # 12
 NUM_GAMES        = G = 2 #4
 NUM_ROUNDS       = R = $prod ? 20 : 2
-TRIALS_PER_ROUND = T = $prod ? 12 : 12
+TRIALS_PER_ROUND = T = $prod ? 12 : 2
 COINSIGN         = '$'
 SHOWUP           = 1.5
 EXCHANGE_RATIO   = 20
@@ -65,7 +65,7 @@ end
 
 def save_data_to_db
   subj_num = sesh['user_data']['subject_number']
-  data     = sesh.to_h.just('user_data','moves')  
+  data     = sesh.to_h.just('user_data','moves','game_lengths','game_random_rounds_chosen','game_payments_for_random_round_chosen')  
   $togu.update_id(subj_num, data, upsert: true)
 end
 
@@ -110,6 +110,7 @@ def set_new_game
 end
 
 get '/togu/subjects' do
+  protected!
   erb :'/togu/subjects', default_layout
 end
 
@@ -127,14 +128,14 @@ namespace '/togu' do
   end
 
   get '/info' do
+    session.clear
     erb :'togu/subject_number', default_layout
   end
 
   post '/start' do
-    session.clear
     session[:user_id] = pr[:subject_number]
     $cur_sesh = {}
-    sesh[:user_data] = params.just(:subject_number,:sex,:age,:mturk_id,:education,:income,:income_type,:location)
+    sesh[:user_data] = params.just(:subject_number,:sex,:age,:prolific_id,:education,:income,:income_type,:location)
     sesh[:consts]    = togu_default_consts
     sesh[:games]     = get_games_order
     sesh[:moves]     = {}
@@ -199,11 +200,13 @@ namespace '/togu' do
     {val: val, map: sesh[:cur_game_payoffs]}
   end
 
-  get '/game_instructions' do
+  get '/game_instructions' do    
     erb :'togu/game_instructions', default_layout
   end
 
   get '/game' do
+    sesh[:game_lengths] ||= []
+    sesh[:time_started]     = Time.now 
     sesh[:cur_game_payoffs] = {'giveup' => {}, 'try' => {}}.hwia
     erb :'togu/game', default_layout
   end
@@ -219,6 +222,9 @@ namespace '/togu' do
   end
 
   get '/next_game' do
+    sesh[:time_finished] = Time.now
+    game_time = ((sesh[:time_finished]-sesh[:time_started])/60).round(2)
+    sesh[:game_lengths].push(game_time)
     redirect '/togu/last_payment' if (sesh[:g] >= NUM_GAMES) 
     set_new_game
     erb :'togu/between_games', default_layout
@@ -229,21 +235,27 @@ namespace '/togu' do
   end
 
   get '/last_payment' do
-    save_data_to_db
-    
+    sesh[:time_finished] = Time.now   
     num_games = sesh[:moves].values #for future sella
 
     game_one                  = sesh[:moves].values[0]
     game_one_random_round_num = rand(game_one.values.size)
     game_one_rand_round       = game_one.values[game_one_random_round_num]
+    game_one_rand_round_sum   = game_one_rand_round.mapo(:val).sum.to_f
 
     game_two                  = sesh[:moves].values[1]
     game_two_random_round_num = rand(game_two.values.size)
     game_two_rand_round       = game_two.values[game_two_random_round_num]
+    game_two_rand_round_sum   = game_two_rand_round.mapo(:val).sum.to_f
 
-    sum       = game_one_rand_round.mapo(:val).sum.to_f + game_two_rand_round.mapo(:val).sum.to_f + SHOWUP
+    sum       =  game_one_rand_round_sum + game_two_rand_round_sum + SHOWUP
 
     final_payment = [sum, SHOWUP].max
+
+    sesh[:game_random_rounds_chosen] = [game_one_random_round_num+1,game_two_random_round_num+1]
+    sesh[:game_payments_for_random_round_chosen] = [game_one_rand_round_sum,game_two_rand_round_sum]
+
+    save_data_to_db
 
     erb :'togu/last_payment', default_layout.merge(locals: {rand_round_from_game_one: game_one_random_round_num, rand_round_from_game_two: game_two_random_round_num, sum: sum}) 
   end
