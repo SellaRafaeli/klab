@@ -106,7 +106,7 @@ def set_new_game
   game_num = sesh[:g]     = sesh[:games][sesh[:order]]
   round    = sesh[:round_number]     = 1
   sesh[:moves]["#{game_num}"]  = {}
-  sesh[:moves]["#{game_num}"]["#{round}"] = []  
+  sesh[:moves]["#{game_num}"]["#{round}"] = []    
 end
 
 get '/togu/subjects' do
@@ -204,9 +204,9 @@ namespace '/togu' do
     erb :'togu/game_instructions', default_layout
   end
 
-  get '/game' do
-    sesh[:game_lengths] ||= []
-    sesh[:time_started]     = Time.now 
+  get '/game' do    
+    sesh[:game_lengths]   ||= []
+    sesh[:time_started]     = Time.now if sesh[:round_number] == 1
     sesh[:cur_game_payoffs] = {'giveup' => {}, 'try' => {}}.hwia
     erb :'togu/game', default_layout
   end
@@ -223,7 +223,7 @@ namespace '/togu' do
 
   get '/next_game' do
     sesh[:time_finished] = Time.now
-    game_time = ((sesh[:time_finished]-sesh[:time_started])/60).round(2)
+    game_time = ((sesh[:time_finished]-sesh[:time_started])/60.0).round(2)
     sesh[:game_lengths].push(game_time)
     redirect '/togu/last_payment' if (sesh[:g] >= NUM_GAMES) 
     set_new_game
@@ -258,5 +258,11 @@ namespace '/togu' do
     save_data_to_db
 
     erb :'togu/last_payment', default_layout.merge(locals: {rand_round_from_game_one: game_one_random_round_num, rand_round_from_game_two: game_two_random_round_num, sum: sum}) 
+  end
+
+  get '/delete_all' do
+    protected!
+    $togu.delete_many
+    redirect '/'
   end
 end

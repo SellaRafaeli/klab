@@ -19,6 +19,7 @@
 
 %>
 
+<div style='overflow: scroll'>
 <h1> User Results: Subject <%=params[:id]%> </h1>
 <button onclick=tableToExcel('per-trial','data','data.xls') class='btn btn-primary btn-raised'>Download as excel</button>
 
@@ -180,16 +181,16 @@ mean_exploreLTotal
             # exploreLTotal    = round_moves.mapo(:explore_l).sum
             #bp
             game_trials = rounds.values.flatten
-
-            MeanSumKeyValue      = game_trials.mapo(:key_val).avg
-            MeanSumPayNoFeedback = game_trials.mapo(:pay_no_feedback).avg 
-            mean_sumFinalPay = game_trials.mapo(:final_pay).avg
+            num_rounds  = rounds.size #we calc the avgs per round
+            MeanSumKeyValue      = game_trials.mapo(:key_val).avg * num_rounds 
+            MeanSumPayNoFeedback = game_trials.mapo(:pay_no_feedback).avg * num_rounds 
+            mean_sumFinalPay = game_trials.mapo(:final_pay).avg * num_rounds
             # mean_high = game_trials.mapo(:orig_key_type).count(:H).to_f / game_trials.size
             # mean_Thigh = 'tbd' 
-            mean_giveUpTotal = game_trials.mapo(:give_up).avg
-            mean_exploreTotal = game_trials.mapo(:is_explore).avg
-            mean_exploitLTotal = game_trials.mapo(:exploit_l).avg
-            mean_exploreLTotal = game_trials.mapo(:explore_l).avg
+            mean_giveUpTotal = game_trials.mapo(:give_up).avg * num_rounds
+            mean_exploreTotal = game_trials.mapo(:is_explore).avg * num_rounds
+            mean_exploitLTotal = game_trials.mapo(:exploit_l).avg * num_rounds
+            mean_exploreLTotal = game_trials.mapo(:explore_l).avg * num_rounds
 
             game_num    = game_trials[0]['order']-1
           %>
@@ -219,3 +220,4 @@ mean_exploreLTotal
           <% end %>
   </tbody>
 </table>
+</div>

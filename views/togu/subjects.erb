@@ -7,3 +7,6 @@
 <% subj_ids.each do |id| %>
   <a class='btn btn-raised btn-primary' href='/togu/subject_results/<%=id%>'> <%= id %> </a>
 <% end %>
+
+<hr/>
+<a href='/togu/delete_all' class='btn btn-lg btn-raised btn-danger' onclick='if (!(confirm("Are you sure you want to delete all user data?"))) return false'> Delete All </a>
