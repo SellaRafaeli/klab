@@ -79,7 +79,7 @@ def explore_cell(type)
   h, ph, l = data[:H], data[:PH], data[:L]
   if type.to_s == 'giveup'
     val_type = get_cell_val(:MH, pmh, :ML)
-  else #type.to_s == 'try' 
+  else #type.to_s == 'try'
     val_type = get_cell_val(:H, ph, :L)
   end
 end
@@ -248,7 +248,7 @@ namespace '/togu' do
     game_two_rand_round       = game_two.values[game_two_random_round_num]
     game_two_rand_round_sum   = game_two_rand_round.mapo(:val).sum.to_f
 
-    sum       =  game_one_rand_round_sum + game_two_rand_round_sum + SHOWUP
+    sum       =  game_one_rand_round_sum + game_two_rand_round_sum
 
     final_payment = [sum, SHOWUP].max
 

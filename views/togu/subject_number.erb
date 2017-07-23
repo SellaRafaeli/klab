@@ -9,7 +9,7 @@
 
     <br/>
     <label> Sex: </label><br/>
-      <input required type="radio" name="sex" value="m" checked=""> Male<br>
+      <input required type="radio" name="sex" value="m"> Male<br>
       <input required type="radio" name="sex" value="f"> Female<br>
 
       <br/>
@@ -21,7 +21,8 @@
 
     <br>
     <label>Education Level
-    <select required name=education>
+    <select required name=education value=''>
+      <option selected disabled>Choose one</option>
       <option value="less_than_highschool">Less than High School</option>
       <option value="highschool_equivalent">High School or Equivalent (e.g., GED)</option>
       <option value="some_college">Some College</option>
@@ -38,7 +39,7 @@
     <label>What is your average monthly income? <input name=income required /> </label>
     
     <label>
-      <select  name=income_type>
+      <select name=income_type>
         <option value="USD">USD</option>
         <option value="GBP">GBP</option>
         <option value="CAD">CAD</option>
