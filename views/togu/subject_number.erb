@@ -1,6 +1,14 @@
+<script>
+  function verifyForm(form) {
+    if (!$(form).serializeObject().education) {
+      alert('Please choose your education level')
+      return false
+    }
+  }
+</script>
 <h1> Please enter your details </h1>
 
-<form action='/togu/start' method=post>
+<form action='/togu/start' method=post onsubmit="return verifyForm(this)">
 
     <input name='subject_number' type='hidden' value="<%=$togu.count+1%>" /s>
 
