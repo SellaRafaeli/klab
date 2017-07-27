@@ -37,7 +37,7 @@ NUM_ROUNDS       = R = $prod ? 20 : 3
 TRIALS_PER_ROUND = T = $prod ? 12 : 3
 COINSIGN         = '$'
 SHOWUP           = 1.5
-EXCHANGE_RATIO   = 20
+EXCHANGE_RATIO   = 25
 F                = 2
 
 $togu = $mongo.collection('togu')
@@ -241,7 +241,7 @@ namespace '/togu' do
     game_one                  = sesh[:moves].values[0]
     game_one_random_round_num = rand(game_one.values.size)
     game_one_rand_round       = game_one.values[game_one_random_round_num]
-    game_one_rand_round_sum   = game_one_rand_round.mapo(:val).sum.to_f
+    game_one_rand_round_sum   = game_one_rand_round.mapo(:val).sum.togu_default_consts
 
     game_two                  = sesh[:moves].values[1]
     game_two_random_round_num = rand(game_two.values.size)
