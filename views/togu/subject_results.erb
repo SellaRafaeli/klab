@@ -182,15 +182,15 @@ mean_exploreLTotal
             #bp
             game_trials = rounds.values.flatten
             num_rounds  = rounds.size #we calc the avgs per round
-            MeanSumKeyValue      = game_trials.mapo(:key_val).sum / num_rounds 
-            MeanSumPayNoFeedback = game_trials.mapo(:pay_no_feedback).sum / num_rounds 
-            mean_sumFinalPay = game_trials.mapo(:final_pay).sum / num_rounds
+            MeanSumKeyValue      = game_trials.mapo(:key_val).sum / num_rounds.to_f 
+            MeanSumPayNoFeedback = game_trials.mapo(:pay_no_feedback).sum / num_rounds.to_f 
+            mean_sumFinalPay = game_trials.mapo(:final_pay).sum / num_rounds.to_f
             # mean_high = game_trials.mapo(:orig_key_type).count(:H).to_f / game_trials.size
             # mean_Thigh = 'tbd' 
-            mean_giveUpTotal = game_trials.mapo(:give_up).sum / num_rounds
-            mean_exploreTotal = game_trials.mapo(:is_explore).sum / num_rounds
-            mean_exploitLTotal = game_trials.mapo(:exploit_l).sum / num_rounds
-            mean_exploreLTotal = game_trials.mapo(:explore_l).sum / num_rounds
+            mean_giveUpTotal = game_trials.mapo(:give_up).sum / num_rounds.to_f
+            mean_exploreTotal = game_trials.mapo(:is_explore).sum / num_rounds.to_f
+            mean_exploitLTotal = game_trials.mapo(:exploit_l).sum / num_rounds.to_f
+            mean_exploreLTotal = game_trials.mapo(:explore_l).sum / num_rounds.to_f
 
             game_num    = game_trials[0]['order']-1
           %>
