@@ -57,7 +57,7 @@
     <% end %>
   </thead>
   <tbody>
-      <% all_moves.each do |game, rounds| %>
+      <% all_moves.to_a.each do |game, rounds| %>
         <% rounds.each do |round, round_moves| %>          
           <% round_moves.each do |move| %>
           <tr>
@@ -105,7 +105,7 @@ ExploreLTotal (sum of ExploreL over all T trials)
     <% end %>
   </thead>
   <tbody>
-      <% all_moves.each do |game, rounds| %>
+      <% all_moves.to_a.each do |game, rounds| %>
         <% rounds.each do |round, round_moves| %>          
 
           <%
@@ -168,7 +168,7 @@ mean_exploreLTotal
     <% end %>
   </thead>
   <tbody>
-      <% all_moves.each do |game, rounds| %>
+      <% all_moves.to_a.each do |game, rounds| %>
           <%
             # sumKeyVal        = round_moves.mapo(:key_val).sum
             # sumPayNoFeedback = round_moves.mapo(:pay_no_feedback).sum

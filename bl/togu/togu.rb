@@ -132,10 +132,11 @@ namespace '/togu' do
     erb :'togu/subject_number', default_layout
   end
 
-  post '/start' do
-    session[:user_id] = pr[:subject_number]
+  post '/start' do    
     $cur_sesh = {}
-    sesh[:user_data] = params.just(:subject_number,:sex,:age,:prolific_id,:education,:income,:income_type,:location)
+    sesh[:user_data] = params.just(:sex,:age,:prolific_id,:education,:income,:income_type,:location)
+    session[:user_id] = sesh[:user_data]['subject_number'] = user_id = ($togu.count+1).to_s
+    $togu.update_id(user_id, {}, upsert: true)
     sesh[:consts]    = togu_default_consts
     sesh[:games]     = get_games_order
     sesh[:moves]     = {}
