@@ -12,8 +12,12 @@ get '/ex2' do
 end
 
 get '/ex2/instructions' do
-  session.clear
+  session.clear 
   erb :'ex2/instructions', default_layout
+end
+
+get '/ex2/instructions_part2' do
+  erb :'ex2/instructions_part2', default_layout
 end
 
 get '/ex2/start' do
