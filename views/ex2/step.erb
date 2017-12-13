@@ -42,9 +42,13 @@
 }
 </style>
 <div class='main'>
-<%= sesh.to_h %>
-  <% if part2 %><h3>Part2</h3><% end %>
-  <h1> Step <span class='stepNum'>1</span></h1>
+Admin Data: <%= sesh.to_h %>
+  <% if part2 %>
+    <h3>Part 2</h3>
+  <% else %>
+    <h3>Part 1</h3>
+  <% end %>
+  <h1> Trial <span class='stepNum'>1</span></h1>
   
   <div class='buffer'></div>
   <button class='btn btn-lg btn-info btn-raised btn-left' onclick=buttonClick(this,'left')></button>

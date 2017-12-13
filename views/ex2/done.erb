@@ -1,9 +1,21 @@
 <h1> You're done! </h1>
 
-Your data was:
+<pre>
+Congratulations, the game is now over!
 
-<%= data %>
+One trial was randomly selected: Trial <%=data[:random_move][0]%> of part <%=data[:random_part]%>. Your payoff in this trial was <%=data[:random_move][1][1]%>.
+
+In addition, one estimation was randomly selected. This estimation yielded a bonus of YYY.
+
+Accordingly, your final payment is ZZZ <%=PaySign%>.
+
+Thank you for participating in this study ☺
+</pre>
 
 <div>
 <a class='btn btn-raised btn-primary' href='/ex2'>Home</a>
 </div>
+
+
+Admin data was:
+<%= data %>

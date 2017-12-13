@@ -1,7 +1,7 @@
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
-T=200
-E=100
+T=6
+E=7
 ShowUp=1
 PaySign='$'
 ExchangeRate=5
@@ -101,13 +101,13 @@ get '/ex2/click' do
   val = res[pr[:side]]
   
   if (sesh[:part2])
-    res['done'] = true if cur_step >= 3
+    res['done'] = true if cur_step >= T
     sesh[:moves_part2] ||= {}
     sesh[:moves_part2][cur_step] = [pr[:side],val]  
   else 
     sesh[:moves] ||= {}
     sesh[:moves][cur_step] = [pr[:side],val]  
-    res['gotoPart2'] = true if cur_step >= 3
+    res['gotoPart2'] = true if cur_step >= E
   end
   
   res
@@ -115,13 +115,14 @@ end
 
 get '/ex2/done' do
   user_actions = sesh.to_h.hwia
-  random1 = user_actions[:moves].to_a.sample[1][1]
-  random2 = user_actions[:moves_part2].to_a.sample[1][1]
-  random = [random1,random2].sample
+  
+  random_part = [:moves,:moves_part2].sample
+  random_move = user_actions[random_part].to_a.sample
 
   data = {
     user_actions: user_actions,
-    random_move: random
+    random_part: (random_part == :moves) ? 1 : 2,
+    random_move: random_move
   }
   $ex2results.update_id(sesh[:subject_number].to_s,data,{upsert:true})
 
