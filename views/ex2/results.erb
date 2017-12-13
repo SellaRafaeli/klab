@@ -1,0 +1,42 @@
+
+<% if pr[:id] %>
+  <% data = $ex2results.get(pr[:id]).hwia[:user_actions] %>
+
+  <h1> Data for subject <%=pr[:id]%> </h1>  
+  <% [1,2].each do |part| %>
+    <h2> Part <%=part%> </h2>
+    <table class='table table-striped'>
+    <thead>
+      <% ['move number','choice','result'].each do |k| %>
+        <th><%= k %></th>  
+      <% end %>
+    </thead>
+    <tbody>
+      <% 
+        key = 'moves'
+        key = 'moves_part2' if part == 2
+      %> 
+        <% data[key].to_a.each do |move_num, info| %>
+            <tr>
+              <td> <%=move_num %> </td>
+              <td> <%=info[0]%> </td>
+              <td> <%=info[1]%> </td>
+            </tr>
+        <% end %>
+    </tbody>
+    </table>
+  <% end %>
+
+<a class='btn btn-raised btn-primary' href='/ex2/results'>Back</a>
+<%= data %>
+
+
+<% else %>
+  <h1> EX2 All Results </h1>
+  <% $ex2results.all.mapo('_id').each do |id| %>
+  <a class='btn btn-raised btn-primary' href='/ex2/results/<%=id%>'><%=id%></a>
+  <% end %>
+  <div>
+  <a class='btn btn-raised btn-primary' href='/ex2'>Home</a>
+  </div>
+<% end %>

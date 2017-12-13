@@ -1,0 +1,75 @@
+<%
+  part2 ||= false
+%>
+<style>
+.main {
+  text-align: center;
+  /*border:1px solid red;*/
+}
+.main .btn {
+  height:200px;
+  width:200px;
+  margin:40px 100px;
+  font-size:30px;  
+}
+.black {
+  color: black !important;
+}
+.grey {
+  color: lightgrey !important;
+}
+.disabled {
+  pointer-events: none;
+  cursor: wait !important;
+}
+
+.btn-left {
+
+}
+.guess_area {
+  margin:auto 50px;
+  float:left;
+}
+</style>
+<div class='main'>
+
+  <% if part2 %><h3>Part2</h3><% end %>
+  <h1> Step <span class='stepNum'>1</span></h1>
+  
+  <button class='btn btn-lg btn-info btn-raised btn-left black' onclick=buttonClick(this,'left')></button>
+  <button class='btn btn-lg btn-warning btn-raised btn-right grey' onclick=buttonClick(this,'right')></button>
+
+  <div>
+  <% if false %>
+  <span class='guess_area'>
+    <span class='guess_text'>What do you think is your chance of getting this right? </span>
+    <div>
+    <input />
+    </div>
+  </span>
+  </div>
+
+<% end %>
+
+</div>
+
+<script>
+var stepNum = 1; 
+function enableButtons(){
+  $('.btn').removeClass('black').removeClass('grey').removeClass('disabled').text('');
+  $('.stepNum').text(stepNum);
+}
+function buttonClick(btn,side) {
+  if (side == 'left') other = 'right';
+  if (side == 'right') other = 'left';
+  $.get(`/ex2/click?side=${side}&stepNum=${stepNum}&part2=${<%=part2%>}`).success(res=>{    
+    $('.btn-'+side).addClass('black').text(res[side])
+    $('.btn-'+other).addClass('grey').text(res[other])
+    $('.btn').addClass('disabled');
+    stepNum = res.stepNum;    
+    setTimeout(enableButtons,500)
+    if (res.gotoPart2) {document.location.href = '/ex2/part2'}
+    if (res.done) {document.location.href = '/ex2/done'}
+  })
+}
+</script>
