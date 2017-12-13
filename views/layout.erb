@@ -15,10 +15,12 @@ x=1
 <body style='overflow-x: hidden; height:100%'>  
 <!-- <div id=map class='well'></div> -->
 <!-- <div class='well'><%= session.to_h['moves'] %></div> -->
+<% if false %>
   <% if request_fullpath.ends_with? 'last_payment' %>
   <a href='/logout' class='btn btn-danger' style='position: absolute; z-index: 999; right: 0px; top: 0px; height:40px'> Close Screen </a>  
   <% else %> 
   <a href='/logout' class='btn btn-danger' style='position: absolute; z-index: 999; right: 0px; top: 0px; height:40px' onclick='if (!confirm("Are you sure?")) return false;'>Quit without pay</a>  
+  <% end %>
   <% end %>
 
   <div class='' style='background-color: whitesmoke; height: 100%'>    
