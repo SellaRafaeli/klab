@@ -21,7 +21,19 @@ get '/ex2/instructions_part2' do
 end
 
 get '/ex2/start' do
-  sesh[:subject_number] = pr[:subject_number]
+  sesh[:subject_number] = pr[:subject_number].to_i || 1 
+  
+  if sesh[:subject_number] < 500
+    group_num = ['a','b'].sample
+  elsif sesh[:subject_number] < 1000
+    group_num = ['c','d'].sample
+  elsif sesh[:subject_number] < 1500
+    group_num = ['e','f'].sample
+  end
+
+  sesh[:group_num] = group_num
+  sesh[:flip] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
+  
   sesh[:down] = [true,false].sample
   sesh[:colors] = ['lightblue','lightyellow','lightpink','purple'].sample(2)
   redirect '/ex2/step'
@@ -36,21 +48,66 @@ get '/ex2/part2' do
   erb :'ex2/step', locals: {part2: true}, layout: :layout
 end 
 
+def get_vals(group_num, flip)
+
+  rand_prob = rand
+
+  if group_num == 'a'
+    left = -2
+    right = (rand_prob < 0.1) ? -20 : 0
+  elsif group_num == 'b'
+    left = 2
+    right = (rand_prob < 0.1) ? 20 : 0
+  elsif group_num == 'c'    
+    left = -2 
+    right = (rand_prob < 0.1) ? 20 : 0
+  elsif group_num == 'd'
+    left = 0
+    if (rand_prob < 0.05) 
+      right = 10
+    elsif (rand_prob >= 0.05) && (rand_prob < 0.1)
+      right = -10
+    else 
+      right = 0
+    end
+  elsif group_num == 'e'    
+    left = 2
+    right = (rand_prob < 0.1) ? 20 : 0
+  elsif group_num == 'f'    
+    left = 0
+    if (rand_prob < 0.05) 
+      right = 10
+    elsif (rand_prob >= 0.05) && (rand_prob < 0.1)
+      right = -10
+    else 
+      right = 0
+    end
+  end
+
+  if flip
+    temp = left; left = right; right = temp
+  end
+
+  return left, right
+end
+
+
 get '/ex2/click' do 
   cur_step  = pr[:stepNum].to_i
   next_step = cur_step+1
 
-  res = {left: rand(1000).to_s, right: rand(10).to_s, stepNum: next_step}.hwia
+  left, right = get_vals(sesh[:group_num], sesh[:flip])
+  res = {left: left, right: right, stepNum: next_step}.hwia
   val = res[pr[:side]]
   
   if (sesh[:part2])
-    res['done'] = true if cur_step >= 2
+    res['done'] = true if cur_step >= 3
     sesh[:moves_part2] ||= {}
     sesh[:moves_part2][cur_step] = [pr[:side],val]  
   else 
     sesh[:moves] ||= {}
     sesh[:moves][cur_step] = [pr[:side],val]  
-    res['gotoPart2'] = true if cur_step >= 1
+    res['gotoPart2'] = true if cur_step >= 3
   end
   
   res

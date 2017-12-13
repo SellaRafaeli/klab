@@ -15,10 +15,15 @@
   height:200px;
   width:200px;
   margin:40px 100px;
-  font-size:30px;  
+  font-size:45px;  
+  color: grey !important;
+  font-weight: bold;
 }
-.black {
+.main .btn.black {
   color: black !important;
+}
+.grey {
+  color: grey !important;
 }
 .disabled {
   pointer-events: none;
@@ -42,7 +47,7 @@
   <h1> Step <span class='stepNum'>1</span></h1>
   
   <div class='buffer'></div>
-  <button class='btn btn-lg btn-info btn-raised btn-left black' onclick=buttonClick(this,'left')></button>
+  <button class='btn btn-lg btn-info btn-raised btn-left' onclick=buttonClick(this,'left')></button>
   <button class='btn btn-lg btn-warning btn-raised btn-right' onclick=buttonClick(this,'right')></button>
 
   <div>
@@ -70,7 +75,7 @@ function buttonClick(btn,side) {
   if (side == 'right') other = 'left';
   $.get(`/ex2/click?side=${side}&stepNum=${stepNum}&part2=${<%=part2%>}`).success(res=>{    
     $('.btn-'+side).addClass('black').text(res[side])
-    $('.btn-'+other).text(res[other])
+    $('.btn-'+other).addClass('grey').text(res[other])
     $('.btn').addClass('disabled');
     stepNum = res.stepNum;    
     var waitTime = 1000
