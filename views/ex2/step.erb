@@ -6,6 +6,11 @@
   text-align: center;
   /*border:1px solid red;*/
 }
+.buffer {
+  <% if sesh[:down] %>
+  margin-top: 300px;
+  <% end%>
+}
 .main .btn {
   height:200px;
   width:200px;
@@ -15,16 +20,16 @@
 .black {
   color: black !important;
 }
-.grey {
-  color: lightgrey !important;
-}
 .disabled {
   pointer-events: none;
   cursor: wait !important;
 }
 
 .btn-left {
-
+  background-color: <%=sesh[:colors][0]%> !important;
+}
+.btn-right {
+  background-color: <%=sesh[:colors][1]%> !important; 
 }
 .guess_area {
   margin:auto 50px;
@@ -32,12 +37,13 @@
 }
 </style>
 <div class='main'>
-
+<%= sesh.to_h %>
   <% if part2 %><h3>Part2</h3><% end %>
   <h1> Step <span class='stepNum'>1</span></h1>
   
+  <div class='buffer'></div>
   <button class='btn btn-lg btn-info btn-raised btn-left black' onclick=buttonClick(this,'left')></button>
-  <button class='btn btn-lg btn-warning btn-raised btn-right grey' onclick=buttonClick(this,'right')></button>
+  <button class='btn btn-lg btn-warning btn-raised btn-right' onclick=buttonClick(this,'right')></button>
 
   <div>
   <% if false %>
@@ -64,12 +70,14 @@ function buttonClick(btn,side) {
   if (side == 'right') other = 'left';
   $.get(`/ex2/click?side=${side}&stepNum=${stepNum}&part2=${<%=part2%>}`).success(res=>{    
     $('.btn-'+side).addClass('black').text(res[side])
-    $('.btn-'+other).addClass('grey').text(res[other])
+    $('.btn-'+other).text(res[other])
     $('.btn').addClass('disabled');
     stepNum = res.stepNum;    
-    setTimeout(enableButtons,500)
-    if (res.gotoPart2) {document.location.href = '/ex2/instructions_part2'}
-    if (res.done) {document.location.href = '/ex2/done'}
+    var waitTime = 1000
+    setTimeout(enableButtons,waitTime);
+
+    if (res.gotoPart2) setTimeout(()=>document.location.href = '/ex2/instructions_part2',waitTime);
+    if (res.done) setTimeout(()=>document.location.href = '/ex2/done',waitTime);
   })
 }
 </script>

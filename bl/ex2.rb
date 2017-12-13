@@ -22,6 +22,8 @@ end
 
 get '/ex2/start' do
   sesh[:subject_number] = pr[:subject_number]
+  sesh[:down] = [true,false].sample
+  sesh[:colors] = ['lightblue','lightyellow','lightpink','purple'].sample(2)
   redirect '/ex2/step'
 end
 
