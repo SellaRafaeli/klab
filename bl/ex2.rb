@@ -22,20 +22,12 @@ end
 
 get '/ex2/start' do
   sesh[:subject_number] = pr[:subject_number].to_i || 1 
-  
-  if sesh[:subject_number] < 500
-    group_num = ['a','b'].sample
-  elsif sesh[:subject_number] < 1000
-    group_num = ['c','d'].sample
-  elsif sesh[:subject_number] < 1500
-    group_num = ['e','f'].sample
-  end
-
+  group_num = [12,21,13,31,23,32].sample
   sesh[:group_num] = group_num
   sesh[:flip] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
   
-  sesh[:down] = [true,false].sample
-  sesh[:colors] = ['lightblue','lightyellow','lightpink','purple'].sample(2)
+  #sesh[:down] = [true,false].sample
+  sesh[:colors] = ['lightblue','lightyellow','lightpink','purple'].shuffle
   redirect '/ex2/step'
 end
 
@@ -48,32 +40,22 @@ get '/ex2/part2' do
   erb :'ex2/step', locals: {part2: true}, layout: :layout
 end 
 
-def get_vals(group_num, flip)
-
+def get_vals(group_num, flip, cur_step)
   rand_prob = rand
 
-  if group_num == 'a'
+  if (cur_step.to_i) % 2 == 0
+    group_num = group_num % 10
+  else 
+    group_num = group_num / 10
+  end
+
+  if group_num == 1
     left = -2
     right = (rand_prob < 0.1) ? -20 : 0
-  elsif group_num == 'b'
+  elsif group_num == 2
     left = 2
     right = (rand_prob < 0.1) ? 20 : 0
-  elsif group_num == 'c'    
-    left = -2 
-    right = (rand_prob < 0.1) ? 20 : 0
-  elsif group_num == 'd'
-    left = 0
-    if (rand_prob < 0.05) 
-      right = 10
-    elsif (rand_prob >= 0.05) && (rand_prob < 0.1)
-      right = -10
-    else 
-      right = 0
-    end
-  elsif group_num == 'e'    
-    left = 2
-    right = (rand_prob < 0.1) ? 20 : 0
-  elsif group_num == 'f'    
+  else # group_num == 3
     left = 0
     if (rand_prob < 0.05) 
       right = 10
@@ -96,7 +78,7 @@ get '/ex2/click' do
   cur_step  = pr[:stepNum].to_i
   next_step = cur_step+1
 
-  left, right = get_vals(sesh[:group_num], sesh[:flip])
+  left, right = get_vals(sesh[:group_num], sesh[:flip], cur_step)
   res = {left: left, right: right, stepNum: next_step}.hwia
   val = res[pr[:side]]
   

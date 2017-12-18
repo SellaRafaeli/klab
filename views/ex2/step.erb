@@ -6,10 +6,8 @@
   text-align: center;
   /*border:1px solid red;*/
 }
-.buffer {
-  <% if sesh[:down] %>
-  margin-top: 300px;
-  <% end%>
+.noDisplay {
+  display: none
 }
 .main .btn {
   height:200px;
@@ -29,12 +27,8 @@
   pointer-events: none;
   cursor: wait !important;
 }
-
-.btn-left {
-  background-color: <%=sesh[:colors][0]%> !important;
-}
-.btn-right {
-  background-color: <%=sesh[:colors][1]%> !important; 
+.invisible {
+  visibility: none;
 }
 .guess_area {
   margin:auto 50px;
@@ -42,18 +36,21 @@
 }
 </style>
 <div class='main'>
-Admin Data: <%= sesh.to_h %>
   <% if part2 %>
-    <h3>Part 2</h3>
+    <h5>Part 2</h5>
   <% else %>
-    <h3>Part 1</h3>
+    <h5>Part 1</h5>
   <% end %>
-  <h1> Trial <span class='stepNum'>1</span></h1>
-  
-  <div class='buffer'></div>
-  <button class='btn btn-lg btn-info btn-raised btn-left' onclick=buttonClick(this,'left')></button>
-  <button class='btn btn-lg btn-warning btn-raised btn-right' onclick=buttonClick(this,'right')></button>
-
+  <h4> Trial <span class='stepNum'>1</span></h4>
+  <div class='even_odd_trials invisible'>
+    <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=sesh[:colors][0]%>' onclick=buttonClick(this,'left')></button>
+    <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=sesh[:colors][1]%>' onclick=buttonClick(this,'right')></button>
+  </div>
+  <div class='even_odd_trials'>
+    <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=sesh[:colors][2]%>' onclick=buttonClick(this,'left')></button>
+    <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=sesh[:colors][3]%>' onclick=buttonClick(this,'right')></button>
+  </div>
+  <div>Admin Data: <%= sesh.to_h %></div>
   <div>
   <% if false %>
   <span class='guess_area'>
@@ -73,6 +70,7 @@ var stepNum = 1;
 function enableButtons(){
   $('.btn').removeClass('black').removeClass('grey').removeClass('disabled').text('');
   $('.stepNum').text(stepNum);
+  $('.even_odd_trials').toggleClass('invisible')
 }
 function buttonClick(btn,side) {
   if (side == 'left') other = 'right';
