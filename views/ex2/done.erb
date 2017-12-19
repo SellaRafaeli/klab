@@ -3,11 +3,13 @@
 <pre>
 Congratulations, the game is now over!
 
-One trial was randomly selected: Trial <%=data[:random_move][0]%> of part <%=data[:random_part]%>. Your payoff in this trial was <%=data[:random_move][1][1]%>.
+One trial was randomly selected: Trial <%=data[:random_move][0]%> of part <%=data[:random_part]%>. Your payoff in this trial was <%=data[:rand_payoff]%>.
 
-In addition, one estimation was randomly selected. This estimation yielded a bonus of YYY.
+In addition, one estimation was randomly selected. This estimation yielded a bonus of 2<%=PaySign%>.
 
-Accordingly, your final payment is ZZZ <%=PaySign%>.
+You also received <%=ShowUp%><%=PaySign%> for showing up.
+
+Accordingly, your final payment is <%=data[:rand_payoff] + 2 + ShowUp%><%=PaySign%>.
 
 Thank you for participating in this study ☺
 </pre>

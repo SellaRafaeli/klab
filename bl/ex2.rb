@@ -1,6 +1,6 @@
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
-T=6
+T=5
 E=7
 ShowUp=1
 PaySign='$'
@@ -17,6 +17,7 @@ get '/ex2/instructions' do
 end
 
 get '/ex2/instructions_part2' do
+  sesh[:stepNum] = 0
   erb :'ex2/instructions_part2', default_layout
 end
 
@@ -40,21 +41,35 @@ get '/ex2/part2' do
   erb :'ex2/step', locals: {part2: true}, layout: :layout
 end 
 
+def potential_risky_val(group_num, cur_step)
+  group_num = sub_group_num(group_num, cur_step)
+  z = '+10'
+  z = '-20' if group_num == 1
+  z = '20' if group_num == 2
+  return z.to_s
+end
+
+def sub_group_num(group_num, cur_step)
+  if (cur_step.to_i) % 2 == 0
+    group_num = group_num / 10
+  else 
+    group_num = group_num % 10
+  end
+end
+
 def get_vals(group_num, flip, cur_step)
   rand_prob = rand
 
-  if (cur_step.to_i) % 2 == 0
-    group_num = group_num % 10
-  else 
-    group_num = group_num / 10
-  end
+  group_num = sub_group_num(group_num, cur_step)
 
   if group_num == 1
     left = -2
     right = (rand_prob < 0.1) ? -20 : 0
+    # right = -20
   elsif group_num == 2
     left = 2
     right = (rand_prob < 0.1) ? 20 : 0
+    # right = 20
   else # group_num == 3
     left = 0
     if (rand_prob < 0.05) 
@@ -64,6 +79,7 @@ def get_vals(group_num, flip, cur_step)
     else 
       right = 0
     end
+    # right = -10
   end
 
   if flip
@@ -73,23 +89,28 @@ def get_vals(group_num, flip, cur_step)
   return left, right
 end
 
+get '/ex2/estimate' do 
+  sesh[:estimates] ||= []
+  sesh[:estimates].push(pr[:estimate])
+  {msg: "ok"}
+end
 
 get '/ex2/click' do 
-  cur_step  = pr[:stepNum].to_i
-  next_step = cur_step+1
+  cur_step  = sesh[:stepNum].to_i
+  next_step = sesh[:stepNum] = sesh[:stepNum].to_i+1
 
   left, right = get_vals(sesh[:group_num], sesh[:flip], cur_step)
   res = {left: left, right: right, stepNum: next_step}.hwia
   val = res[pr[:side]]
   
   if (sesh[:part2])
-    res['done'] = true if cur_step >= T
+    res['done'] = true if next_step >= E
     sesh[:moves_part2] ||= {}
     sesh[:moves_part2][cur_step] = [pr[:side],val]  
   else 
     sesh[:moves] ||= {}
     sesh[:moves][cur_step] = [pr[:side],val]  
-    res['gotoPart2'] = true if cur_step >= E
+    res['gotoPart2'] = true if next_step >= T
   end
   
   res
@@ -106,6 +127,8 @@ get '/ex2/done' do
     random_part: (random_part == :moves) ? 1 : 2,
     random_move: random_move
   }
+
+  data[:rand_payoff] = data[:random_move][1][1] 
   $ex2results.update_id(sesh[:subject_number].to_s,data,{upsert:true})
 
   erb :'ex2/done', locals: {data: data}, layout: :layout
