@@ -34,7 +34,7 @@ end
 NUM_CELLS        = 12 # 12
 NUM_GAMES        = G = 2 #4
 NUM_ROUNDS       = R = $prod ? 20 : 3
-TRIALS_PER_ROUND = T = $prod ? 12 : 3
+TRIALS_PER_ROUND = old_T = $prod ? 12 : 3
 COINSIGN         = '$'
 SHOWUP           = 1.6
 EXCHANGE_RATIO   = 30
