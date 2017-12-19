@@ -7,6 +7,12 @@ PaySign='$'
 ExchangeRate=5
 MinimalPay=0.75
 
+get '/ex2_info' do
+  {
+    T: T, E: E, show_up: ShowUp, pay_sign: PaySign, minimal_pay: MinimalPay
+  }
+end
+
 get '/ex2' do
   erb :'ex2/home', default_layout
 end
