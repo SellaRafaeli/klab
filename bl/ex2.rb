@@ -96,7 +96,7 @@ def get_vals(group_num, flip, cur_step)
     temp = left; left = right; right = temp
   end
 
-  return left, right
+  return left, right, group_num
 end
 
 get '/ex2/estimate' do 
@@ -105,21 +105,44 @@ get '/ex2/estimate' do
   {msg: "ok"}
 end
 
+# ID, age, gender (1=male; 0=female), condition (1/2/3), problem (1/2/3), top (1=top; 0=bottom), SafeRight (1=the safe option is to the right; 0=else), trial, ChoiceSide (left=L; right=R), risk (1=risky key was selected; 0=safe key was selected), payoff, forgone, RareAsked (the rare outcome that the participant was asked to estimate its probability to occur), PrareAsked (probability to get the rare outcome), Estimation (the value that was typed in the text box divided by 100. For example if 50 was typed, then Estimation=0.5), EstimationScore [the calculation is as follows: EstimationScore=1-(Estimation-PrareAsked)^2]
+
+# So after this screen the line that should be written is (assuming ID=1, age=26, gender=female, estimation=50):
+
+# 1, 26, 0, 1, 2, 0, 0, 201, R, 1, 20, 2, 20, 0.1, 0.5, 0.84 
+
 get '/ex2/click' do 
   cur_step  = sesh[:stepNum].to_i
   next_step = sesh[:stepNum] = sesh[:stepNum].to_i+1
 
-  left, right = get_vals(sesh[:group_num], sesh[:flip], cur_step)
+  left, right, problem_num = get_vals(sesh[:group_num], sesh[:flip], cur_step)
   res = {left: left, right: right, stepNum: next_step}.hwia
   val = res[pr[:side]]
+  other_side = (pr[:side] == 'left') ? 'right' : 'left'
+  is_top = (cur_step % 2 == 0) ? 1 : 0
+  move_data = {
+    condition: sesh[:group_num].to_i % 3,
+    problem_num: problem_num,
+    top: is_top,
+    safe_right: !!sesh[:flip],
+    trial: cur_step+1,
+    choice_side: pr[:side],
+    risk: 'n/a',
+    payoff: val,
+    forgone: res[other_side],
+    rare_asked: 'n/a',
+    p_rare_asked: 'n/a',
+    estimation: 'tbd',
+    estimation_score: 'tbd'
+  }
   
   if (sesh[:part2])
     res['done'] = true if next_step >= E
     sesh[:moves_part2] ||= {}
-    sesh[:moves_part2][cur_step] = [pr[:side],val]  
+    sesh[:moves_part2][cur_step] = [pr[:side],val,move_data]  
   else 
     sesh[:moves] ||= {}
-    sesh[:moves][cur_step] = [pr[:side],val]  
+    sesh[:moves][cur_step] = [pr[:side],val,move_data]  
     res['gotoPart2'] = true if next_step >= T
   end
   

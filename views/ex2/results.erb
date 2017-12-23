@@ -3,7 +3,11 @@
   <% all_info = $ex2results.get(pr[:id]).hwia %>
   <% data = all_info[:user_actions] %>
 
+<%
+bp
+x=1
 
+%>
   <h1> Data for subject <%=pr[:id]%> </h1>  
   <h4> Random Payoff: Part <%=all_info[:random_part]%>, trial <%=all_info[:random_move]%>, payoff <%=all_info[:rand_payoff]%> </h4>
   <% [1,2].each do |part| %>
@@ -20,6 +24,11 @@
         key = 'moves_part2' if part == 2
       %> 
         <% data[key].to_a.each do |move_num, info| %>
+          <%
+            move_data = info[2] || {}
+          %>
+
+          <!-- # ID, age, gender (1=male; 0=female), condition (1/2/3), problem (1/2/3), top (1=top; 0=bottom), SafeRight (1=the safe option is to the right; 0=else), trial, ChoiceSide (left=L; right=R), risk (1=risky key was selected; 0=safe key was selected), payoff, forgone, RareAsked (the rare outcome that the participant was asked to estimate its probability to occur), PrareAsked (probability to get the rare outcome), Estimation (the value that was typed in the text box divided by 100. For example if 50 was typed, then Estimation=0.5), EstimationScore [the calculation is as follows: EstimationScore=1-(Estimation-PrareAsked)^2] -->
             <tr>
               <td> <%=move_num %> </td>
               <td> <%=info[0]%> </td>
@@ -35,7 +44,6 @@
 
 <a class='btn btn-raised btn-primary' href='/ex2/results'>Back</a>
 <%= all_info %>
-
 
 <% else %>
   <h1> EX2 All Results </h1>
