@@ -30,7 +30,7 @@ x=1
             md = move_data = info[2] || {}
           %>
             <tr>
-              <td> <%=all_info['user_actions']['gender'] || 'missing' %> </td>
+              <td> <%=all_info['user_actions']['subject_number'] || 'missing' %> </td>
               <td> <%=all_info['user_actions']['age'] || 'missing' %> </td>
               <td> <%=all_info['user_actions']['gender'] || 'missing' %> </td>
               <td> <%=md['condition'] %> </td>
@@ -52,7 +52,7 @@ x=1
   <% end %>
 
 <a class='btn btn-raised btn-primary' href='/ex2/results'>Back</a>
-<%= all_info %>
+<%#= all_info %>
 
 <% else %>
   <h1> EX2 All Results </h1>

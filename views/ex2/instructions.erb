@@ -17,9 +17,9 @@ presented in gray on the key you did not select).
 
 After the game is over, one trial will randomly be selected,
 and the payoff you got in this trial will be converted to
-money (<%=ExchangeRate%> points = 1 <%=PaySign%>). The resulting
+money (<%=ExchangeRate%> points = 1<%=PaySign%>). The resulting
 amount will be added to or subtracted from your show-up
-fee of <%=ShowUp%> <%=PaySign%>.
+fee of <%=ShowUp%><%=PaySign%>.
 
 Thus, you should try to maximize your payoff in every trial
 during the game.
@@ -29,8 +29,22 @@ Good luck!
 
 <p></p>
 <form action='/ex2/start'>
-  <label> Please enter your subject number. </label>
+  <label> Please enter your number, age and gedner </label>
   <div></div>
-  <input name='subject_number' value=1 autofocus="" />
+  <input name='subject_number' value=1 autofocus="" placeholder="Subject Number" required />
+  <br/>
+  <input name='age' type=number value=20 placeholder="Subject Age" required />
+  <br/>
+  <select name=gender>
+    <option value='male'>Male </option>
+    <option value='female'>Female </option>
+  </select>
+  <br/>
   <button class='btn btn-raised btn-primary'> Submit </button>
 </form>
+
+<style>
+form input, form select{
+  margin-top:10px;
+}
+</style>

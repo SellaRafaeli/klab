@@ -117,7 +117,9 @@ $(".guess_input").keyup(function(event) {
       if (parseInt(val)!=val) return alert('Please enter a valid number');
       var v = parseInt(val);
       if ((v<0) || (v>100)) return alert('Please enter a number between 0 and 100');
-      $.get('/ex2/estimate?estimate='+v).success(()=>enableButtons())
+      window.estimate = v;
+      enableButtons();
+      //$.get('/ex2/estimate?estimate='+v).success(()=>enableButtons())
     }
 }); 
 function enableButtons(){
@@ -143,7 +145,9 @@ function buttonClick(btn,side) {
   $('.please_select').addClass('invisible');
   if (side == 'left') other = 'right';
   if (side == 'right') other = 'left';
-  $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}`).success(res=>{    
+  $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}&estimate=${window.estimate || 999}`).success(res=>{    
+    if (res[side] > 0)  res[side] = '+'+res[side];
+    if (res[other] > 0) res[other] = '+'+res[other];
     $('.btn-'+side).addClass('black').text(res[side])
     $('.btn-'+other).addClass('grey').text(res[other])
     $('.btn').addClass('disabled');

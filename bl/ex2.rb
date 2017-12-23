@@ -1,6 +1,6 @@
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
-T=5
+T=6
 E=7
 # T=200 
 # E=100
@@ -30,7 +30,9 @@ get '/ex2/instructions_part2' do
 end
 
 get '/ex2/start' do
-  sesh[:subject_number] = pr[:subject_number].to_i || 1 
+  sesh[:subject_number] = pr[:subject_number].to_i 
+  sesh[:age]            = pr[:age].to_i
+  sesh[:gender]         = pr[:gender]
   group_num = [12,21,13,31,23,32].sample
   sesh[:group_num] = group_num
   sesh[:flip] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
@@ -105,12 +107,6 @@ get '/ex2/estimate' do
   {msg: "ok"}
 end
 
-# ID, age, gender (1=male; 0=female), condition (1/2/3), problem (1/2/3), top (1=top; 0=bottom), SafeRight (1=the safe option is to the right; 0=else), trial, ChoiceSide (left=L; right=R), risk (1=risky key was selected; 0=safe key was selected), payoff, forgone, RareAsked (the rare outcome that the participant was asked to estimate its probability to occur), PrareAsked (probability to get the rare outcome), Estimation (the value that was typed in the text box divided by 100. For example if 50 was typed, then Estimation=0.5), EstimationScore [the calculation is as follows: EstimationScore=1-(Estimation-PrareAsked)^2]
-
-# So after this screen the line that should be written is (assuming ID=1, age=26, gender=female, estimation=50):
-
-# 1, 26, 0, 1, 2, 0, 0, 201, R, 1, 20, 2, 20, 0.1, 0.5, 0.84 
-
 get '/ex2/click' do 
   cur_step  = sesh[:stepNum].to_i
   next_step = sesh[:stepNum] = sesh[:stepNum].to_i+1
@@ -120,6 +116,11 @@ get '/ex2/click' do
   val = res[pr[:side]]
   other_side = (pr[:side] == 'left') ? 'right' : 'left'
   is_top = (cur_step % 2 == 0) ? 1 : 0
+  p_rare_asked = 0.1
+
+  estimate = pr[:estimate].to_f / 100 
+  estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
+
   move_data = {
     condition: sesh[:group_num].to_i % 3,
     problem_num: problem_num,
@@ -131,11 +132,11 @@ get '/ex2/click' do
     payoff: val,
     forgone: res[other_side],
     rare_asked: 'n/a',
-    p_rare_asked: 'n/a',
-    estimation: 'tbd',
-    estimation_score: 'tbd'
+    p_rare_asked: p_rare_asked,
+    estimation: estimate,
+    estimation_score: estimation_score
   }
-  
+
   if (sesh[:part2])
     res['done'] = true if next_step >= E
     sesh[:moves_part2] ||= {}
@@ -149,11 +150,32 @@ get '/ex2/click' do
   res
 end
 
+# <!-- 
+# XXX is the payoff the participant obtained in the one trial randomly selected (out of all 300 trails) divided by ExchangeRate.
+# For example (assuming ExchangeRate=5), if trial number 2 was randomly selected, the obtained payoff in this trial was +20 so XXX=4.
+
+# YYY=EstimationScore the participant obtained in the one randomly selected estimation (out of trials 201-300).
+# For example, if the estimation trial that was randomly selected was trial 202, EstimationScore at this trial was 0.99 so YYY=0.99
+
+# ZZZ=ShowUp+XXX+YYY.
+# In the example above (assuming ShowUp=1), ZZZ=4.99 
+# So the sentence will be 
+# “…your final payment is 4.99 $.”
+
+# Important! There should be another variable MinimalPay, so that if ZZZ<MinimalPay then ZZZ=MinimalPay
+#  -->
+
 get '/ex2/done' do
+  #bp
   user_actions = sesh.to_h.hwia
   
   random_part = [:moves,:moves_part2].sample
+  random_part = :moves
   random_move = user_actions[random_part].to_a.sample
+  random_move = user_actions[random_part].to_a[1]
+  
+
+  random_estimate = random_part2 = user_actions[:moves_part2].to_a.sample[1][2]['estimation_score'] rescue rand(100)
 
   data = {
     user_actions: user_actions,
@@ -161,7 +183,17 @@ get '/ex2/done' do
     random_move: random_move
   }
 
-  data[:rand_payoff] = data[:random_move][1][1] 
+  data[:rand_payoff] = data[:random_move][1][1] / ExchangeRate.to_f rescue 0
+  
+  xxx = data[:rand_payoff]
+  yyy = random_estimate
+  zzz = xxx + yyy + ShowUp
+  if zzz < MinimalPay 
+    zzz = MinimalPay
+  end
+
+  data[:yyy] = yyy
+  data[:zzz] = zzz.round(2)
   $ex2results.update_id(sesh[:subject_number].to_s,data,{upsert:true})
 
   erb :'ex2/done', locals: {data: data}, layout: :layout
