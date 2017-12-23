@@ -9,10 +9,13 @@
 .noDisplay {
   display: none
 }
+.ct {
+  text-align: center;
+}
 .main .btn {
   height:180px;
   width:180px;
-  margin:40px 100px;
+  margin:10px 100px;
   font-size:45px;  
   color: grey !important;
   font-weight: bold;
@@ -20,6 +23,7 @@
 }
 .main .btn.black {
   color: black !important;
+  border:3px dashed black;
 }
 .grey {
   color: grey !important;
@@ -32,18 +36,23 @@
   visibility: none;
 }
 .guess_area {
-  margin:auto 50px;
+  width:240px;
+  display: inline-block;  
   <% if sesh[:flip] %> 
-  float: left;
+  margin-right: 380px;
+  /*float: left;*/
   <% else %> 
-  float: right;
+  margin-left: 380px;
+  /*float: right;*/
   <% end %>
+}
+.guess_input {
+  margin-top:10px;
 }
 .right_text {
 
 }
-.estimate {
-  text-align: center;
+.estimate {  
   /*border:1px solid red;*/
 }
 .cf {
@@ -54,16 +63,17 @@
   <% if part2 %>
   <% risky_val_a = potential_risky_val(sesh[:group_num], sesh[:stepNum].to_i) %>
   <% risky_val_b = potential_risky_val(sesh[:group_num], sesh[:stepNum].to_i+1) %>
-    <h5>Part 2</h5>
+    <h5>Part 2 - Trial <span class='stepNum'>1</span></h5>
   <% else %>
-    <h5>Part 1</h5>
+    <h5>Part 1 - Trial <span class='stepNum'>1</span></h5>
   <% end %>
-   <div>Admin Data: <%= sesh.to_h %></div> 
-  <h4> Trial <span class='stepNum'>1</span></h4>
+   <!-- <div>Admin Data: <%= sesh.to_h %></div>  -->
+  
 
   <div class='even_odd_trials'>
     <% if part2 %>
-    <div class='estimate'>In the next trial, the following keys will be presented:</div>
+    <div class='estimate ct'>In the next trial, the following keys will be presented:</div>
+    <div class='please_select invisible'>Now please select the key you prefer</div>
     <% end %>
     <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=sesh[:colors][0]%>' onclick=buttonClick(this,'left')></button>
     <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=sesh[:colors][1]%>' onclick=buttonClick(this,'right')></button>
@@ -71,7 +81,7 @@
     <div class='estimate'>
     <span class='guess_area'>
       <span class='guess_text'>What do you think is the chance to get <%=risky_val_a%> from selecting this key?</span>
-      <div> <input class=guess_input type=number /> </div>
+      <div> <input class=guess_input type=number placeholder="Please type a number" /> </div>
     </span>
     </div>
     <div class='cf'></div>
@@ -79,7 +89,8 @@
   </div>
   <div class='even_odd_trials invisible'>
     <% if part2 %>
-    <div class='estimate'>In the next trial, the following keys will be presented:</div>
+    <div class='estimate ct'>In the next trial, the following keys will be presented:</div>
+    <div class='please_select invisible'>Now please select the key you prefer</div>
     <% end %>
     <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=sesh[:colors][2]%>' onclick=buttonClick(this,'left')></button>
     <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=sesh[:colors][3]%>' onclick=buttonClick(this,'right')></button>
@@ -88,7 +99,7 @@
     <div class='estimate'>
     <span class='guess_area'>
       <span class='guess_text'>What do you think is the chance to get <%=risky_val_b%> from selecting this key?</span>
-      <div> <input class=guess_input type=number /> </div>
+      <div> <input class=guess_input type=number placeholder="Please type a number" /> </div>
     </span>
     </div>
     <div class='cf'></div>
@@ -112,12 +123,15 @@ $(".guess_input").keyup(function(event) {
 function enableButtons(){
   $('.btn').removeClass('black').removeClass('grey').removeClass('disabled').text('');  
   $('.estimate').toggleClass('invisible');
+  $('.please_select').removeClass('invisible');
 }
 function nextStep(){
   $('.stepNum').text(stepNum);
   $('.even_odd_trials').toggleClass('invisible');
+
   <% if part2 %>
   $('.btn').addClass('disabled');
+  $('.please_select').addClass('invisible');
   $('.guess_input').val('')
   <% end %>
 }
@@ -126,6 +140,7 @@ function nextStep(){
 $('.btn').addClass('disabled');
 <% end %>
 function buttonClick(btn,side) {
+  $('.please_select').addClass('invisible');
   if (side == 'left') other = 'right';
   if (side == 'right') other = 'left';
   $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}`).success(res=>{    

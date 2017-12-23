@@ -2,6 +2,8 @@ $ex2 = $ex2results = $mongo.collection('ex2results')
 
 T=5
 E=7
+# T=200 
+# E=100
 ShowUp=1
 PaySign='$'
 ExchangeRate=5
@@ -34,11 +36,13 @@ get '/ex2/start' do
   sesh[:flip] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
   
   #sesh[:down] = [true,false].sample
-  sesh[:colors] = ['lightblue','lightyellow','lightpink','purple'].shuffle
+  sesh[:colors] = ['lightblue','lightyellow','fuchsia','orange'].shuffle
+
   redirect '/ex2/step'
 end
 
 get '/ex2/step' do
+  #return erb :'ex2/step', locals: {part2: true}, layout: :layout
   erb :'ex2/step', default_layout  
 end
 
