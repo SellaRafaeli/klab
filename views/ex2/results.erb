@@ -4,7 +4,7 @@
   <% data = all_info[:user_actions] %>
 
 <%
-bp
+
 x=1
 
 %>
@@ -14,7 +14,9 @@ x=1
     <h2> Part <%=part%> </h2>
     <table class='table table-striped'>
     <thead>
-      <% ['move number','choice','result','estimate'].each do |k| %>
+      <% fields = ['move number','choice','result','estimate'] %>
+      <% fields = [ 'ID', 'age', 'gender', 'condition', 'problem', 'top', 'safe_right', 'choice_side', 'risk', 'payoff', 'forgone', 'rare_asked', 'p_rare_asked', 'estimation', 'estimation_score'] %>
+      <% fields.each do |k| %>
         <th><%= k %></th>  
       <% end %>
     </thead>
@@ -25,17 +27,24 @@ x=1
       %> 
         <% data[key].to_a.each do |move_num, info| %>
           <%
-            move_data = info[2] || {}
+            md = move_data = info[2] || {}
           %>
-
-          <!-- # ID, age, gender (1=male; 0=female), condition (1/2/3), problem (1/2/3), top (1=top; 0=bottom), SafeRight (1=the safe option is to the right; 0=else), trial, ChoiceSide (left=L; right=R), risk (1=risky key was selected; 0=safe key was selected), payoff, forgone, RareAsked (the rare outcome that the participant was asked to estimate its probability to occur), PrareAsked (probability to get the rare outcome), Estimation (the value that was typed in the text box divided by 100. For example if 50 was typed, then Estimation=0.5), EstimationScore [the calculation is as follows: EstimationScore=1-(Estimation-PrareAsked)^2] -->
             <tr>
-              <td> <%=move_num %> </td>
-              <td> <%=info[0]%> </td>
-              <td> <%=info[1]%> </td>
-              <% if part == 2 %>
-              <td> <%=data[:estimates][move_num.to_i]%> </td>
-              <% end %>
+              <td> <%=all_info['user_actions']['gender'] || 'missing' %> </td>
+              <td> <%=all_info['user_actions']['age'] || 'missing' %> </td>
+              <td> <%=all_info['user_actions']['gender'] || 'missing' %> </td>
+              <td> <%=md['condition'] %> </td>
+              <td> <%=md['problem_num'] %> </td>
+              <td> <%=md['top'] %> </td>
+              <td> <%=md['safe_right'] %> </td>
+              <td> <%=md['choice_side'] %> </td>
+              <td> <%=md['risk'] %> </td>
+              <td> <%=md['payoff'] %> </td>
+              <td> <%=md['forgone'] %> </td>
+              <td> <%=md['rare_asked'] %> </td>
+              <td> <%=md['p_rare_asked'] %> </td>
+              <td> <%=md['estimation'] %> </td>
+              <td> <%=md['estimation_score'] %> </td>
             </tr>
         <% end %>
     </tbody>
