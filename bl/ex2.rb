@@ -55,7 +55,7 @@ end
 
 def potential_risky_val(group_num, cur_step)
   group_num = sub_group_num(group_num, cur_step)
-  z = '+10'
+  z = '+10/-10'
   z = '-20' if group_num == 1
   z = '20' if group_num == 2
   return z.to_s
