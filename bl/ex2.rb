@@ -1,7 +1,7 @@
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
-T=6
-E=7
+T=16
+E=8
 # T=200 
 # E=100
 ShowUp=1
@@ -117,7 +117,8 @@ get '/ex2/click' do
   other_side = (pr[:side] == 'left') ? 'right' : 'left'
   is_top = (cur_step % 2 == 0) ? 1 : 0
   p_rare_asked = 0.1
-
+  risky = ((pr[:side] == 'right') && sesh[:flip]) || ((pr[:side] == 'left') && !sesh[:flip])
+  risky = risky ? 1 : 0
   estimate = pr[:estimate].to_f / 100 
   estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
 
@@ -128,7 +129,7 @@ get '/ex2/click' do
     safe_right: !!sesh[:flip],
     trial: cur_step+1,
     choice_side: pr[:side],
-    risk: 'n/a',
+    risk: risky,
     payoff: val,
     forgone: res[other_side],
     rare_asked: 'n/a',
