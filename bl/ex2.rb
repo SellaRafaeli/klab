@@ -55,7 +55,7 @@ end
 
 def potential_risky_val(group_num, cur_step)
   group_num = sub_group_num(group_num, cur_step)
-  z = '+10/-10'
+  z = ['+10','-10'].sample
   z = '-20' if group_num == 1
   z = '20' if group_num == 2
   return z.to_s
@@ -116,7 +116,7 @@ get '/ex2/click' do
   val = res[pr[:side]]
   other_side = (pr[:side] == 'left') ? 'right' : 'left'
   is_top = (cur_step % 2 == 0) ? 1 : 0
-  p_rare_asked = 0.1
+  p_rare_asked = (problem_num == 3) ? 0.05 : 0.1
   risky = ((pr[:side] == 'right') && sesh[:flip]) || ((pr[:side] == 'left') && !sesh[:flip])
   risky = risky ? 1 : 0
   estimate = pr[:estimate].to_f / 100 
