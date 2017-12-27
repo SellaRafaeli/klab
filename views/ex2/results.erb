@@ -12,7 +12,7 @@ x=1
   <h4> Random Payoff: Part <%=all_info[:random_part]%>, trial <%=all_info[:random_move]%>, payoff <%=all_info[:rand_payoff]%> </h4>
   <% [1,2].each do |part| %>
     <h2> Part <%=part%> </h2>
-    <table class='table table-striped'>
+    <table class='table table-striped' id='part<%=part%>'>
     <thead>
       <% fields = ['move number','choice','result','estimate'] %>
       <% fields = [ 'ID', 'age', 'gender', 'condition', 'problem', 'top', 'safe_right', 'choice_side', 'risk', 'payoff', 'forgone', 'rare_asked', 'p_rare_asked', 'estimation', 'estimation_score'] %>
@@ -49,6 +49,7 @@ x=1
         <% end %>
     </tbody>
     </table>
+    <button onclick=tableToExcel('part<%=part%>','data','subject_<%=pr[:id]%>_part_<%=part%>.xls') class='btn btn-primary btn-raised'>Download as excel</button>
   <% end %>
 
 <a class='btn btn-raised btn-primary' href='/ex2/results'>Back</a>

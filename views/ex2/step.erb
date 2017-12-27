@@ -67,7 +67,9 @@
   <% else %>
     <h5>Part 1 - Trial <span class='stepNum'>1</span></h5>
   <% end %>
+    <% if false %>
     <div>Admin Data: <%= sesh.to_h %></div>  
+    <% end %>
   
 
   <div class='even_odd_trials'>
@@ -81,7 +83,9 @@
     <div class='estimate'>
     <span class='guess_area'>
       <span class='guess_text'>What do you think is the chance to get <%=risky_val_a%> from selecting this key?</span>
-      <div> <input class=guess_input type=number placeholder="Please type a number" /> </div>
+      <div> %<input class=guess_input type=number placeholder="Type a number" />
+        <div class='est_instructions'>Please type a number between 0-100 and press enter to continue</div>
+       </div>
     </span>
     </div>
     <div class='cf'></div>
@@ -99,7 +103,7 @@
     <div class='estimate'>
     <span class='guess_area'>
       <span class='guess_text'>What do you think is the chance to get <%=risky_val_b%> from selecting this key?</span>
-      <div> <input class=guess_input type=number placeholder="Please type a number" /> </div>
+      <div> %<input class=guess_input type=number placeholder="Type a number" /> <div class='est_instructions'>Please type a number between 0-100 and press enter to continue</div> </div>
     </span>
     </div>
     <div class='cf'></div>

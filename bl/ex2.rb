@@ -2,6 +2,8 @@ $ex2 = $ex2results = $mongo.collection('ex2results')
 
 T=16
 E=8
+T=3
+E=3
 # T=200 
 # E=100
 ShowUp=1
@@ -77,18 +79,23 @@ def get_vals(group_num, flip, cur_step)
   if group_num == 1
     left = -2
     right = (rand_prob < 0.1) ? -20 : 0
+    rare_asked = -20
     # right = -20
   elsif group_num == 2
     left = 2
     right = (rand_prob < 0.1) ? 20 : 0
+    rare_asked = 20
     # right = 20
   else # group_num == 3
     left = 0
     if (rand_prob < 0.05) 
       right = 10
+      rare_asked = 10
     elsif (rand_prob >= 0.05) && (rand_prob < 0.1)
       right = -10
+      rare_asked = -10
     else 
+      rare_asked = 10
       right = 0
     end
     # right = -10
@@ -98,7 +105,7 @@ def get_vals(group_num, flip, cur_step)
     temp = left; left = right; right = temp
   end
 
-  return left, right, group_num
+  return left, right, group_num, rare_asked
 end
 
 get '/ex2/estimate' do 
@@ -111,7 +118,7 @@ get '/ex2/click' do
   cur_step  = sesh[:stepNum].to_i
   next_step = sesh[:stepNum] = sesh[:stepNum].to_i+1
 
-  left, right, problem_num = get_vals(sesh[:group_num], sesh[:flip], cur_step)
+  left, right, problem_num, rare_asked = get_vals(sesh[:group_num], sesh[:flip], cur_step)
   res = {left: left, right: right, stepNum: next_step}.hwia
   val = res[pr[:side]]
   other_side = (pr[:side] == 'left') ? 'right' : 'left'
@@ -121,6 +128,13 @@ get '/ex2/click' do
   risky = risky ? 1 : 0
   estimate = pr[:estimate].to_f / 100 
   estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
+
+  if !sesh[:part2]
+    rare_asked = 'n/a'
+    p_rare_asked= 'n/a'
+    estimate='n/a'
+    estimation_score='n/a'
+  end
 
   move_data = {
     condition: sesh[:group_num].to_i % 3,
@@ -132,7 +146,7 @@ get '/ex2/click' do
     risk: risky,
     payoff: val,
     forgone: res[other_side],
-    rare_asked: 'n/a',
+    rare_asked: rare_asked,
     p_rare_asked: p_rare_asked,
     estimation: estimate,
     estimation_score: estimation_score

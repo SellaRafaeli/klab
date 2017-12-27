@@ -3,7 +3,7 @@
 <pre>
 Welcome to the colored keys game!
 
-This game includes many trials (overall <%=T+E%> trials).
+This game includes many trials (<%=T+E%> trials overall).
 
 On each trial, two colored keys will be presented on the
 screen, and your task is to select the key you prefer (by
@@ -15,9 +15,9 @@ black. You will also be able to see what you could have got
 had you selected the other key (the forgone payoff will be
 presented in gray on the key you did not select).
 
-After the game is over, one trial will randomly be selected,
+After the game is over, one trial will be randomly selected,
 and the payoff you got in this trial will be converted to
-money (<%=ExchangeRate%> points = 1<%=PaySign%>). The resulting
+money (<%=ExchangeRate%> points = <%=PaySign%>1). The resulting
 amount will be added to or subtracted from your show-up
 fee of <%=ShowUp%><%=PaySign%>.
 
@@ -29,9 +29,9 @@ Good luck!
 
 <p></p>
 <form action='/ex2/start'>
-  <label> Please enter your number, age and gedner </label>
+  <label> Please enter your Prolific ID number, age and gender </label>
   <div></div>
-  <input name='subject_number' zvalue=1 autofocus="" placeholder="Subject Number" required />
+  <input name='subject_number' zvalue=1 autofocus="" placeholder="Prolific ID Number" required />
   <br/>
   <input name='age' type=number zvalue=20 placeholder="Subject Age" required />
   <br/>
