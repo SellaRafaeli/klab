@@ -3,7 +3,7 @@ $prod_url   = 'http://app.herokuapp.com'
 $root_url   = $prod ? $prod_url : 'http://localhost:9090'
 
 #enable :sessions
-use Rack::Session::Pool
+use Rack::Session::Pool, expire_after: 60 * 60
 set :session_secret, '&a*n31994@'
 set :raise_errors,          false
 set :show_exceptions,       false
