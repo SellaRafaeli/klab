@@ -136,7 +136,12 @@ function nextStep(){
   $('.even_odd_trials').toggleClass('invisible');
 
   <% if part2 %>
-  $('.btn').addClass('disabled');
+  if (window.skipPart2) {
+    console.log('skipping part 2')
+  } else {
+    $('.btn').addClass('disabled');  
+  }
+
   $('.please_select').addClass('invisible');
   $('.guess_input').val('')
   <% end %>
