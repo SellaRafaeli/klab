@@ -156,7 +156,7 @@ function buttonClick(btn,side) {
     $('.btn-'+other).addClass('grey').text(res[other])
     $('.btn').addClass('disabled');
     stepNum = 1+ res.stepNum;    
-    var waitTime = 1000
+    var waitTime = window.waitTime || 1000;
 
     if (res.gotoPart2) setTimeout(()=>document.location.href = '/ex2/instructions_part2',waitTime);
     else if (res.done) setTimeout(()=>document.location.href = '/ex2/done',waitTime);
