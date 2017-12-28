@@ -1,9 +1,14 @@
+require 'csv'
+
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
-T=200
-E=100
-# T=3
-# E=3
+if $prod
+  T=200
+  E=100
+else
+  T=3
+  E=3
+end
 # T=200 
 # E=100
 ShowUp=1
@@ -15,6 +20,15 @@ get '/ex2_info' do
   {
     T: T, E: E, show_up: ShowUp, pay_sign: PaySign, minimal_pay: MinimalPay
   }
+end
+
+get '/ex2/all_payments' do
+  content_type 'application/csv'
+  attachment 'payoffs.csv'
+  csv_string = CSV.generate do |csv|
+    csv << ["prolific_id", "payoff"]
+    $ex2results.all.each {|r| csv << ["#{r['_id']}", "#{r['zzz']}"]}
+  end  
 end
 
 get '/ex2' do
