@@ -143,7 +143,12 @@ function nextStep(){
 }
 
 <% if part2 %>
-$('.btn').addClass('disabled');
+if (window.skipPart2) {
+  console.log('skipping part 2')
+} else {
+  $('.btn').addClass('disabled');  
+}
+
 <% end %>
 function buttonClick(btn,side) {
   $('.please_select').addClass('invisible');
