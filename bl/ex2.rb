@@ -1,9 +1,9 @@
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
-T=16
-E=8
-T=3
-E=3
+T=200
+E=100
+# T=3
+# E=3
 # T=200 
 # E=100
 ShowUp=1
