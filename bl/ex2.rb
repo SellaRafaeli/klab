@@ -23,12 +23,13 @@ get '/ex2_info' do
 end
 
 get '/ex2/all_payments' do
-  content_type 'application/csv'
+  content_type 'application/csv'  
   attachment 'payoffs.csv'
   csv_string = CSV.generate do |csv|
     csv << ["prolific_id", "payoff"]
     $ex2results.all.each {|r| csv << ["#{r['_id']}", "#{r['zzz']}"]}
   end  
+  
 end
 
 get '/ex2' do
