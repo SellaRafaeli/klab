@@ -1,0 +1,80 @@
+<style>
+.box {
+  height: 200px;
+  width: 200px;
+  background-color: grey;
+  /*margin:20px;*/
+  border:1px solid black;
+  display: inline-block;
+}
+.disabled {
+  cursor: not-allowed;
+}
+.box.disabled {
+  background-color: darkgreen;
+}
+.sample_or_choose {
+  background-color: lightblue;
+  display: inline-block;
+  width: 200px;
+  cursor: not-allowed;
+  font-weight: bold;
+}
+.sample_or_choose.disabled {
+  font-weight: normal;
+  cursor: pointer;
+}
+</style>
+
+<h1> Sampling </h1>
+
+<div class='status'>
+</div>
+
+<section>
+  <div class='sample_or_choose sample' onclick=sampleOrChooseState("sample")>
+  Sample
+  </div>
+  <div class='sample_or_choose choose disabled' onclick=sampleOrChooseState("choose")>
+  Choose
+  </div>
+</section>
+
+<section>
+<div class='box 1' onclick=onBoxClick(1)> 10 </div>
+<div class='box 2' onclick=onBoxClick(2)> 20 </div>
+<div class='box 3' onclick=onBoxClick(3)>    </div><div class='box 4' onclick=onBoxClick(4)> 40 </div>
+</section>
+<script>
+log = console.log
+function refreshData() { 
+  $.get('/sg/state').success(r=>{
+    $('.status').html(JSON.stringify(r))
+  })
+}
+
+function onBoxClick(a) {
+  console.log(a)
+  var id = a;
+  $.get('/sg/move?box='+id).success(r=> {
+    debugger
+    $('.box.'+id).html(r.val);
+    setTimeout(()=> {
+      debugger  
+      $('.box.'+id).html('')
+    },1000);
+  })
+}
+
+function sampleOrChooseState(state) {
+  $('.sample_or_choose').addClass('disabled')
+  $('.sample_or_choose.'+state).removeClass('disabled')
+}
+$('.sample_or_choose').click()
+
+//$('.box').addClass('disabled')
+//$('.box').click(onBoxClick)
+
+
+//setInterval(refreshData,window.time || 1000)
+</script>
