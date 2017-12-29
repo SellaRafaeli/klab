@@ -6,6 +6,7 @@
   /*margin:20px;*/
   border:1px solid black;
   display: inline-block;
+  vertical-align: top;
 }
 .disabled {
   cursor: not-allowed;
@@ -41,9 +42,10 @@
 </section>
 
 <section>
-<div class='box 1' onclick=onBoxClick(1)> 10 </div>
-<div class='box 2' onclick=onBoxClick(2)> 20 </div>
-<div class='box 3' onclick=onBoxClick(3)>    </div><div class='box 4' onclick=onBoxClick(4)> 40 </div>
+<div class='box 1' onclick=onBoxClick(1)> 1 </div>
+<div class='box 2' onclick=onBoxClick(2)>  </div>
+<div class='box 3' onclick=onBoxClick(3)>  2  </div>
+<div class='box 4' onclick=onBoxClick(4)>  </div>
 </section>
 <script>
 log = console.log
@@ -60,8 +62,7 @@ function onBoxClick(a) {
     debugger
     $('.box.'+id).html(r.val);
     setTimeout(()=> {
-      debugger  
-      $('.box.'+id).html('')
+      $('.box').html('')
     },1000);
   })
 }
