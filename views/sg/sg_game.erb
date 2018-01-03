@@ -14,12 +14,24 @@
   font-size: 30px;
   cursor: pointer;
 }
+.box.sample_val {
+  color: black;
+}
+.box.choose_val {
+  color: red;
+}
 .disabled {
   cursor: not-allowed;
 }
 .box.disabled {
   background-color: darkgrey;
   color:white;
+}
+.box.blocked {
+  background-color: lightgrey;
+  padding-top:20px;
+  /*font-size:100px;*/
+  color:red;
 }
 .sample_or_choose {
   background-color: lightblue;
@@ -103,11 +115,17 @@ function refreshData() {
 
     //new round 
     if (data.chosen_buttons.length == 0) { 
-      $('.box').removeClass('disabled').html('') 
-      clickingEnabled = true;
+      $('.box').removeClass('disabled').removeClass('blocked').html('') 
+      clickingEnabled = true;      
       window.already_chosen = false;
     }
 
+    //mark blocked boxes
+    allowed_boxes = data.roles[data.user_ids.indexOf(window.user_id)];
+    blocked_boxes = [1,2,3,4].filter(z=>allowed_boxes.indexOf(z)==-1)
+    blocked_boxes.forEach(idx=> { 
+      $('.box.'+idx).addClass('blocked').html("<i class='fa fa-close'></i>");
+    })
 
     data.chosen_buttons.forEach(boxID=>{
       $('.box.'+boxID).addClass('disabled').html('Chosen');
@@ -120,6 +138,9 @@ function refreshData() {
 }
 
 function onBoxClick(a) {
+  if ($('.box.'+a).hasClass('disabled') || $('.box.'+a).hasClass('blocked')) {
+    return;
+  }
   if (!clickingEnabled) {
     console.log('skipping since clickingEnabled is false')
     return
@@ -134,13 +155,15 @@ function onBoxClick(a) {
   already_chosen  = true;
   var id = a;
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
-    $('.box.'+id).html(r.val);
+    $('.box.'+id).html(r.val).addClass(window.phase+'_val');
+    
     setTimeout(()=> {
-      $('.box.'+id).html('')
+      $('.box.'+id).html('').removeClass('sample_val').removeClass('choose_val')
     },1000);
   })
 }
 
+window.phase = 'sample';
 function sampleOrChooseState(state) {
   window.phase = state;
   $('.sample_or_choose').addClass('disabled')
