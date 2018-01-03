@@ -1,8 +1,15 @@
 $sg_games = $mongo.collection('sg_games')
 $sg = $sampling_game = $mongo.collection('sampling_game')
+$sg_moves = $mongo.collection('sg_moves')
 
 def get_box_val(box_num,phase)
   [10,20].sample
+end
+
+def record_sg_move(data)
+  rd = data
+  rd[:user_id] = sesh[:user_id]
+  $sg_moves.add(rd)
 end
 
 get '/sg' do
@@ -48,6 +55,7 @@ get '/sg/move' do
   else 
     
   end
-  $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons})
-  {val: val}
+  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons})
+  record_sg_move(game)
+  {val: val, game: game}
 end
