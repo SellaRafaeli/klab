@@ -1,0 +1,9 @@
+<h1> Sampling Game Admin </h1>
+
+<% $sg_games.all.each do |game| %>
+
+<div>
+<%= game['_id'] %> | logged participants: <%= game['user_ids'] %> | started: <b><%= game['started'] %></b><a class='btn btn-raised'> Start Game </a>
+</div>
+
+<% end %>

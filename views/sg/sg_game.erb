@@ -37,14 +37,20 @@
 .not_your_turn {
   position: absolute;
   height: 100%;
-  width: 100%;
-  opacity: 0.8;
+  width: 80%;
+  opacity: 0.6;
   font-weight: bold;
   background-color: lightgrey;
   z-index: 999;
 }
 </style>
 
+
+<div class='not_your_turn' style='text-align: center'>
+      <div style='margin-top:100px'>
+        Wait for your turn
+      </div>
+    </div>
 <h1> Sampling </h1>
 
 <div class='status'>
@@ -72,7 +78,12 @@ user_id = "<%= sesh[:user_id] %>"
 
 function updateTurn(user_id) {
   $('.curTurn').html(user_id)
-  if (user_id == window.user_id) {$('.not_your_turn').hide(); clickingEnabled = true;} else { $('.not_your_turn').show(); }
+  if (user_id == window.user_id) {
+      $('.not_your_turn').hide();   
+      clickingEnabled = true;    
+  } else {
+   $('.not_your_turn').show(); 
+ }
 }
 
 function refreshData() { 
@@ -82,12 +93,20 @@ function refreshData() {
     //on new round
     //if (window.d && (data.round > window.d.round)) { $('.box').removeClass('disabled') }
       
-    var curTurn = (data.user_ids[data.turn])
+    //var curTurn = (data.user_ids[data.turn % data.user_ids.length])
+    var curTurn = data.cur_turn;
     updateTurn(curTurn)
 
     data.user_id = window.user_id;
 
-    if (data.chosen_buttons.length == 0) { $('.box').removeClass('disabled') }
+    //new round 
+    if (data.chosen_buttons.length == 0) { 
+      $('.box').removeClass('disabled') 
+      clickingEnabled = true;
+      window.already_chosen = false;
+    }
+
+
     data.chosen_buttons.forEach(boxID=>{
       $('.box.'+boxID).addClass('disabled');
     })
@@ -102,7 +121,14 @@ function onBoxClick(a) {
     console.log('skipping since clickingEnabled is false')
     return
   }
+
+  var numModUsers=2;
+  if (window.d.user_ids.length % numModUsers != 0 ) {
+    return alert('There are currently '+window.d.user_ids+' users connected; please wait until the number of users is a multiple of '+numModUsers)
+  }
+
   clickingEnabled = false;
+  already_chosen  = true;
   var id = a;
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
     $('.box.'+id).html(r.val);
