@@ -5,7 +5,7 @@
 .box {
   height: 200px;
   width: 200px;
-  background-color: grey;
+  background-color: lightgreen;
   /*margin:20px;*/
   border:1px solid black;
   display: inline-block;
@@ -18,7 +18,8 @@
   cursor: not-allowed;
 }
 .box.disabled {
-  background-color: darkgreen;
+  background-color: darkgrey;
+  color:white;
 }
 .sample_or_choose {
   background-color: lightblue;
@@ -102,14 +103,14 @@ function refreshData() {
 
     //new round 
     if (data.chosen_buttons.length == 0) { 
-      $('.box').removeClass('disabled') 
+      $('.box').removeClass('disabled').html('') 
       clickingEnabled = true;
       window.already_chosen = false;
     }
 
 
     data.chosen_buttons.forEach(boxID=>{
-      $('.box.'+boxID).addClass('disabled');
+      $('.box.'+boxID).addClass('disabled').html('Chosen');
     })
 
     window.d = data;
@@ -135,7 +136,7 @@ function onBoxClick(a) {
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
     $('.box.'+id).html(r.val);
     setTimeout(()=> {
-      $('.box').html('')
+      $('.box.'+id).html('')
     },1000);
   })
 }
