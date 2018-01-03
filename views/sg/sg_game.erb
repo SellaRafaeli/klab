@@ -14,6 +14,7 @@
   vertical-align: top;
   text-align: center;
   font-size: 30px;
+  cursor: pointer;
 }
 .disabled {
   cursor: not-allowed;
@@ -33,15 +34,23 @@
   cursor: pointer;
   background-color: darkgrey;
 }
+.not_your_turn {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  opacity: 0.8;
+  font-weight: bold;
+  background-color: lightgrey;
+  z-index: 999;
+}
 </style>
 
 <h1> Sampling </h1>
 
 <div class='status'>
 </div>
-
-
 <section>
+
   <div class='curTurnHolder'>Current Turn: <div class='curTurn'></div></div>
   <div class='sample_or_choose sample' onclick=sampleOrChooseState("sample")>
   Sample
@@ -63,22 +72,27 @@ user_id = "<%= sesh[:user_id] %>"
 
 function updateTurn(user_id) {
   $('.curTurn').html(user_id)
+  if (user_id == window.user_id) {$('.not_your_turn').hide(); } else { $('.not_your_turn').show(); }
 }
 
 function refreshData() { 
   $.get('/sg/state?game_id=<%=sesh[:game_id]%>').success(r=>{
     var data = r;
-    d = data;
 
-    var curTurn = (d.user_ids[d.turn])
+    //on new round
+    //if (window.d && (data.round > window.d.round)) { $('.box').removeClass('disabled') }
+      
+    var curTurn = (data.user_ids[data.turn])
     updateTurn(curTurn)
 
     data.user_id = window.user_id;
 
-    d.chosen_buttons.forEach(boxID=>{
+    if (data.chosen_buttons.length == 0) { $('.box').removeClass('disabled') }
+    data.chosen_buttons.forEach(boxID=>{
       $('.box.'+boxID).addClass('disabled');
     })
 
+    window.d = data;
     $('.status').html(JSON.stringify(data))
   })
 }
@@ -99,7 +113,7 @@ function sampleOrChooseState(state) {
   $('.sample_or_choose').addClass('disabled')
   $('.sample_or_choose.'+state).removeClass('disabled')
 }
-$('.sample_or_choose').click()
+//$('.sample_or_choose').click()
 
 //$('.box').addClass('disabled')
 //$('.box').click(onBoxClick)

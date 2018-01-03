@@ -35,6 +35,7 @@ get '/sg/move' do
   if turn >= game[:user_ids].size 
     turn  = 0 
     round = round+1
+    chosen_buttons = []
   else 
     
   end
