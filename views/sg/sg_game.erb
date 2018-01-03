@@ -51,7 +51,7 @@
 </div>
 <section>
 
-  <div class='curTurnHolder'>Current Turn: <div class='curTurn'></div></div>
+  <div class='curTurnHolder'>Current Turn: <span class='curTurn'></span></div>
   <div class='sample_or_choose sample' onclick=sampleOrChooseState("sample")>
   Sample
   </div>
@@ -72,7 +72,7 @@ user_id = "<%= sesh[:user_id] %>"
 
 function updateTurn(user_id) {
   $('.curTurn').html(user_id)
-  if (user_id == window.user_id) {$('.not_your_turn').hide(); } else { $('.not_your_turn').show(); }
+  if (user_id == window.user_id) {$('.not_your_turn').hide(); clickingEnabled = true;} else { $('.not_your_turn').show(); }
 }
 
 function refreshData() { 
@@ -98,7 +98,11 @@ function refreshData() {
 }
 
 function onBoxClick(a) {
-  console.log(a)
+  if (!clickingEnabled) {
+    console.log('skipping since clickingEnabled is false')
+    return
+  }
+  clickingEnabled = false;
   var id = a;
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
     $('.box.'+id).html(r.val);

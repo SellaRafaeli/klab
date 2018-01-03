@@ -1,6 +1,10 @@
 $sg_games = $mongo.collection('sg_games')
 $sg = $sampling_game = $mongo.collection('sampling_game')
 
+def get_box_val(box_num,phase)
+  [10,20].sample
+end
+
 get '/sg' do
   redirect '/sg/intro'  
 end
@@ -30,7 +34,12 @@ get '/sg/move' do
   turn  = game[:turn]+1
   round = game[:round]
   chosen_buttons = game['chosen_buttons']
-  chosen_buttons.push(pr[:box]) if pr[:phase] == 'choose'
+
+  if pr[:phase] == 'choose'
+    chosen_buttons.push(pr[:box]) 
+  end
+
+  val = get_box_val(pr[:box],pr[:phase])
 
   if turn >= game[:user_ids].size 
     turn  = 0 
@@ -40,6 +49,5 @@ get '/sg/move' do
     
   end
   $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons})
-  
-  {val: rand(10000)}
+  {val: val}
 end
