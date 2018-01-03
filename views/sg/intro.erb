@@ -1,9 +1,25 @@
+<style>
+label {
+  width:90px;
+}
+</style>
 <h1> Sampling Game Intro </h1>
 
 Welcome to the sampling game, please input game ID and user ID.
-<form action='/sg/game'>
+<!-- <form action='/sg/game'> -->
+<form action='/sg/instructions'>
+  <label> Game ID </label>
   <input name=game_id placeholder='Game ID' zvalue=1 autofocus>
   <br/>
-  <input name=user_id placeholder='User ID'>
-  <button>Submit</button>
+  <label> User ID </label>
+  <input name=user_id placeholder='User ID' value=<%=rand(10000)%>>
+  <br/>
+  <label> Gender </label>
+  <input name=gender placeholder='Gender' value=m>
+
+  <br/>
+  <label> Age </label>
+  <input name=age placeholder='Age' value=30>
+  <br/>
+  <button class='btn btn-raised btn-primary'>Submit</button>
 </form>

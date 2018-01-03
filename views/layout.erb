@@ -7,6 +7,9 @@ p {
 }
 label { color: black; }
 body, html: {border:1px solid red;}
+.heb {
+  direction: rtl;
+}
 </style>
 <%
 #bp
@@ -14,7 +17,10 @@ x=1
 %>
 <body style='overflow-x: hidden; height:100%'>  
 <!-- <div id=map class='well'></div> -->
-<!-- <div class='well'><%= session.to_h['moves'] %></div> -->
+<% if false %>
+<div class='well'><%= session.to_h%></div>
+<% end %>
+
 <% if false %>
   <% if request_fullpath.ends_with? 'last_payment' %>
   <a href='/logout' class='btn btn-danger' style='position: absolute; z-index: 999; right: 0px; top: 0px; height:40px'> Close Screen </a>  

@@ -1,7 +1,7 @@
 Sampling Game
 -------------
 
-- make 'start game' route
+- add instructions
 - add practice rounds
 - make it prettier
 - record actual events

@@ -31,21 +31,27 @@ get '/sg/intro' do
   erb :'sg/intro', default_layout
 end
 
+get '/sg/instructions' do
+  [:user_id, :age, :gender, :game_id].each {|field| sesh[field] = pr[field] }
+  
+  erb :'sg/instructions', default_layout
+end
+
 get '/sg/game' do
-  sesh[:user_id] = pr[:user_id]
-  game = $sg_games.update_id(pr[:game_id], {}, {upsert: true})
+  game_id = sesh[:game_id] || pr[:game_id]
+  game = $sg_games.update_id(game_id, {}, {upsert: true})
   user_ids = (game['user_ids'] || []).push(sesh[:user_id]).uniq.compact.sort
   if !game['round'] 
-    $sg_games.update_id(pr[:game_id], {cur_turn: user_ids[0], round: 0, turn: 0, chosen_buttons: [], users_chosen: []})
+    $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 0, chosen_buttons: [], users_chosen: []})
   end
   
-  $sg_games.update_id(pr[:game_id], {user_ids: user_ids})
+  $sg_games.update_id(game_id, {user_ids: user_ids})
   erb :'/sg/sg_game', default_layout
 end
 
 #game has user_ids, turn_id, round_num.
-get '/sg/state' do  
-  game = $sg_games.get(pr[:game_id])
+get '/sg/state' do
+  game = $sg_games.get(sesh[:game_id])
   game['round'] ||= 0 
   game
 end
