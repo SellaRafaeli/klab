@@ -3,8 +3,8 @@ require 'csv'
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
 if $prod
-  T=200
-  E=100
+  T=400
+  E=20
 else
   T=3
   E=3
@@ -50,12 +50,13 @@ get '/ex2/start' do
   sesh[:subject_number] = pr[:subject_number].to_i 
   sesh[:age]            = pr[:age].to_i
   sesh[:gender]         = pr[:gender]
-  group_num = [12,21,13,31,23,32].sample
+  #group_num = [12,21,13,31,23,32].sample
+  group_num = [12,21].sample
   sesh[:group_num] = group_num
   sesh[:flip] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
   
   #sesh[:down] = [true,false].sample
-  sesh[:colors] = ['lightblue','lightyellow','fuchsia','orange'].shuffle
+  sesh[:colors] = ['lightblue','lightyellow','#ffd5dc','orange'].shuffle
 
   redirect '/ex2/step'
 end
@@ -142,7 +143,8 @@ get '/ex2/click' do
   risky = ((pr[:side] == 'right') && sesh[:flip]) || ((pr[:side] == 'left') && !sesh[:flip])
   risky = risky ? 1 : 0
   estimate = pr[:estimate].to_f / 100 
-  estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
+  # estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
+  estimation_score = (2-(estimate.to_f-p_rare_asked)**2).round(2)
 
   if !sesh[:part2]
     rare_asked = 'n/a'
