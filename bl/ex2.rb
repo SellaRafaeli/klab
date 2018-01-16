@@ -7,7 +7,7 @@ if $prod
   E=20
 else
   T=3
-  E=3
+  E=5
 end
 # T=200 
 # E=100
@@ -53,6 +53,9 @@ get '/ex2/start' do
   #group_num = [12,21,13,31,23,32].sample
   group_num = [12,21].sample
   sesh[:group_num] = group_num
+
+  sesh[:risky_estimate_trial_1] = (1..E-1).step(2).to_a.sample #risky odd trial
+  sesh[:risky_estimate_trial_2] = (2..E-1).step(2).to_a.sample #risky even trial
   sesh[:flip] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
   
   #sesh[:down] = [true,false].sample
@@ -97,11 +100,29 @@ def get_vals(group_num, flip, cur_step)
     right = (rand_prob < 0.1) ? -20 : 0
     rare_asked = -20
     # right = -20
+    if sesh[:part2] 
+      bp
+      if (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_1]) || (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_2])
+        right = -20
+      else 
+        right = 0 
+      end
+    end
+
   elsif group_num == 2
     left = 2
     right = (rand_prob < 0.1) ? 20 : 0
     rare_asked = 20
     # right = 20
+    if sesh[:part2] 
+      bp
+      if (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_1]) || (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_2])
+        right = 20
+      else 
+        right = 0 
+      end
+    end
+
   else # group_num == 3
     left = 0
     if (rand_prob < 0.05) 
