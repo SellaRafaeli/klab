@@ -34,7 +34,7 @@ get '/sg' do
 end
 
 get '/sg/intro' do
-  $sg_games.delete_many
+  #$sg_games.delete_many
   erb :'sg/intro', default_layout
 end
 
@@ -46,6 +46,7 @@ end
 
 get '/sg/game' do
   game_id = sesh[:game_id] || pr[:game_id]
+  
   game = $sg_games.update_id(game_id, {}, {upsert: true})
   user_ids = (game['user_ids'] || []).push(sesh[:user_id]).uniq.compact.sort
   if !game['round'] 
@@ -62,6 +63,7 @@ end
 #game has user_ids, turn_id, round_num.
 get '/sg/state' do
   game = $sg_games.get(sesh[:game_id])
+  game['game_id'] = game['_id']
   game['round'] ||= 0 
   game
 end

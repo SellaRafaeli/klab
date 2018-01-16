@@ -2,6 +2,9 @@
 %>
 
 <style>
+.highlighted {
+  color: gold;
+}
 .box {
   height: 200px;
   width: 200px;
@@ -123,6 +126,7 @@ function refreshData() {
     //mark blocked boxes
     allowed_boxes = data.roles[data.user_ids.indexOf(window.user_id)];
     blocked_boxes = [1,2,3,4].filter(z=>allowed_boxes.indexOf(z)==-1)
+    console.log('blocked boxes: ',blocked_boxes)
     blocked_boxes.forEach(idx=> { 
       $('.box.'+idx).addClass('blocked').html("<i class='fa fa-close'></i>");
     })
@@ -133,7 +137,14 @@ function refreshData() {
 
     window.d = data;
     $('.status').html(JSON.stringify(data))
-    $('.round_num').html(data.round)
+
+    var highlight = false;
+    if ((parseInt($('.round_num').text())) < data.round) highlight = true;      
+    $('.round_num').html(data.round);    
+    if (highlight) {
+      $('.round_num').addClass('highlighted');
+      setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1000);
+    }
   })
 }
 
