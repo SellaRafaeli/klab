@@ -140,7 +140,7 @@ get '/ex2/click' do
   other_side = (pr[:side] == 'left') ? 'right' : 'left'
   is_top = (cur_step % 2 == 0) ? 1 : 0
   p_rare_asked = (problem_num == 3) ? 0.05 : 0.1
-  risky = ((pr[:side] == 'right') && sesh[:flip]) || ((pr[:side] == 'left') && !sesh[:flip])
+  risky = ((pr[:side] == 'right') && !sesh[:flip]) || ((pr[:side] == 'left') && sesh[:flip])
   risky = risky ? 1 : 0
   estimate = pr[:estimate].to_f / 100 
   # estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
@@ -182,6 +182,11 @@ get '/ex2/click' do
   res
 end
 
+
+post '/ex2/add_comments' do
+  $ex2results.update_id(sesh[:subject_number].to_s,{comments: pr[:comments]},{upsert:true})
+  {msg: "ok"}
+end
 # <!-- 
 # XXX is the payoff the participant obtained in the one trial randomly selected (out of all 300 trails) divided by ExchangeRate.
 # For example (assuming ExchangeRate=5), if trial number 2 was randomly selected, the obtained payoff in this trial was +20 so XXX=4.
@@ -206,7 +211,6 @@ get '/ex2/done' do
   random_move = user_actions[random_part].to_a.sample
   random_move = user_actions[random_part].to_a[1]
   
-
   random_estimate = random_part2 = user_actions[:moves_part2].to_a.sample[1][2]['estimation_score'] rescue rand(100)
 
   data = {

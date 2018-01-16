@@ -11,6 +11,7 @@ x=1
   <h1> Data for subject <%=pr[:id]%> </h1>  
   <h4> Random Payoff: Part <%=all_info[:random_part]%>, trial <%=all_info[:random_move]%>, payoff <%=all_info[:rand_payoff]%> </h4>
   <h5> Final random payoff - <%= all_info[:zzz] %> </h5>
+  <% if all_info[:comments].present? %><h5> Comments: <%= all_info[:comments] %> </h5><% end %>
   <% [1,2].each do |part| %>
     <h2> Part <%=part%> </h2>
     <table class='table table-striped' id='part<%=part%>'>
