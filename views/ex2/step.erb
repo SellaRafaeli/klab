@@ -159,7 +159,8 @@ function buttonClick(btn,side) {
   $('.please_select').addClass('invisible');
   if (side == 'left') other = 'right';
   if (side == 'right') other = 'left';
-  $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}&estimate=${window.estimate || 999}`).success(res=>{    
+  if (!window.estimate && window.estimate!=0) window.estimate = 999;
+  $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}&estimate=${window.estimate}`).success(res=> {
     if (res[side] > 0)  res[side] = '+'+res[side];
     if (res[other] > 0) res[other] = '+'+res[other];
     $('.btn-'+side).addClass('black').text(res[side])

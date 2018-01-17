@@ -101,7 +101,7 @@ def get_vals(group_num, flip, cur_step)
     rare_asked = -20
     # right = -20
     if sesh[:part2] 
-      bp
+      
       if (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_1]) || (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_2])
         right = -20
       else 
@@ -115,7 +115,7 @@ def get_vals(group_num, flip, cur_step)
     rare_asked = 20
     # right = 20
     if sesh[:part2] 
-      bp
+      
       if (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_1]) || (sesh[:stepNum].to_i == sesh[:risky_estimate_trial_2])
         right = 20
       else 
