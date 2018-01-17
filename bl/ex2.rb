@@ -47,7 +47,7 @@ get '/ex2/instructions_part2' do
 end
 
 get '/ex2/start' do
-  sesh[:subject_number] = pr[:subject_number].to_i 
+  sesh[:subject_number] = pr[:subject_number].to_s 
   sesh[:age]            = pr[:age].to_i
   sesh[:gender]         = pr[:gender]
   #group_num = [12,21,13,31,23,32].sample
