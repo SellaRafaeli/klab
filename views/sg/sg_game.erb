@@ -109,6 +109,11 @@ function refreshData() {
 
     //on new round
     //if (window.d && (data.round > window.d.round)) { $('.box').removeClass('disabled') }
+    console.log(r.game_over)
+    if (r.game_over) {
+      alert('game over!')
+      document.location.href = '/sg/game_over'
+    }
       
     //var curTurn = (data.user_ids[data.turn % data.user_ids.length])
     var curTurn = data.cur_turn;
@@ -139,8 +144,8 @@ function refreshData() {
     $('.status').html(JSON.stringify(data))
 
     var highlight = false;
-    if ((parseInt($('.round_num').text())) < data.round) highlight = true;      
-    $('.round_num').html(data.round);    
+    if ((parseInt($('.round_num').text())-1) < data.round) highlight = true;      
+    $('.round_num').html(parseInt(data.round)+1);    
     if (highlight) {
       $('.round_num').addClass('highlighted');
       setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1000); 

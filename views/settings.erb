@@ -1,0 +1,9 @@
+<h1> Settings </h1>
+
+<form action='/update_settings' method=post>
+<% SETTINGS_FIELDS.each do |field| %>
+<label> <%= field.to_s.titleize %> <input name=<%=field%> placeholder=<%=field%> value=<%=get_setting(field)%> /></label>
+<% end %>
+<div></div>
+<button class='btn btn-primary btn-raised'> Submit </button>
+</form>
