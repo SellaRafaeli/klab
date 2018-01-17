@@ -3,7 +3,7 @@ require 'csv'
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
 if $prod
-  T=400
+  T=20
   E=20
 else
   T=3

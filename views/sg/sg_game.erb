@@ -143,7 +143,7 @@ function refreshData() {
     $('.round_num').html(data.round);    
     if (highlight) {
       $('.round_num').addClass('highlighted');
-      setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1000);
+      setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1000); 
     }
   })
 }
@@ -159,7 +159,7 @@ function onBoxClick(a) {
 
   var numModUsers=2;
   if (window.d.user_ids.length % numModUsers != 0 ) {
-    return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is a multiple of '+numModUsers)
+    return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
   }
 
   clickingEnabled = false;

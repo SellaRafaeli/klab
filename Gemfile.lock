@@ -110,8 +110,20 @@ GEM
       rack (>= 1.0)
       rack-test (~> 0.6.2)
       ripl (>= 0.7.0)
+    roo (2.7.1)
+      nokogiri (~> 1)
+      rubyzip (~> 1.1, < 2.0.0)
+    roo-xls (1.1.0)
+      nokogiri
+      roo (>= 2.0.0beta1, < 3)
+      spreadsheet (> 0.9.0)
+    ruby-ole (1.2.12.1)
+    rubyzip (1.2.1)
     shotgun (0.9.1)
       rack (>= 1.0)
+    simple-spreadsheet (0.5.0)
+      roo (~> 2.4)
+      roo-xls (~> 1.0)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -127,6 +139,8 @@ GEM
     sinatra-reloader (1.0)
       sinatra-contrib
     slop (3.6.0)
+    spreadsheet (1.1.5)
+      ruby-ole (>= 1.0)
     thread_safe (0.3.5)
     tilt (2.0.2)
     tux (0.3.0)
@@ -178,6 +192,7 @@ DEPENDENCIES
   rest-client (= 1.8.0)
   ripl-color_result
   shotgun
+  simple-spreadsheet
   sinatra
   sinatra-contrib
   sinatra-cross_origin (~> 0.3.1)

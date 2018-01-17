@@ -31,6 +31,8 @@ gem 'twilio-ruby'
 gem 'postmark'
 gem "sinatra-cross_origin", "~> 0.3.1"
 gem 'mysql2'
+gem 'simple-spreadsheet'
+
 #gem 'base62' #allows compression of mongo ids
 
 group :development, :test do

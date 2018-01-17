@@ -1,6 +1,8 @@
 $sg_games = $mongo.collection('sg_games')
 $sg = $sampling_game = $mongo.collection('sampling_game')
 $sg_moves = $mongo.collection('sg_moves')
+#$sg_values = SimpleSpreadsheet::Workbook.read("sg_values.xlsx")
+
 
 def get_box_val(box_num,phase)
   [10,20].sample
