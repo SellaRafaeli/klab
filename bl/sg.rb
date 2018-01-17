@@ -2,11 +2,6 @@ $sg_games = $mongo.collection('sg_games')
 $sg = $sampling_game = $mongo.collection('sampling_game')
 $sg_moves = $mongo.collection('sg_moves')
 
-
-
-
-
-
 def get_box_val(round_num,opt_num,phase)
   $sg_values ||= SimpleSpreadsheet::Workbook.read("sg_values.xlsx") 
   table = $sg_values
@@ -53,11 +48,11 @@ def get_btns_order
   [1,2,3,4].shuffle
 end
 
-def get_random_roles
+def get_random_roles(round_num = 0)
   all = [1,2,3,4]
   lca = all.sample(2)
   lcb = all - lca
-  [all,lca,lcb].shuffle
+  [all,lca,lcb].rotate(round_num)
 end
 
 get '/sg_admin' do
@@ -92,7 +87,7 @@ get '/sg/game' do
   user_ids = (game['user_ids'] || []).push(sesh[:user_id]).uniq.compact.sort
   rounds_order = (0..89).to_a.shuffle
   if !game['round'] 
-    $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 0, chosen_buttons: [], users_chosen: [], roles: get_random_roles, btns_order: get_btns_order, rounds_order: rounds_order})
+    $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 0, chosen_buttons: [], users_chosen: [], roles: get_random_roles(0), btns_order: get_btns_order, rounds_order: rounds_order})
   end
   
   $sg_games.update_id(game_id, {user_ids: user_ids})
@@ -135,7 +130,7 @@ get '/sg/move' do
     users_chosen   = []
     btns_order     = get_btns_order
     cur_turn       = user_ids[0]
-    roles          = get_random_roles    
+    roles          = get_random_roles(round)    
   else 
     cur_turn = remaining_users[turn % remaining_users.size]  
     roles    = game['roles']
