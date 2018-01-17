@@ -7,8 +7,37 @@ $sg_moves = $mongo.collection('sg_moves')
 
 
 
-def get_box_val(box_num,phase)
+def get_box_val(round_num,opt_num,phase)
   $sg_values ||= SimpleSpreadsheet::Workbook.read("sg_values.xlsx") 
+  table = $sg_values
+
+  col_offset_from_excel_start = 3
+  ev_offset_from_opt_start= 5
+  ev_col = col_offset_from_excel_start + (ev_offset_from_opt_start * opt_num)
+
+  plow_offset_from_ev   = -1
+  low_offset_from_ev    = -2
+  phigh_offset_from_ev  = -3
+  high_offset_from_ev   = -4
+  
+  row_offset_from_excel_start = 2
+  row = round_num + row_offset_from_excel_start
+
+  if phase == 'sample' 
+    phigh  = table.cell(row,ev_col+phigh_offset_from_ev)
+    vhigh  = table.cell(row,ev_col+high_offset_from_ev)
+    vlow   = table.cell(row,ev_col+low_offset_from_ev)
+    x      = rand
+    if x < phigh
+      res = vhigh
+    else 
+      res = vlow
+    end
+  else  # phase == 'choose'      
+    res = table.cell(row,ev_col)
+  end
+
+  res
 rescue 
   -1 
 end
@@ -95,8 +124,9 @@ get '/sg/move' do
   end
 
   remaining_users = user_ids - users_chosen
-  
-  val = get_box_val(pr[:box],phase)
+  opt_num = game[:btns_order][pr[:box].to_i-1]
+  row_num = game[:rounds_order][round]
+  val = get_box_val(row_num,opt_num,phase)
 
   if remaining_users.size == 0
     turn           = 0 

@@ -109,7 +109,7 @@ function refreshData() {
 
     //on new round
     //if (window.d && (data.round > window.d.round)) { $('.box').removeClass('disabled') }
-    console.log(r.game_over)
+    //console.log(r.game_over)
     if (r.game_over) {
       alert('game over!')
       document.location.href = '/sg/game_over'
@@ -150,6 +150,8 @@ function refreshData() {
       $('.round_num').addClass('highlighted');
       setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1000); 
     }
+
+    setTimeout(refreshData,(window.time || 1) * 1000)
   })
 }
 
@@ -191,6 +193,6 @@ function sampleOrChooseState(state) {
 //$('.box').click(onBoxClick)
 
 
-setInterval(refreshData,window.time || 1 * 1000)
+//setInterval(refreshData,window.time || 1 * 1000)
 refreshData()
 </script>
