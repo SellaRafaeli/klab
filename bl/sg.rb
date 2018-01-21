@@ -32,16 +32,15 @@ def get_box_val(round_num,opt_num,phase)
     res = table.cell(row,ev_col)
   end
 
-  res
+  ev1 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*1))
+  ev2 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*2))
+  ev3 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*3))
+  ev4 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*4))
+
+  environment = table.cell(row,2) 
+  return res, environment, ev1, ev2, ev3, ev4
 rescue 
   -1 
-end
-
-def record_sg_move(data)
-  rd = data
-  rd[:user_id] = sesh[:user_id]
-  rd['_id'] = nice_id
-  $sg_moves.add(rd)
 end
 
 def get_btns_order
@@ -80,14 +79,15 @@ get '/sg/instructions' do
 end
 
 get '/sg/game' do
-  [:user_id, :age, :gender, :game_id].each {|field| sesh[field] ||= pr[field] }
+  #[:user_id, :age, :gender, :game_id].each {|field| sesh[field] ||= pr[field] }
+  sesh[:is_practice] = true
   game_id = sesh[:game_id] || pr[:game_id]
   
   game = $sg_games.update_id(game_id, {}, {upsert: true})
   user_ids = (game['user_ids'] || []).push(sesh[:user_id]).uniq.compact.sort
   rounds_order = (0..89).to_a.shuffle
   if !game['round'] 
-    $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 0, chosen_buttons: [], users_chosen: [], roles: get_random_roles(0), btns_order: get_btns_order, rounds_order: rounds_order})
+    $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 0, chosen_buttons: [], users_chosen: [], roles: get_random_roles(0), btns_order: get_btns_order, rounds_order: rounds_order, practice_over: false})
   end
   
   $sg_games.update_id(game_id, {user_ids: user_ids})
@@ -111,7 +111,8 @@ get '/sg/move' do
   phase = pr[:phase] == 'choose' ? 'choose' : 'sample' 
   chosen_buttons = game['chosen_buttons']
   user_ids = game['user_ids']
-
+  round_time = 'missing-round-time'
+  ev_type = 'missing-ev-type'
   users_chosen = game['users_chosen']
   if pr[:phase] == 'choose'
     chosen_buttons.push(pr[:box]) 
@@ -121,11 +122,19 @@ get '/sg/move' do
   remaining_users = user_ids - users_chosen
   opt_num = game[:btns_order][pr[:box].to_i-1]
   row_num = game[:rounds_order][round]
-  val = get_box_val(row_num,opt_num,phase)
+  val, e, ev1, ev2, ev3, ev4 = get_box_val(row_num,opt_num,phase)
 
+
+  record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, [], 'option_choice', 'outcome', 'mode', 'fopt')
+
+  practice_over = false
   if remaining_users.size == 0
     turn           = 0 
-    round          = round+1    
+    round          = round+1   
+    if round == 3 && !game[:practice_over]
+      round = 0 
+      practice_over = true
+    end 
     chosen_buttons = []
     users_chosen   = []
     btns_order     = get_btns_order
@@ -136,10 +145,47 @@ get '/sg/move' do
     roles    = game['roles']
   end
 
-  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, roles: roles})
+  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, roles: roles})  
 
-  record_sg_move(game)
+  if (practice_over) 
+    $sg_games.update_id(pr[:game_id],practice_over: practice_over)
+  end
+  
   {val: val.to_s, game: game}
+end
+
+def record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt)
+  rd = {}
+  
+  rd['_id'] = nice_id
+  rd = {
+    game_id: game['_id'],
+    user_id: sesh[:user_id],
+    age: sesh[:age],
+    gender: sesh[:gender],
+    round: round,
+    round_time: round_time,
+    e: e,
+    ev_type: 'missing',
+    ev1: ev1,
+    ev2: ev2,
+    ev3: ev3,
+    ev4: ev4,
+    n_choice: 'missing',
+    o1: 'missing',
+    o2: 'missing',
+    o3: 'missing',
+    o4: 'missing',
+    oc: 'missing_option_choice',
+    ou: 'missing_outcome',
+    mode: mode,
+    fopt: fopt
+  }
+  $sg_moves.add(rd)
+end
+
+get '/sg/results/:id' do
+  erb :'sg/results', default_layout
 end
 
 get '/sg/game_over' do

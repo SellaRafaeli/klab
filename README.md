@@ -1,10 +1,7 @@
 Sampling Game
 -------------
 
-- get actual values
 - add practice rounds
-- make it prettier
-- record actual events
-- make output file 
-- make game-over screen
+- record events - add missing things
+- handle final-rounds, make game-over screen
 

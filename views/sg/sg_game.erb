@@ -48,7 +48,7 @@
 .sample_or_choose.disabled {
   font-weight: normal;
   cursor: pointer;
-  background-color: darkgrey;
+  background-color: whitesmoke;
 }
 .not_your_turn {
   position: absolute;
@@ -91,8 +91,9 @@
 </section>
 <script>
 log = console.log
-user_id = "<%= sesh[:user_id] %>"
-
+user_id = "<%= sesh[:user_id] %>";
+//window.time = 2;
+window.practice_over = false;
 function updateTurn(user_id) {
   $('.curTurn').html(user_id)
   if (user_id == window.user_id) {
@@ -113,6 +114,11 @@ function refreshData() {
     if (r.game_over) {
       alert('game over!')
       document.location.href = '/sg/game_over'
+    }
+
+    if (r.practice_over && !window.practice_over) {
+      window.practice_over = true;
+      alert('Practice is over!');
     }
       
     //var curTurn = (data.user_ids[data.turn % data.user_ids.length])
@@ -164,7 +170,7 @@ function onBoxClick(a) {
     return
   }
 
-  var numModUsers=2;
+  var numModUsers=1;
   if (window.d.user_ids.length % numModUsers != 0 ) {
     return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
   }
@@ -177,7 +183,7 @@ function onBoxClick(a) {
     
     setTimeout(()=> {
       $('.box.'+id).html('').removeClass('sample_val').removeClass('choose_val')
-    },1000);
+    },(1000));
   })
 }
 

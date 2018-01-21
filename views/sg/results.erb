@@ -1,0 +1,27 @@
+<%
+  moves = $sg_moves.all(game_id: pr[:id])
+%>
+<h1> Sampling Game results: game <%= pr[:id] %></h1>
+
+<div style='overflow-x: scroll; border:1px solid black'>
+  <table class='table table-striped' id='moves'>
+    <thead>
+      <% fields = [:game_id, :user_id, :age, :gender, :round, :round_time, :e, :ev_type, :ev1, :ev2, :ev3, :ev4, :n_choice, :o1, :o2, :o3, :o4, :oc, :ou, :mode, :fopt] %>
+      <% fields.each do |k| %>
+        <th><%= k %></th>  
+      <% end %>
+    </thead>
+    <tbody>
+        <% moves.each do |move| %>
+            <tr>
+              <% fields.each do |mf| %>
+              <td> <%=move[mf.to_s]%> </td>
+              <% end %>
+            </tr>
+        <% end %>
+    </tbody>
+    </table>    
+</div>
+
+<a class='btn btn-raised btn-primary' href='/sg_admin'> Back to SG Admin </a>
+<button class='btn btn-raised btn-primary' onclick=tableToExcel('moves','data','moves_<%=pr[:id]%>.xls')> Download </button> 

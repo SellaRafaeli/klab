@@ -1,9 +1,8 @@
-<h1> Sampling Game Admin </h1>
+<h1> Sampling Games Results </h1>
 
-<% $sg_games.all.each do |game| %>
+<% game_ids = $sg_moves.distinct(:game_id) %>
+<% game_ids.each do |game| %>
 
-<div>
-<%= game['_id'] %> | logged participants: <%= game['user_ids'] %> | started: <b><%= game['started'] %></b><a class='btn btn-raised'> Start Game </a>
-</div>
+<div> <a class='btn btn-raised btn-primary' href='/sg/results/<%=game%>'> <%= game %> (<%= $sg_moves.count(game_id: game) %> moves) </a> </div>
 
 <% end %>
