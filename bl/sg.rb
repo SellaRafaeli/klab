@@ -123,9 +123,12 @@ get '/sg/move' do
   opt_num = game[:btns_order][pr[:box].to_i-1]
   row_num = game[:rounds_order][round]
   val, e, ev1, ev2, ev3, ev4 = get_box_val(row_num,opt_num,phase)
-
-
-  record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, [], 'option_choice', 'outcome', 'mode', 'fopt')
+bp
+  available_choices = game['roles'][game['user_ids'].index(sesh[:user_id])]
+  option_choice = opt_num
+  mode = pr[:phase] == 'sample' ? 0 : 1
+  fopt = (game['round'].to_i >= get_setting(:sampling_game_nrounds).to_i - 1) ? 1 : 0
+  record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt)
 
   practice_over = false
   if remaining_users.size == 0
@@ -150,13 +153,13 @@ get '/sg/move' do
   if (practice_over) 
     $sg_games.update_id(pr[:game_id],practice_over: practice_over)
   end
-  
+
   {val: val.to_s, game: game}
 end
 
 def record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt)
   rd = {}
-  
+
   rd['_id'] = nice_id
   rd = {
     game_id: game['_id'],
@@ -166,16 +169,16 @@ def record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, avai
     round: round,
     round_time: round_time,
     e: e,
-    ev_type: 'missing',
+    ev_type: ev_type,
     ev1: ev1,
     ev2: ev2,
     ev3: ev3,
     ev4: ev4,
-    n_choice: 'missing',
-    o1: 'missing',
-    o2: 'missing',
-    o3: 'missing',
-    o4: 'missing',
+    n_choice: available_choices.size == 4 ? 1 : 0,
+    o1: available_choices.include?(1),
+    o2: available_choices.include?(2),
+    o3: available_choices.include?(3),
+    o4: available_choices.include?(4),
     oc: 'missing_option_choice',
     ou: 'missing_outcome',
     mode: mode,
