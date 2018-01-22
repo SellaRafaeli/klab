@@ -3,7 +3,7 @@ require 'csv'
 $ex2 = $ex2results = $mongo.collection('ex2results')
 
 if $prod
-  T=20
+  T=400
   E=20
 else
   T=3
@@ -228,9 +228,9 @@ get '/ex2/done' do
   user_actions = sesh.to_h.hwia
   
   random_part = [:moves,:moves_part2].sample
-  random_part = :moves
+  #random_part = :moves
   random_move = user_actions[random_part].to_a.sample
-  random_move = user_actions[random_part].to_a[1]
+  #random_move = user_actions[random_part].to_a[1]
   
   random_estimate = random_part2 = user_actions[:moves_part2].to_a.sample[1][2]['estimation_score'] rescue rand(100)
 
