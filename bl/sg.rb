@@ -2,6 +2,8 @@ $sg_games = $mongo.collection('sg_games')
 $sg = $sampling_game = $mongo.collection('sampling_game')
 $sg_moves = $mongo.collection('sg_moves')
 
+SG_EXCHANGE_RATE = 0.6
+
 def get_box_val(round_num,opt_num,phase)
   $sg_values ||= SimpleSpreadsheet::Workbook.read("sg_values.xlsx") 
   table = $sg_values
@@ -15,7 +17,7 @@ def get_box_val(round_num,opt_num,phase)
   phigh_offset_from_ev  = -3
   high_offset_from_ev   = -4
   
-  row_offset_from_excel_start = 2
+  row_offset_from_excel_start = 3
   row = round_num + row_offset_from_excel_start
 
   if phase == 'sample' 
@@ -32,13 +34,15 @@ def get_box_val(round_num,opt_num,phase)
     res = table.cell(row,ev_col)
   end
 
-  ev1 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*1))
-  ev2 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*2))
-  ev3 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*3))
-  ev4 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*4))
+  ev1 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*1)).to_f.round(2)
+  ev2 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*2)).to_f.round(2)
+  ev3 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*3)).to_f.round(2)
+  ev4 = table.cell(row,col_offset_from_excel_start+(ev_offset_from_opt_start*4)).to_f.round(2)
 
   environment = table.cell(row,2) 
-  return res, environment, ev1, ev2, ev3, ev4
+  ev_type = table.cell(row,3) 
+  res = res.to_f.round(2)
+  return res, ev_type, environment, ev1, ev2, ev3, ev4
 rescue 
   -1 
 end
@@ -112,7 +116,7 @@ get '/sg/move' do
   chosen_buttons = game['chosen_buttons']
   user_ids = game['user_ids']
   round_time = 'missing-round-time'
-  ev_type = 'missing-ev-type'
+  
   users_chosen = game['users_chosen']
   if pr[:phase] == 'choose'
     chosen_buttons.push(pr[:box]) 
@@ -122,13 +126,13 @@ get '/sg/move' do
   remaining_users = user_ids - users_chosen
   opt_num = game[:btns_order][pr[:box].to_i-1]
   row_num = game[:rounds_order][round]
-  val, e, ev1, ev2, ev3, ev4 = get_box_val(row_num,opt_num,phase)
-bp
+  val, ev_type, e, ev1, ev2, ev3, ev4 = get_box_val(row_num,opt_num,phase)
+
   available_choices = game['roles'][game['user_ids'].index(sesh[:user_id])]
   option_choice = opt_num
   mode = pr[:phase] == 'sample' ? 0 : 1
   fopt = (game['round'].to_i >= get_setting(:sampling_game_nrounds).to_i - 1) ? 1 : 0
-  record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt)
+  record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) if game[:practice_over]
 
   practice_over = false
   if remaining_users.size == 0
@@ -179,8 +183,8 @@ def record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, avai
     o2: available_choices.include?(2),
     o3: available_choices.include?(3),
     o4: available_choices.include?(4),
-    oc: 'missing_option_choice',
-    ou: 'missing_outcome',
+    oc: option_choice,
+    ou: outcome,
     mode: mode,
     fopt: fopt
   }
@@ -192,5 +196,14 @@ get '/sg/results/:id' do
 end
 
 get '/sg/game_over' do
-  erb :'sg/game_over', default_layout
+  game    = $sg_games.get(sesh[:game_id])
+  user_id = sesh[:user_id]  
+  
+  high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id).select {|move| move['ev_type'] == 'HighValues'}.sample['ou']
+  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id).select {|move| move['ev_type'] == 'LowValues'}.sample['ou']
+  total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE
+  total_payoff = total_payoff.round(2)
+  $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
+
+  erb :'sg/game_over', locals: {game: game}, layout: :layout
 end

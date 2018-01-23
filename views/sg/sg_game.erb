@@ -155,10 +155,10 @@ function refreshData() {
     $('.round_num').html(parseInt(data.round)+1);    
     if (highlight) {
       $('.round_num').addClass('highlighted');
-      setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1000); 
+      setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1500); 
     }
 
-    setTimeout(refreshData,(window.time || 1) * 1000)
+    setTimeout(refreshData,(window.time || 1) * 1500)
   })
 }
 
@@ -184,7 +184,7 @@ function onBoxClick(a) {
     
     setTimeout(()=> {
       $('.box.'+id).html('').removeClass('sample_val').removeClass('choose_val')
-    },(1000));
+    },(1500));
   })
 }
 

@@ -1,1 +1,18 @@
-<h1> Game Over! </h1>
+<% 
+total = game['total_payoff'] 
+%>
+<h1> Game Over </h1>
+
+<p> Thank you for playing. </p>
+<p> We have randomly chosen the payoffs of two rounds, and altogether you received <%= total %> points. </p>
+
+<% if pr[:v] %>
+game: <%= game %>
+
+<br/>
+low: <%= game['low_values_rand_payoff'] %>
+<br/>
+high: <%= game['high_values_rand_payoff'] %>
+<br/>
+total: <%= total %>
+<% end %>
