@@ -148,6 +148,7 @@ function refreshData() {
     })
 
     window.d = data;
+    delete data.rounds_order;
     $('.status').html(JSON.stringify(data))
 
     var highlight = false;
