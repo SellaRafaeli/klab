@@ -199,6 +199,8 @@ get '/ex2/click' do
     sesh[:moves][cur_step] = [pr[:side],val,move_data]  
     res['gotoPart2'] = true if next_step >= T
   end
+
+  save_data rescue nil
   
   res
 end
@@ -223,8 +225,7 @@ end
 # Important! There should be another variable MinimalPay, so that if ZZZ<MinimalPay then ZZZ=MinimalPay
 #  -->
 
-get '/ex2/done' do
-  #bp
+def save_data
   user_actions = sesh.to_h.hwia
   
   random_part = [:moves,:moves_part2].sample
@@ -252,6 +253,12 @@ get '/ex2/done' do
   data[:yyy] = yyy
   data[:zzz] = zzz.round(2)
   $ex2results.update_id(sesh[:subject_number].to_s,data,{upsert:true})
+  return data
+end
+
+get '/ex2/done' do
+  #bp
+  data = save_data
 
   erb :'ex2/done', locals: {data: data}, layout: :layout
 end
