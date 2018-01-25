@@ -64,6 +64,12 @@ x=1
   <% end %>
   <div>
   <a class='btn btn-raised btn-primary' href='/ex2'>Home</a>
-  <a class='btn btn-raised btn-primary' href=# onclick='document.location.href="/ex2/all_payments"'>All Payments CSV</a>
+  <a class='btn btn-raised btn-primary' href='#' onclick='document.location.href="/ex2/all_payments"'>All Payments CSV</a>
   </div>
 <% end %>
+
+
+<br/>
+<br/>
+<br/>
+<a class='btn btn-danger btn-raised' href='/ex2/delete_all' onclick='return confirm("Are you sure? This action is irreversible.")'> Delete All! Be careful, irreversible </a>

@@ -4,6 +4,7 @@ SETTINGS_FIELDS = [:sampling_game_nrounds]
 
 $settings.update_id(:data,{}, upsert: true)
 get '/settings' do
+  protected!
   erb :settings, layout: :layout
 end
 

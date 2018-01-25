@@ -257,5 +257,12 @@ get '/ex2/done' do
 end
 
 get '/ex2/results/?:id?' do  
+  protected!
   erb :'ex2/results', layout: :layout
+end
+
+get '/ex2/delete_all' do  
+  protected!
+  $ex2results.delete_many
+  redirect back  
 end
