@@ -152,7 +152,7 @@ function refreshData() {
       document.location.href = '/sg/game_over'
     }
 
-    <% num_users = $prod ? 3 : 2 %>
+    <% num_users = $prod ? 3 : 1 %>
     window.numModUsers=<%= num_users %>;
     log('numModUsers', window.numModUsers)
     if (window.data.user_ids.length % numModUsers != 0 ) {
@@ -163,8 +163,10 @@ function refreshData() {
     }
 
 
+    var firstRealRound = false;
     if (r.practice_over && !window.practice_over) {
       window.practice_over = true;
+      firstRealRound = true;
       <% if $prod %>
       alert('Practice is over!');
       <% end %>
@@ -207,9 +209,9 @@ function refreshData() {
     delete data.rounds_order;
     $('.status').html(JSON.stringify(data))
 
-    var highlight = false;
+    var highlight = false;    
     var round_num_text = parseInt(data.round)+1;
-    if (window.practice_over) {
+    if (window.practice_over) {      
       $('.round_num_is_practice').hide()
       $('.out_of_rounds_num').show()
     } else {
@@ -221,7 +223,7 @@ function refreshData() {
       highlight = true;      
     }
     
-    if (highlight) {
+    if (highlight || firstRealRound) {
       clickingEnabled = true;      
       $('.round_num').addClass('highlighted');
       sampleOrChooseState('sample')
