@@ -84,7 +84,7 @@
       </div>
 </div>
 
-<div class='wait_for_others_to_join' style='text-align: center; display: none'>
+<div class='wait_for_others_to_join' style='text-align: center;'>
       <div style='margin-top:100px'>
         Wait for other players to join
       </div>
@@ -151,6 +151,17 @@ function refreshData() {
       alert('game over!')
       document.location.href = '/sg/game_over'
     }
+
+    <% num_users = $prod ? 3 : 2 %>
+    window.numModUsers=<%= num_users %>;
+    log('numModUsers', window.numModUsers)
+    if (window.data.user_ids.length % numModUsers != 0 ) {
+      $('.wait_for_others_to_join').show();
+      //return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
+    } else {
+      $('.wait_for_others_to_join').hide();
+    }
+
 
     if (r.practice_over && !window.practice_over) {
       window.practice_over = true;
@@ -235,15 +246,6 @@ function onBoxClick(a) {
   if (!window.clickingEnabled) {
     console.log('skipping since clickingEnabled is false')
     return
-  }
-
-  <% num_users = $prod ? 3 : 2 %>
-  var numModUsers=<%= num_users %>;
-  if (window.d.user_ids.length % numModUsers != 0 ) {
-    $('.wait_for_others_to_join').show();
-    //return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
-  } else {
-    $('.wait_for_others_to_join').hide();
   }
 
   clickingEnabled = false;
