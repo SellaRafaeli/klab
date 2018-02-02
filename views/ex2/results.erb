@@ -17,7 +17,7 @@ x=1
     <table class='table table-striped' id='part<%=part%>'>
     <thead>
       <% fields = ['move number','choice','result','estimate'] %>
-      <% fields = [ 'ID', 'age', 'gender', 'condition', 'problem', 'top', 'safe_right', 'choice_side', 'risk', 'payoff', 'forgone', 'rare_asked', 'p_rare_asked', 'estimation', 'estimation_score'] %>
+      <% fields = [ 'ID', 'age', 'gender', 'trial_num', 'condition', 'problem', 'top', 'safe_right', 'choice_side', 'risk', 'payoff', 'forgone', 'rare_asked', 'p_rare_asked', 'estimation', 'estimation_score'] %>
       <% fields.each do |k| %>
         <th><%= k %></th>  
       <% end %>
@@ -31,10 +31,11 @@ x=1
           <%
             md = move_data = info[2] || {}
           %>
-            <tr>
+            <tr>              
               <td> <%=all_info['user_actions']['subject_number'] || 'missing' %> </td>
               <td> <%=all_info['user_actions']['age'] || 'missing' %> </td>
               <td> <%=all_info['user_actions']['gender'] || 'missing' %> </td>
+              <td> <%=move_num.to_i+1 %> </td>
               <td> <%=md['condition'] %> </td>
               <td> <%=md['problem_num'] %> </td>
               <td> <%=md['top'] %> </td>

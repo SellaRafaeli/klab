@@ -12,9 +12,9 @@ end
 # T=200 
 # E=100
 ShowUp=1
-PaySign='$'
-ExchangeRate=5
-MinimalPay=0.75
+PaySign='£'
+ExchangeRate=20
+MinimalPay=1.7
 
 get '/ex2_info' do
   {
