@@ -65,11 +65,12 @@
   cursor: pointer;
   background-color: whitesmoke;
 }*/
-.not_your_turn {
+.not_your_turn, .wait_for_others_to_join, .wait_for_others_to_approve_practice {
   position: absolute;
   height: 100%;
   width: 80%;
   opacity: 0.6;
+  font-size:20px;
   font-weight: bold;
   background-color: lightgrey;
   z-index: 999;
@@ -79,9 +80,22 @@
 
 <div class='not_your_turn' style='text-align: center; display: none'>
       <div style='margin-top:100px'>
-        Wait for other players
+        Wait for other players to move
       </div>
-    </div>
+</div>
+
+<div class='wait_for_others_to_join' style='text-align: center; display: none'>
+      <div style='margin-top:100px'>
+        Wait for other players to join
+      </div>
+</div>
+
+<div class='wait_for_others_to_approve_practice' style='text-align: center; display: none'>
+      <div style='margin-top:100px'>
+        Wait for other players to start
+      </div>
+</div>
+
 <h1> The Sampling Game </h1>
 
 <div style='font-size:30px; font-weight: bold'><span class='round_num_is_practice'>Practice</span> Round <span class='round_num'></span>
@@ -105,15 +119,16 @@
 <div class='box 4' onclick=onBoxClick(4)>  <div class='val'></div></div>
 </section>
 
-<div class='status' style='margin-top:40px'>
+<div class='status' style='margin-top:100px'>
 </div>
-<div class='curTurnHolder'>Current Turn: <span class='curTurn'></span></div>
+<!-- <div class='curTurnHolder'>Current Turn: <span class='curTurn'></span></div> -->
 <script>
 log = console.log
 user_id = "<%= sesh[:user_id] %>";
 //window.time = 2;
 window.practice_over = false;
 window.clickingEnabled= true;
+$('.box'+' .val').show();
 // function updateTurn(user_id) {
 //   //$('.curTurn').html(user_id)
 //   if (user_id == window.user_id) {
@@ -139,8 +154,13 @@ function refreshData() {
 
     if (r.practice_over && !window.practice_over) {
       window.practice_over = true;
+      <% if $prod %>
       alert('Practice is over!');
+      <% end %>
     }
+
+
+    //$('.not_your_turn').show()
       
     //var curTurn = (data.user_ids[data.turn % data.user_ids.length])
     var curTurn = data.cur_turn;
@@ -196,10 +216,11 @@ function refreshData() {
       sampleOrChooseState('sample')
       $('.not_your_turn').hide()
       setTimeout(function () {
-        $('.round_num').removeClass('highlighted');        
-        $('.box'+' .val').html('').removeClass('sample_val').removeClass('choose_val')
+        $('.round_num').removeClass('highlighted');                
       }, 1000); 
-      
+      $('.box'+' .val').fadeOut(1500).removeClass('sample_val').removeClass('choose_val')
+        setTimeout(()=>$('.box'+' .val').html('').show(),1500);
+      highlight = false;
     }
     $('.round_num').html(round_num_text);    
 
@@ -219,7 +240,10 @@ function onBoxClick(a) {
   <% num_users = $prod ? 3 : 2 %>
   var numModUsers=<%= num_users %>;
   if (window.d.user_ids.length % numModUsers != 0 ) {
-    return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
+    $('.wait_for_others_to_join').show();
+    //return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
+  } else {
+    $('.wait_for_others_to_join').hide();
   }
 
   clickingEnabled = false;
@@ -227,7 +251,7 @@ function onBoxClick(a) {
   var id = a;
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
     if (phase == 'choose') r.val = 'Chosen: '+r.val;
-    $('.box.'+id+' .val').html(r.val).addClass(window.phase+'_val');
+    $('.box.'+id+' .val').html(r.val).addClass(window.phase+'_val').show();
     if (window.phase == 'sample') {
       setTimeout(()=> {
         clickingEnabled = true;
