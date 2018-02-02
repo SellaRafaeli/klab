@@ -77,9 +77,9 @@
 </style>
 
 
-<div class='not_your_turn' style='text-align: center'>
+<div class='not_your_turn' style='text-align: center; display: none'>
       <div style='margin-top:100px'>
-        Wait for your turn
+        Wait for other players
       </div>
     </div>
 <h1> The Sampling Game </h1>
@@ -113,15 +113,16 @@ log = console.log
 user_id = "<%= sesh[:user_id] %>";
 //window.time = 2;
 window.practice_over = false;
-function updateTurn(user_id) {
-  $('.curTurn').html(user_id)
-  if (user_id == window.user_id) {
-      $('.not_your_turn').hide();   
-      clickingEnabled = true;    
-  } else {
-   $('.not_your_turn').show(); 
- }
-}
+window.clickingEnabled= true;
+// function updateTurn(user_id) {
+//   //$('.curTurn').html(user_id)
+//   if (user_id == window.user_id) {
+//       $('.not_your_turn').hide();   
+//       clickingEnabled = true;    
+//   } else {
+//    $('.not_your_turn').show(); 
+//  }
+// }
 
 function refreshData() { 
   $.get('/sg/state?game_id=<%=sesh[:game_id]%>').success(r=>{
@@ -143,15 +144,14 @@ function refreshData() {
       
     //var curTurn = (data.user_ids[data.turn % data.user_ids.length])
     var curTurn = data.cur_turn;
-    updateTurn(curTurn)
+    //updateTurn(curTurn)
 
     data.user_id = window.user_id;
 
     //new round 
     if (data.chosen_buttons.length == 0) { 
       $('.box').removeClass('disabled').removeClass('blocked')
-      $('.box .val').removeClass('disabled').removeClass('blocked')
-      clickingEnabled = true;      
+      $('.box .val').removeClass('disabled').removeClass('blocked')      
       window.already_chosen = false;
     }
 
@@ -191,10 +191,15 @@ function refreshData() {
     }
     
     if (highlight) {
+      clickingEnabled = true;      
       $('.round_num').addClass('highlighted');
       sampleOrChooseState('sample')
-      setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1500); 
-      $('.box'+' .val').html('').removeClass('sample_val').removeClass('choose_val')
+      $('.not_your_turn').hide()
+      setTimeout(function () {
+        $('.round_num').removeClass('highlighted');        
+        $('.box'+' .val').html('').removeClass('sample_val').removeClass('choose_val')
+      }, 1000); 
+      
     }
     $('.round_num').html(round_num_text);    
 
@@ -206,7 +211,7 @@ function onBoxClick(a) {
   if ($('.box.'+a).hasClass('disabled') || $('.box.'+a).hasClass('blocked')) {
     return;
   }
-  if (!clickingEnabled) {
+  if (!window.clickingEnabled) {
     console.log('skipping since clickingEnabled is false')
     return
   }
@@ -223,12 +228,14 @@ function onBoxClick(a) {
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
     if (phase == 'choose') r.val = 'Chosen: '+r.val;
     $('.box.'+id+' .val').html(r.val).addClass(window.phase+'_val');
-    
     if (window.phase == 'sample') {
       setTimeout(()=> {
+        clickingEnabled = true;
         $('.box.'+id+' .val').html('').removeClass('sample_val').removeClass('choose_val')
       },(1500));  
-    }    
+    } else {
+      $('.not_your_turn').show()
+    }   
   })
 }
 
