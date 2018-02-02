@@ -12,7 +12,7 @@ Welcome to the sampling game, please input game ID and user ID.
   <input name=game_id placeholder='Game ID' zvalue=1 autofocus>
   <br/>
   <label> User ID </label>
-  <input name=user_id placeholder='User ID' value=<%=rand(10000)%>>
+  <input name=user_id placeholder='User ID' value=<%= $prod ? "" : rand(10000)%>>
   <br/>
   <label> Gender </label>
     <input type="radio" id="contactChoice1"
@@ -25,7 +25,7 @@ Welcome to the sampling game, please input game ID and user ID.
 
   <br/>
   <label> Age </label>
-  <input name=age placeholder='Age' value=30>
+  <input name=age placeholder='Age' value=<%= $prod ? "" : 30%>>
   <br/>
   <button class='btn btn-raised btn-primary'>Submit</button>
 </form>
