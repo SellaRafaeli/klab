@@ -36,7 +36,7 @@
   /*font-size:100px;*/
   color:red;
 }
-.sample_or_choose {
+/*.sample_or_choose {
   background-color: lightblue;
   display: inline-block;
   width: 150px;
@@ -49,7 +49,7 @@
   font-weight: normal;
   cursor: pointer;
   background-color: whitesmoke;
-}
+}*/
 .not_your_turn {
   position: absolute;
   height: 100%;
@@ -69,13 +69,16 @@
     </div>
 <h1> The Sampling Game </h1>
 
-<div style='font-size:30px; font-weight: bold'>Round <span class='round_num'></span></div>
+<div style='font-size:30px; font-weight: bold'><span class='round_num_is_practice'>Practice</span> Round <span class='round_num'></span>
+<span class='out_of_rounds_num'>/ <%= get_setting(:sampling_game_nrounds).to_i%></span>
+</div>
 <section style='margin-bottom: 20px;'>
   
-  <div class='sample_or_choose sample' onclick=sampleOrChooseState("sample")>
+  Action Type:  
+  <div class='btn btn-raised btn-primary sample_or_choose sample disabled' onclick=sampleOrChooseState("sample")>
   Sample
   </div>
-  <div class='sample_or_choose choose disabled' onclick=sampleOrChooseState("choose")>
+  <div class='btn btn-raised btn-primary sample_or_choose choose' onclick=sampleOrChooseState("choose")>
   Choose
   </div>
 </section>
@@ -152,12 +155,25 @@ function refreshData() {
     $('.status').html(JSON.stringify(data))
 
     var highlight = false;
-    if ((parseInt($('.round_num').text())-1) < data.round) highlight = true;      
-    $('.round_num').html(parseInt(data.round)+1);    
+    var round_num_text = parseInt(data.round)+1;
+    if (window.practice_over) {
+      $('.round_num_is_practice').hide()
+      $('.out_of_rounds_num').show()
+    } else {
+      $('.out_of_rounds_num').hide()
+      $('.round_num_is_practice').show()
+    }
+
+    if (data.round > (parseInt($('.round_num').text())-1)) {
+      highlight = true;      
+    }
+    
     if (highlight) {
       $('.round_num').addClass('highlighted');
+      sampleOrChooseState('sample')
       setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1500); 
     }
+    $('.round_num').html(round_num_text);    
 
     setTimeout(refreshData,(window.time || 1) * 1500)
   })
@@ -172,7 +188,8 @@ function onBoxClick(a) {
     return
   }
 
-  var numModUsers=3;
+  <% num_users = $prod ? 3 : 1 %>
+  var numModUsers=<%= num_users %>;
   if (window.d.user_ids.length % numModUsers != 0 ) {
     return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
   }
@@ -192,8 +209,8 @@ function onBoxClick(a) {
 window.phase = 'sample';
 function sampleOrChooseState(state) {
   window.phase = state;
-  $('.sample_or_choose').addClass('disabled')
-  $('.sample_or_choose.'+state).removeClass('disabled')
+  $('.sample_or_choose').removeClass('disabled')
+  $('.sample_or_choose.'+state).addClass('disabled')
 }
 //$('.sample_or_choose').click()
 

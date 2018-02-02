@@ -15,7 +15,13 @@ Welcome to the sampling game, please input game ID and user ID.
   <input name=user_id placeholder='User ID' value=<%=rand(10000)%>>
   <br/>
   <label> Gender </label>
-  <input name=gender placeholder='Gender' value=m>
+    <input type="radio" id="contactChoice1"
+     name="gender" value="M" checked>
+    <label for="contactChoice1">Male</label>
+
+    <input type="radio" id="contactChoice2"
+     name="gender" value="F">
+    <label for="contactChoice2">Female</label>
 
   <br/>
   <label> Age </label>
