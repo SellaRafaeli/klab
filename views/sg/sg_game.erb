@@ -16,20 +16,35 @@
   text-align: center;
   font-size: 30px;
   cursor: pointer;
+  position: relative;
 }
-.box.sample_val {
+.box .val.sample_val {
   color: black;
 }
-.box.choose_val {
+.box .val.choose_val {
   color: red;
+}
+.box .val {
+/*  border:1px solid blue;*/
+  width:20px;
+  height:20px;
+  position: absolute;
+  bottom:-30px;
+  left:30%;
 }
 .disabled {
   cursor: not-allowed;
 }
 .box.disabled {
-  background-color: darkgrey;
-  color:white;
+  background-color: grey;  
+  /*color:white;*/
 }
+
+.mm.box.disabled:after {
+  content: 'Chosen';
+  color: white;
+}
+
 .box.blocked {
   background-color: lightgrey;
   padding-top:20px;
@@ -84,10 +99,10 @@
 </section>
 
 <section>
-<div class='box 1' onclick=onBoxClick(1)>  </div>
-<div class='box 2' onclick=onBoxClick(2)>  </div>
-<div class='box 3' onclick=onBoxClick(3)>  </div>
-<div class='box 4' onclick=onBoxClick(4)>  </div>
+<div class='box 1' onclick=onBoxClick(1)>  <div class='val'></div></div>
+<div class='box 2' onclick=onBoxClick(2)>  <div class='val'></div></div>
+<div class='box 3' onclick=onBoxClick(3)>  <div class='val'></div></div>
+<div class='box 4' onclick=onBoxClick(4)>  <div class='val'></div></div>
 </section>
 
 <div class='status' style='margin-top:40px'>
@@ -110,6 +125,7 @@ function updateTurn(user_id) {
 
 function refreshData() { 
   $.get('/sg/state?game_id=<%=sesh[:game_id]%>').success(r=>{
+    window.data = r;  
     var data = r;
 
     //on new round
@@ -133,7 +149,8 @@ function refreshData() {
 
     //new round 
     if (data.chosen_buttons.length == 0) { 
-      $('.box').removeClass('disabled').removeClass('blocked').html('') 
+      $('.box').removeClass('disabled').removeClass('blocked')
+      $('.box .val').removeClass('disabled').removeClass('blocked')
       clickingEnabled = true;      
       window.already_chosen = false;
     }
@@ -143,11 +160,16 @@ function refreshData() {
     blocked_boxes = [1,2,3,4].filter(z=>allowed_boxes.indexOf(z)==-1)
     console.log('blocked boxes: ',blocked_boxes)
     blocked_boxes.forEach(idx=> { 
-      $('.box.'+idx).addClass('blocked').html("<i class='fa fa-close'></i>");
+      $('.box.'+idx).addClass('blocked')
+      $('.box.'+idx+' .val').addClass('blocked')//.html("<i class='fa fa-close'></i>");
     })
 
     data.chosen_buttons.forEach(boxID=>{
-      $('.box.'+boxID).addClass('disabled').html('Chosen');
+      $('.box.'+boxID).addClass('disabled')
+      //$('.box.'+boxID+' .val').html('Chosen');
+      if (boxID==data.my_chosen_btn) {
+        //$('.box.'+boxID+' .val').html('Chosen: '+data.my_chosen_value);
+      }
     })
 
     window.d = data;
@@ -172,6 +194,7 @@ function refreshData() {
       $('.round_num').addClass('highlighted');
       sampleOrChooseState('sample')
       setTimeout(function () {$('.round_num').removeClass('highlighted'); }, 1500); 
+      $('.box'+' .val').html('').removeClass('sample_val').removeClass('choose_val')
     }
     $('.round_num').html(round_num_text);    
 
@@ -188,7 +211,7 @@ function onBoxClick(a) {
     return
   }
 
-  <% num_users = $prod ? 3 : 1 %>
+  <% num_users = $prod ? 3 : 2 %>
   var numModUsers=<%= num_users %>;
   if (window.d.user_ids.length % numModUsers != 0 ) {
     return alert('There are currently '+window.d.user_ids.length+' users connected; please wait until the number of users is '+numModUsers)
@@ -198,11 +221,14 @@ function onBoxClick(a) {
   already_chosen  = true;
   var id = a;
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
-    $('.box.'+id).html(r.val).addClass(window.phase+'_val');
+    if (phase == 'choose') r.val = 'Chosen: '+r.val;
+    $('.box.'+id+' .val').html(r.val).addClass(window.phase+'_val');
     
-    setTimeout(()=> {
-      $('.box.'+id).html('').removeClass('sample_val').removeClass('choose_val')
-    },(1500));
+    if (window.phase == 'sample') {
+      setTimeout(()=> {
+        $('.box.'+id+' .val').html('').removeClass('sample_val').removeClass('choose_val')
+      },(1500));  
+    }    
   })
 }
 

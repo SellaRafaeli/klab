@@ -105,7 +105,11 @@ get '/sg/state' do
   game['game_id'] = game['_id']
   game['round'] ||= 0 
   game['game_over'] = game['round'] > get_setting(:sampling_game_nrounds).to_i - 1
-  game
+
+  data = game
+  data['my_chosen_btn'] = sesh[:my_chosen_btn]
+
+  data
 end
 
 get '/sg/move' do
@@ -120,7 +124,10 @@ get '/sg/move' do
   users_chosen = game['users_chosen']
   if pr[:phase] == 'choose'
     chosen_buttons.push(pr[:box]) 
+    sesh[:my_chosen_btn] = pr[:box]
     users_chosen += [sesh[:user_id]]    
+  else 
+    sesh[:my_chosen_btn] = nil
   end
 
   remaining_users = user_ids - users_chosen
