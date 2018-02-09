@@ -152,10 +152,10 @@ get '/ex2/estimate' do
 end
 
 get '/ex2/click' do 
-  
+
   cur_step  = sesh[:stepNum].to_i
   next_step = sesh[:stepNum] = sesh[:stepNum].to_i+1
-  sesh[:group_num] = pr[:group_num].to_i if pr[:group_num]
+  sesh[:group_num] = pr[:group_num].to_i if (!sesh[:group_num]) && pr[:group_num]
   left, right, problem_num, rare_asked = get_vals(sesh[:group_num], sesh[:flip], cur_step)
   res = {left: left, right: right, stepNum: next_step}.hwia
   val = res[pr[:side]]
