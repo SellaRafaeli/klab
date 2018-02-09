@@ -115,6 +115,8 @@
 <script>
 var stepNum = 1;
 
+var group_num = <%= sesh[:group_num] %>;
+
 $(".guess_input").keyup(function(event) {
     var val = $(this).val()
     if (event.keyCode === 13) {
@@ -160,7 +162,7 @@ function buttonClick(btn,side) {
   if (side == 'left') other = 'right';
   if (side == 'right') other = 'left';
   if (!window.estimate && window.estimate!=0) window.estimate = 999;
-  $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}&estimate=${window.estimate}`).success(res=> {
+  $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}&estimate=${window.estimate}&group_num=${window.group_num}`).success(res=> {
     if (res[side] > 0)  res[side] = '+'+res[side];
     if (res[other] > 0) res[other] = '+'+res[other];
     $('.btn-'+side).addClass('black').text(res[side])
