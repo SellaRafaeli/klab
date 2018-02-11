@@ -19,7 +19,7 @@
   font-size:45px;  
   color: grey !important;
   font-weight: bold;
-  border:1px solid black;
+  border:1px solid black;  
 }
 .main .btn.black {
   color: black !important;
@@ -30,6 +30,9 @@
 }
 .disabled {
   pointer-events: none;
+  cursor: wait !important;
+}
+.main .btn.disabled {
   cursor: wait !important;
 }
 .invisible {
@@ -159,18 +162,18 @@ if (window.skipPart2) {
 <% end %>
 function buttonClick(btn,side) {
   $('.please_select').addClass('invisible');
+  
   if (side == 'left') other = 'right';
   if (side == 'right') other = 'left';
+  $('.btn').addClass('disabled');
   if (!window.estimate && window.estimate!=0) window.estimate = 999;
   $.get(`/ex2/click?side=${side}&part2=${<%=part2%>}&estimate=${window.estimate}&group_num=${window.group_num}`).success(res=> {
     if (res[side] > 0)  res[side] = '+'+res[side];
     if (res[other] > 0) res[other] = '+'+res[other];
     $('.btn-'+side).addClass('black').text(res[side])
     $('.btn-'+other).addClass('grey').text(res[other])
-    $('.btn').addClass('disabled');
     stepNum = 1+ res.stepNum;    
     var waitTime = window.waitTime || 1500;
-
     if (res.gotoPart2) setTimeout(()=>document.location.href = '/ex2/instructions_part2',waitTime);
     else if (res.done) setTimeout(()=>document.location.href = '/ex2/done',waitTime);
     else setTimeout(()=>{enableButtons(), nextStep()},waitTime);

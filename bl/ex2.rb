@@ -152,7 +152,7 @@ get '/ex2/estimate' do
 end
 
 get '/ex2/click' do 
-
+  #sleep 1
   cur_step  = sesh[:stepNum].to_i
   next_step = sesh[:stepNum] = sesh[:stepNum].to_i+1
   sesh[:group_num] = pr[:group_num].to_i if (!sesh[:group_num]) && pr[:group_num]
