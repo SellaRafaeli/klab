@@ -71,6 +71,7 @@ end
 
 get '/ex2/part2' do
   sesh[:part2] = true
+  sesh[:flip] = [true,false].sample
   erb :'ex2/step', locals: {part2: true}, layout: :layout
 end 
 
