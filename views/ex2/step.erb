@@ -41,7 +41,10 @@
 .guess_area {
   width:240px;
   display: inline-block;  
-  <% if sesh[:flip] %> 
+}
+
+.guess_area_top {
+  <% if sesh[:flip_top] %> 
   margin-right: 380px;
   /*float: left;*/
   <% else %> 
@@ -49,6 +52,17 @@
   /*float: right;*/
   <% end %>
 }
+
+.guess_area_bottom {
+  <% if sesh[:flip_bottom] %> 
+  margin-right: 380px;
+  /*float: left;*/
+  <% else %> 
+  margin-left: 380px;
+  /*float: right;*/
+  <% end %>
+}
+
 .guess_input {
   margin-top:10px;
 }
@@ -70,7 +84,7 @@
   <% else %>
     <h5>Part 1 - Trial <span class='stepNum'>1</span></h5>
   <% end %>
-    <% if pr[:show_data] %>
+    <% if pr[:show_data] || !$prod %>
     <div>Admin Data: <%= sesh.to_h %></div>  
     <% end %>
   
@@ -84,7 +98,7 @@
     <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=sesh[:colors][1]%>' onclick=buttonClick(this,'right')></button>
     <% if part2 %>
     <div class='estimate'>
-    <span class='guess_area'>
+    <span class='guess_area guess_area_top'>
       <span class='guess_text'>What do you think is the chance to get <%=risky_val_a%> from selecting this key?</span>
       <div> %<input class=guess_input type=number placeholder="Type a number" />
         <div class='est_instructions'>Please type a number between 0-100 and press enter to continue</div>
@@ -104,7 +118,7 @@
     
     <% if part2 %>
     <div class='estimate'>
-    <span class='guess_area'>
+    <span class='guess_area guess_area_bottom'>
       <span class='guess_text'>What do you think is the chance to get <%=risky_val_b%> from selecting this key?</span>
       <div> %<input class=guess_input type=number placeholder="Type a number" /> <div class='est_instructions'>Please type a number between 0-100 and press enter to continue</div> </div>
     </span>

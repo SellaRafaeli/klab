@@ -6,7 +6,7 @@ if $prod
   T=400
   E=20
 else
-  T=3
+  T=1
   E=5
 end
 # T=200 
@@ -56,7 +56,8 @@ get '/ex2/start' do
 
   sesh[:risky_estimate_trial_1] = (1..E-1).step(2).to_a.sample #risky odd trial
   sesh[:risky_estimate_trial_2] = (2..E-1).step(2).to_a.sample #risky even trial
-  sesh[:flip] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
+  sesh[:flip_top] = [true,false].sample #if "flipped" then the left-hand side distribution will be for the right-hand side.
+  sesh[:flip_bottom] = [true,false].sample 
   
   #sesh[:down] = [true,false].sample
   sesh[:colors] = ['lightblue','lightyellow','#ffd5dc','orange'].shuffle
@@ -71,7 +72,6 @@ end
 
 get '/ex2/part2' do
   sesh[:part2] = true
-  sesh[:flip] = [true,false].sample
   erb :'ex2/step', locals: {part2: true}, layout: :layout
 end 
 
@@ -156,6 +156,13 @@ get '/ex2/click' do
   #sleep 1
   cur_step  = sesh[:stepNum].to_i
   next_step = sesh[:stepNum] = sesh[:stepNum].to_i+1
+
+  if cur_step % 2 == 0
+    sesh[:flip] = sesh[:flip_top]
+  else
+    sesh[:flip] = sesh[:flip_bottom]
+  end
+
   sesh[:group_num] = pr[:group_num].to_i if (!sesh[:group_num]) && pr[:group_num]
   left, right, problem_num, rare_asked = get_vals(sesh[:group_num], sesh[:flip], cur_step)
   res = {left: left, right: right, stepNum: next_step}.hwia
