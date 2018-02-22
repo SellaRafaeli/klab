@@ -11,7 +11,7 @@ else
 end
 # T=200 
 # E=100
-ShowUp=2
+ShowUp=2.1
 PaySign='£'
 ExchangeRate=20
 MinimalPay=2
