@@ -14,7 +14,7 @@ end
 ShowUp=2.1
 PaySign='£'
 ExchangeRate=20
-MinimalPay=2
+MinimalPay=2.1
 
 get '/ex2_info' do
   {
