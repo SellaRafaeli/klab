@@ -8,7 +8,11 @@
     <thead>
       <% fields = [:game_id, :user_id, :age, :gender, :round, :round_time, :e, :ev_type, :ev1, :ev2, :ev3, :ev4, :n_choice, :o1, :o2, :o3, :o4, :oc, :ou, :mode, :fopt] %>
       <% fields.each do |k| %>
-        <th><%= k %></th>  
+        <th>
+          <% val = k %>
+          <% val = :strong if val == :n_choice %>
+          <%= val %>            
+          </th>  
       <% end %>
     </thead>
     <tbody>

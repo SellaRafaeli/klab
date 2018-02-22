@@ -222,7 +222,22 @@ function refreshData() {
     if (data.round > (parseInt($('.round_num').text())-1)) {
       highlight = true;      
     }
-    
+
+    data.users_sampled = data.users_sampled || [];
+    data.users_chosen = data.users_chosen || [];
+    log('data.users_sampled', data.users_sampled)
+    window.user_has_chosen = data.users_chosen.indexOf(user_id)>-1;
+    if (user_has_chosen) {
+      clickingEnabled = false;      
+      $('.not_your_turn').show();
+    } else if (data.users_sampled.length == 0) {
+        clickingEnabled = true;      
+        $('.not_your_turn').hide();
+      } else if (data.users_sampled.indexOf(user_id)>-1) {
+        clickingEnabled = false;      
+        $('.not_your_turn').show();  
+      }
+
     if (highlight || firstRealRound) {
       clickingEnabled = true;      
       $('.round_num').addClass('highlighted');
@@ -249,9 +264,15 @@ function onBoxClick(a) {
     console.log('skipping since clickingEnabled is false')
     return
   }
-
+  if (window.user_has_chosen) {
+    console.log('skipping since user has already chosen')
+    return
+  }
+  
+  window.already_chosen  = true;
   clickingEnabled = false;
-  already_chosen  = true;
+  
+  $('.not_your_turn').show()
   var id = a;
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
     if (phase == 'choose') r.val = 'Chosen: '+r.val;
@@ -260,9 +281,8 @@ function onBoxClick(a) {
       setTimeout(()=> {
         clickingEnabled = true;
         $('.box.'+id+' .val').html('').removeClass('sample_val').removeClass('choose_val')
-      },(1500));  
-    } else {
-      $('.not_your_turn').show()
+      },(1500));        
+    } else {      
     }   
   })
 }

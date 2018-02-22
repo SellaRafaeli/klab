@@ -121,12 +121,14 @@ get '/sg/move' do
   user_ids = game['user_ids']
   round_time = 'missing-round-time'
   
+  users_sampled = game['users_sampled'].to_a 
   users_chosen = game['users_chosen']
   if pr[:phase] == 'choose'
     chosen_buttons.push(pr[:box]) 
     sesh[:my_chosen_btn] = pr[:box]
     users_chosen += [sesh[:user_id]]    
   else 
+    users_sampled += [sesh[:user_id]]
     sesh[:my_chosen_btn] = nil
   end
 
@@ -139,6 +141,7 @@ get '/sg/move' do
   option_choice = opt_num
   mode = pr[:phase] == 'sample' ? 0 : 1
   fopt = (game['round'].to_i >= get_setting(:sampling_game_nrounds).to_i - 1) ? 1 : 0
+  
   record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) if game[:practice_over]
 
   practice_over = false
@@ -153,13 +156,16 @@ get '/sg/move' do
     users_chosen   = []
     btns_order     = get_btns_order
     cur_turn       = user_ids[0]
-    roles          = get_random_roles(round)    
+    roles          = get_random_roles(round) 
+    users_sampled = []  
   else 
     cur_turn = remaining_users[turn % remaining_users.size]  
     roles    = game['roles']
   end
 
-  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, roles: roles})  
+  users_sampled = [] if (users_sampled + users_chosen).size == user_ids.size 
+bp
+  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles})  
 
   if (practice_over) 
     $sg_games.update_id(pr[:game_id],practice_over: practice_over)
