@@ -11,10 +11,10 @@ else
 end
 # T=200 
 # E=100
-ShowUp=1
+ShowUp=2
 PaySign='£'
 ExchangeRate=20
-MinimalPay=1.7
+MinimalPay=2
 
 get '/ex2_info' do
   {
@@ -174,8 +174,7 @@ get '/ex2/click' do
   risky = risky ? 1 : 0
   estimate = pr[:estimate].to_f / 100 
   # estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
-  estimation_score = (2-(estimate.to_f-p_rare_asked)**2).round(2)
-
+  estimation_score = (1-(estimate.to_f-p_rare_asked)**2).round(2)
   if !sesh[:part2]
     rare_asked = 'n/a'
     p_rare_asked= 'n/a'
