@@ -205,7 +205,7 @@ function refreshData() {
       }
     })
 
-    if (data.chosen_buttons.length == data.user_ids.length - 1) { //last choice
+    if ((window.phase == 'sample') && data.chosen_buttons.length == data.user_ids.length - 1) { //last choice
       sampleOrChooseState('choose');
     }
 
