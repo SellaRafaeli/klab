@@ -152,7 +152,7 @@ function refreshData() {
       document.location.href = '/sg/game_over'
     }
 
-    <% num_users = $prod ? 3 : 3 %>
+    <% num_users = $prod ? 3 : 1 %>
     window.numModUsers=<%= num_users %>;
     log('numModUsers', window.numModUsers)
     if (window.data.user_ids.length % numModUsers != 0 ) {
@@ -297,7 +297,7 @@ function onBoxClick(a) {
 
 window.phase = 'sample';
 function sampleOrChooseState(state) {
-  if (state == 'sample' && (data.chosen_buttons.length == data.user_ids.length - 1)) { //last choice
+  if (state == 'sample' && ((data.user_ids.length > 1) && data.chosen_buttons.length == data.user_ids.length - 1)) { //last choice
     alert('The other option was chosen by another player, thus you have to choose the remaining option.')
     return;
   }

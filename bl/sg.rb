@@ -218,5 +218,5 @@ get '/sg/game_over' do
   total_payoff = total_payoff.round(2)
   $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
 
-  erb :'sg/game_over', locals: {game: game}, layout: :layout
+  erb :'sg/game_over', locals: {game: game, total_payoff: total_payoff}, layout: :layout
 end
