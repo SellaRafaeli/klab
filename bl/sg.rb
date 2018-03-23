@@ -164,7 +164,7 @@ get '/sg/move' do
   end
 
   users_sampled = [] if (users_sampled + users_chosen).size == user_ids.size 
-bp
+
   game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles})  
 
   if (practice_over) 
