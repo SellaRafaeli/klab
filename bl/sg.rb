@@ -197,7 +197,7 @@ def record_sg_move(game, user_id, age, gender, turn, round, searches, round_time
     last_move = $sg_moves.get(game_id: game['_id'], user_id: user_id, round: round)
     age      = last_move[:age]
     gender   = last_move[:gender]
-    option_hoice = last_move[:option_choice]
+    option_choice = last_move[:option_choice]
     searches = last_move[:searches]
   end
 
