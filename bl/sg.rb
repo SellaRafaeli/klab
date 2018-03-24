@@ -91,7 +91,7 @@ get '/sg/game' do
   user_ids = (game['user_ids'] || []).push(sesh[:user_id]).uniq.compact.sort
   rounds_order = (0..89).to_a.shuffle
   if !game['round'] 
-    $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 0, chosen_buttons: [], users_chosen: [], roles: get_random_roles(0), btns_order: get_btns_order, rounds_order: rounds_order, practice_over: false})
+    $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 1, chosen_buttons: [], users_chosen: [], roles: get_random_roles(0), btns_order: get_btns_order, rounds_order: rounds_order, practice_over: false})
   end
   
   $sg_games.update_id(game_id, {user_ids: user_ids})
@@ -114,9 +114,11 @@ end
 
 get '/sg/move' do
   game  = $sg_games.get(pr[:game_id])
-  turn  = game[:turn]+1
+  turn  = game[:turn]
   round = game[:round]
+  params[:phase] = 'sample'
   phase = pr[:phase] == 'choose' ? 'choose' : 'sample' 
+
   chosen_buttons = game['chosen_buttons']
   user_ids = game['user_ids']
   round_time = 'missing-round-time'
@@ -139,15 +141,21 @@ get '/sg/move' do
 
   available_choices = game['roles'][game['user_ids'].index(sesh[:user_id])]
   option_choice = opt_num
-  mode = pr[:phase] == 'sample' ? 0 : 1
+  mode = pr[:phase] == 'sample' ? 1 : 2
+
   fopt = (game['round'].to_i >= get_setting(:sampling_game_nrounds).to_i - 1) ? 1 : 0
   
-  record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) if game[:practice_over]
+  sesh[:searches] = sesh[:searches] || 0 
+  sesh[:searches]+=1 if pr[:phase] == 'sample' 
+  
+  record_sg_move(game, turn, round, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) if game[:practice_over]
 
   practice_over = false
-  if remaining_users.size == 0
-    turn           = 0 
+  
+  if remaining_users.size == 0    
     round          = round+1   
+    turn           = 1
+    sesh[:searches]= 0
     if round == 3 && !game[:practice_over]
       round = 0 
       practice_over = true
@@ -159,6 +167,7 @@ get '/sg/move' do
     roles          = get_random_roles(round) 
     users_sampled = []  
   else 
+    turn = turn+1 if user_ids.size == users_sampled.size + users_chosen.size
     cur_turn = remaining_users[turn % remaining_users.size]  
     roles    = game['roles']
   end
@@ -174,16 +183,19 @@ get '/sg/move' do
   {val: val.to_s, game: game}
 end
 
-def record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt)
+def record_sg_move(game, turn, round, searches, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt)
   rd = {}
 
   rd['_id'] = nice_id
+
   rd = {
     game_id: game['_id'],
     user_id: sesh[:user_id],
     age: sesh[:age],
     gender: sesh[:gender],
+    turn: turn,
     round: round,
+    searches: searches,
     round_time: round_time,
     e: e,
     ev_type: ev_type,
@@ -201,6 +213,7 @@ def record_sg_move(game, round, round_time, e, ev_type, ev1, ev2, ev3, ev4, avai
     mode: mode,
     fopt: fopt
   }
+
   $sg_moves.add(rd)
 end
 
