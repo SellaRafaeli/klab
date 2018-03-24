@@ -76,6 +76,11 @@
   clear:both;
 }
 </style>
+
+<%
+  colors = (sesh[:colors] || ['lightblue','lightyellow','#ffd5dc','orange'].shuffle).to_a
+%>
+
 <div class='main'>
   <% if part2 %>
   <% risky_val_a = potential_risky_val(sesh[:group_num], sesh[:stepNum].to_i) %>
@@ -94,8 +99,8 @@
     <div class='estimate ct'>In the next trial, the following keys will be presented:</div>
     <div class='please_select invisible'>Now please select the key you prefer</div>
     <% end %>
-    <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=sesh[:colors][0]%>' onclick=buttonClick(this,'left')></button>
-    <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=sesh[:colors][1]%>' onclick=buttonClick(this,'right')></button>
+    <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=colors[0]%>' onclick=buttonClick(this,'left')></button>
+    <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=colors[1]%>' onclick=buttonClick(this,'right')></button>
     <% if part2 %>
     <div class='estimate'>
     <span class='guess_area guess_area_top'>
@@ -113,8 +118,8 @@
     <div class='estimate ct'>In the next trial, the following keys will be presented:</div>
     <div class='please_select invisible'>Now please select the key you prefer</div>
     <% end %>
-    <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=sesh[:colors][2]%>' onclick=buttonClick(this,'left')></button>
-    <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=sesh[:colors][3]%>' onclick=buttonClick(this,'right')></button>
+    <button class='btn btn-lg btn-info btn-raised btn-left' style='background-color: <%=colors[2]%>' onclick=buttonClick(this,'left')></button>
+    <button class='btn btn-lg btn-warning btn-raised btn-right' style='background-color: <%=colors[3]%>' onclick=buttonClick(this,'right')></button>
     
     <% if part2 %>
     <div class='estimate'>
