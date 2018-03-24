@@ -116,7 +116,7 @@ get '/sg/move' do
   game  = $sg_games.get(pr[:game_id])
   turn  = game[:turn]
   round = game[:round]
-  params[:phase] = 'sample'
+  #params[:phase] = 'sample'
   phase = pr[:phase] == 'choose' ? 'choose' : 'sample' 
 
   chosen_buttons = game['chosen_buttons']
@@ -169,7 +169,7 @@ get '/sg/move' do
   else 
     if user_ids.size == users_chosen.size + users_sampled.size      
       users_chosen.each { |user_id| 
-        record_sg_move(game, user_id, 'get_last', 'get_last', turn, round, 'get_last', 'n/a', e, ev_type, ev1, ev2, ev3, ev4, [], 'n/a', 'n/a', 0, 'n/a') if game[:practice_over]
+        record_sg_move(game, user_id, 'get_last', 'get_last', turn, round, 'get_last', 'n/a', e, ev_type, ev1, ev2, ev3, ev4, [], 'n/a', 'get_last', 0, 'n/a') if game[:practice_over]
       }      
       turn = turn+1 
     end
@@ -197,6 +197,7 @@ def record_sg_move(game, user_id, age, gender, turn, round, searches, round_time
     last_move = $sg_moves.get(game_id: game['_id'], user_id: user_id, round: round)
     age      = last_move[:age]
     gender   = last_move[:gender]
+    option_hoice = last_move[:option_choice]
     searches = last_move[:searches]
   end
 
