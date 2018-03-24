@@ -140,7 +140,7 @@ get '/sg/move' do
   val, ev_type, e, ev1, ev2, ev3, ev4 = get_box_val(row_num,opt_num,phase)
 
   available_choices = game['roles'][game['user_ids'].index(sesh[:user_id])]
-  option_choice = pr[:box].to_i-1 
+  option_choice = pr[:box].to_i 
   mode = pr[:phase] == 'sample' ? 1 : 2
 
   fopt = (game['round'].to_i >= get_setting(:sampling_game_nrounds).to_i - 1) ? 1 : 0
