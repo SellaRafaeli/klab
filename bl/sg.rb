@@ -148,12 +148,12 @@ get '/sg/move' do
   sesh[:searches] = sesh[:searches] || 0 
   sesh[:searches]+=1 if pr[:phase] == 'sample' 
   
-  record_sg_move(game, turn, round, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) if game[:practice_over]
+  record_sg_move(game, sesh[:user_id], sesh[:age], sesh[:gender], turn, round, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) if game[:practice_over]
 
   practice_over = false
   
   if remaining_users.size == 0    
-    round          = round+1   
+    round          = round+1       
     turn           = 1
     sesh[:searches]= 0
     if round == 3 && !game[:practice_over]
@@ -167,7 +167,12 @@ get '/sg/move' do
     roles          = get_random_roles(round) 
     users_sampled = []  
   else 
-    turn = turn+1 if user_ids.size == users_sampled.size + users_chosen.size
+    if user_ids.size == users_chosen.size + users_sampled.size      
+      users_chosen.each { |user_id| 
+        record_sg_move(game, user_id, 'get_last', 'get_last', turn, round, 'get_last', 'n/a', e, ev_type, ev1, ev2, ev3, ev4, [], 'n/a', 'n/a', 0, 'n/a') if game[:practice_over]
+      }      
+      turn = turn+1 
+    end
     cur_turn = remaining_users[turn % remaining_users.size]  
     roles    = game['roles']
   end
@@ -183,16 +188,23 @@ get '/sg/move' do
   {val: val.to_s, game: game}
 end
 
-def record_sg_move(game, turn, round, searches, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt)
+def record_sg_move(game, user_id, age, gender, turn, round, searches, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt)
   rd = {}
 
   rd['_id'] = nice_id
 
+  if searches == 'get_last'
+    last_move = $sg_moves.get(game_id: game['_id'], user_id: user_id, round: round)
+    age      = last_move[:age]
+    gender   = last_move[:gender]
+    searches = last_move[:searches]
+  end
+
   rd = {
     game_id: game['_id'],
-    user_id: sesh[:user_id],
-    age: sesh[:age],
-    gender: sesh[:gender],
+    user_id: user_id,
+    age: age,
+    gender: gender,
     turn: turn,
     round: round,
     searches: searches,
