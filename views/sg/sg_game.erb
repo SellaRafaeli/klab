@@ -49,6 +49,7 @@
   background-color: lightgrey;
   padding-top:20px;
   /*font-size:100px;*/
+  cursor: not-allowed;
   color:red;
 }
 /*.sample_or_choose {
@@ -70,7 +71,8 @@
   height: 100%;
   width: 80%;
   opacity: 0.6;
-  font-size:20px;
+  font-size:50px;
+  color: black;
   font-weight: bold;
   background-color: lightgrey;
   z-index: 999;
@@ -211,7 +213,8 @@ function refreshData() {
 
     window.d = data;
     delete data.rounds_order;
-    $('.status').html(JSON.stringify(data))
+    
+    if (localStorage.showData) $('.status').html(JSON.stringify(data))
 
     var highlight = false;    
     var round_num_text = parseInt(data.round)+1;
@@ -297,7 +300,8 @@ function onBoxClick(a) {
 
 window.phase = 'sample';
 function sampleOrChooseState(state) {
-  if (state == 'sample' && ((data.user_ids.length > 1) && data.chosen_buttons.length == data.user_ids.length - 1)) { //last choice
+
+  if (state == 'sample' && ((data.user_ids.length > 1) && $(".box").not('.blocked').not('.disabled').length==1)) { //last choice
     alert('The other option was chosen by another player, thus you have to choose the remaining option.')
     return;
   }
