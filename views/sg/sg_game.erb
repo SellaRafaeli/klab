@@ -66,7 +66,7 @@
   cursor: pointer;
   background-color: whitesmoke;
 }*/
-.not_your_turn, .wait_for_others_to_join, .wait_for_others_to_approve_practice {
+.not_your_turn, .wait_for_others_to_join, .wait_for_others_to_approve_practice, .showRoundOver {
   position: absolute;
   height: 100%;
   width: 80%;
@@ -76,6 +76,12 @@
   font-weight: bold;
   background-color: lightgrey;
   z-index: 999;
+}
+
+.showRoundOver {
+  opacity: 1;
+  background-color: darkgreen;
+  font-weight: bold;
 }
 </style>
 
@@ -96,6 +102,13 @@
       <div style='margin-top:100px'>
         Wait for other players to start
       </div>
+</div>
+
+<div class='showRoundOver noDisplay' style='text-align: center; display: none'>
+      <div style='margin-top:100px'>The round is finished, your outcome for the round is </div>
+      <div class='showRoundOverVal'></div>
+      <div>In the next round you will be given a new set of buttons.</div>
+      <div><button style='color: red' onclick=$('.showRoundOver').hide()> OK </button></div>
 </div>
 
 <h1> The Sampling Game </h1>
@@ -140,6 +153,11 @@ $('.box'+' .val').show();
 //    $('.not_your_turn').show(); 
 //  }
 // }
+
+function showRoundOver() {
+  $('.showRoundOver').show()
+  $('.showRoundOver .showRoundOverVal').html(localStorage.myLastChosenVal);
+}
 
 function refreshData() { 
   $.get('/sg/state?game_id=<%=sesh[:game_id]%>').success(r=>{
@@ -248,6 +266,7 @@ function refreshData() {
     if (highlight || firstRealRound) {
       clickingEnabled = true;      
       $('.round_num').addClass('highlighted');
+      showRoundOver();
       sampleOrChooseState('sample')
       $('.not_your_turn').hide()
       setTimeout(function () {
@@ -286,7 +305,10 @@ function onBoxClick(a) {
   $('.not_your_turn').show()
   var id = a;
   $.get('/sg/move?game_id=<%=sesh[:game_id]%>&box='+id+'&phase='+window.phase).success(r=> {
-    if (phase == 'choose') r.val = 'Chosen: '+r.val;
+    if (phase == 'choose') {
+      localStorage.myLastChosenVal = r.val;
+      r.val = 'Chosen: '+r.val;
+    }
     $('.box.'+id+' .val').html(r.val).addClass(window.phase+'_val').show();
     if (window.phase == 'sample') {
       setTimeout(()=> {

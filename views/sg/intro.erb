@@ -1,6 +1,6 @@
 <style>
 label {
-  width:90px;
+  width:340px;
 }
 </style>
 <h1> Sampling Game Intro </h1>
@@ -8,11 +8,11 @@ label {
 Welcome to the sampling game, please input game ID and user ID.
 <form action='/sg/instructions'>
 <!-- <form action='/sg/instructions'> -->
-  <label> Game ID </label>
-  <input name=game_id placeholder='Game ID' zvalue=1 autofocus>
+  <label> Game ID (To be filled be experimenter only) </label>
+  <input name=game_id placeholder='Game ID' zvalue=1 autofocus required >
   <br/>
-  <label> User ID </label>
-  <input name=user_id placeholder='User ID' value=<%= $prod ? "" : rand(10000)%>>
+  <label> User ID (To be filled be experimenter only) </label>
+  <input name=user_id placeholder='User ID' value=<%= $prod ? "" : rand(10000)%> required >
   <br/>
   <label> Gender </label>
     <input type="radio" id="contactChoice1"
