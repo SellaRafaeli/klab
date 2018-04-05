@@ -135,6 +135,7 @@ get '/sg/move' do
   end
 
   remaining_users = user_ids - users_chosen
+
   opt_num = game[:btns_order][pr[:box].to_i-1]
   row_num = game[:rounds_order][round]
   val, ev_type, e, ev1, ev2, ev3, ev4 = get_box_val(row_num,opt_num,phase)
@@ -173,13 +174,14 @@ get '/sg/move' do
       }      
       turn = turn+1 
     end
+    btns_order = game[:btns_order]
     cur_turn = remaining_users[turn % remaining_users.size]  
     roles    = game['roles']
   end
 
   users_sampled = [] if (users_sampled + users_chosen).size == user_ids.size 
 
-  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles})  
+  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order})  
 
   if (practice_over) 
     $sg_games.update_id(pr[:game_id],practice_over: practice_over)

@@ -23,6 +23,8 @@
 }
 .box .val.choose_val {
   color: red;
+  font-weight: bold;
+  position: relative;
 }
 .box .val {
 /*  border:1px solid blue;*/
@@ -105,10 +107,9 @@
 </div>
 
 <div class='showRoundOver noDisplay' style='text-align: center; display: none'>
-      <div style='margin-top:100px'>The round is finished, your outcome for the round is </div>
-      <div class='showRoundOverVal'></div>
+      <div style='margin-top:100px'>The round is finished, your outcome for the round is <span class='showRoundOverVal'></span>.</div>      
       <div>In the next round you will be given a new set of buttons.</div>
-      <div><button style='color: red' onclick=$('.showRoundOver').hide()> OK </button></div>
+      <div><button style='color: black' onclick=$('.showRoundOver').hide()> OK </button></div>
 </div>
 
 <h1> The Sampling Game </h1>
@@ -154,9 +155,12 @@ $('.box'+' .val').show();
 //  }
 // }
 
+localStorage.removeItem('myLastChosenVal');
 function showRoundOver() {
-  $('.showRoundOver').show()
-  $('.showRoundOver .showRoundOverVal').html(localStorage.myLastChosenVal);
+  if (localStorage.myLastChosenVal) {
+    $('.showRoundOver').show()
+    $('.showRoundOver .showRoundOverVal').html(localStorage.myLastChosenVal);  
+  }  
 }
 
 function refreshData() { 
@@ -225,14 +229,14 @@ function refreshData() {
       }
     })
 
-    if ((window.phase == 'sample') && data.chosen_buttons.length == data.user_ids.length - 1) { //last choice
+    if ((window.phase == 'sample') && oneChoiceLeft()) { //last choice
       sampleOrChooseState('choose');
     }
 
     window.d = data;
     delete data.rounds_order;
     
-    if (localStorage.showData) $('.status').html(JSON.stringify(data))
+    if (true || localStorage.showData) $('.status').html(JSON.stringify(data))
 
     var highlight = false;    
     var round_num_text = parseInt(data.round)+1;
@@ -265,8 +269,8 @@ function refreshData() {
 
     if (highlight || firstRealRound) {
       clickingEnabled = true;      
-      $('.round_num').addClass('highlighted');
-      showRoundOver();
+      $('.round_num').addClass('highlighted'); 
+      showRoundOver();     
       sampleOrChooseState('sample')
       $('.not_your_turn').hide()
       setTimeout(function () {
@@ -320,10 +324,13 @@ function onBoxClick(a) {
   })
 }
 
+function oneChoiceLeft() {
+  return ((data.user_ids.length > 1) && ($(".box").not('.blocked').not('.disabled').length==1))
+}
+
 window.phase = 'sample';
 function sampleOrChooseState(state) {
-
-  if (state == 'sample' && ((data.user_ids.length > 1) && $(".box").not('.blocked').not('.disabled').length==1)) { //last choice
+  if (state == 'sample' && oneChoiceLeft()) { //last choice
     alert('The other option was chosen by another player, thus you have to choose the remaining option.')
     return;
   }

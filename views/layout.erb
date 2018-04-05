@@ -48,8 +48,9 @@ x=1
     <%#= erb :"footer" %>           
   </div>  
 
-  
-  <link rel="stylesheet" href="/css/fonts/RobotoFonts.css">
-  <link rel="stylesheet" href="/css/fonts/MaterialIcons.css">
+  <% if $prod %>  
+    <link rel="stylesheet" href="/css/fonts/RobotoFonts.css">
+    <link rel="stylesheet" href="/css/fonts/MaterialIcons.css">
+  <% end %>
 </body>
 </html>
