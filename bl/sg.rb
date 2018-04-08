@@ -149,7 +149,12 @@ get '/sg/move' do
   sesh[:searches] = sesh[:searches] || 0 
   sesh[:searches]+=1 if pr[:phase] == 'sample' 
   
-  record_sg_move(game, sesh[:user_id], sesh[:age], sesh[:gender], turn, round, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) if game[:practice_over]
+  if !game[:practice_over]
+    round_to_record = -3 + round
+  else 
+    round_to_record = round
+  end
+  record_sg_move(game, sesh[:user_id], sesh[:age], sesh[:gender], turn, round_to_record, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) 
 
   practice_over = false
   
@@ -170,7 +175,7 @@ get '/sg/move' do
   else 
     if user_ids.size == users_chosen.size + users_sampled.size      
       users_chosen.each { |user_id| 
-        record_sg_move(game, user_id, 'get_last', 'get_last', turn, round, 'get_last', 'n/a', e, ev_type, ev1, ev2, ev3, ev4, [], 'n/a', 'get_last', 0, 'n/a') if game[:practice_over]
+        record_sg_move(game, user_id, 'get_last', 'get_last', turn, round, 'get_last', 'n/a', e, ev_type, ev1, ev2, ev3, ev4, [], 'n/a', 'get_last', 0, 'n/a') #if game[:practice_over]
       }      
       turn = turn+1 
     end
@@ -184,8 +189,10 @@ get '/sg/move' do
   game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order})  
 
   if (practice_over) 
-    $sg_games.update_id(pr[:game_id],practice_over: practice_over)
+    $sg_games.update_id(pr[:game_id],practice_over: practice_over)  
   end
+
+  
 
   {val: val.to_s, game: game}
 end
