@@ -109,7 +109,7 @@
 <div class='showRoundOver noDisplay' style='text-align: center; display: none'>
       <div style='margin-top:100px'>The round is finished, your outcome for the round is <span class='showRoundOverVal'></span>.</div>      
       <div>In the next round you will be given a new set of buttons.</div>
-      <div><button style='color: black' onclick=$('.showRoundOver').hide()> OK </button></div>
+      <div><button style='color: black; width: 300px' onclick=$('.showRoundOver').hide() autofocus> OK </button></div>
 </div>
 
 <h1> The Sampling Game </h1>
@@ -176,7 +176,7 @@ function refreshData() {
       document.location.href = '/sg/game_over'
     }
 
-    <% num_users = $prod ? 3 : 2 %>
+    <% num_users = $prod ? 3 : 1 %>
     window.numModUsers=<%= num_users %>;
     log('numModUsers', window.numModUsers)
     if (window.data.user_ids.length % numModUsers != 0 ) {
