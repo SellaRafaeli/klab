@@ -241,7 +241,7 @@ def save_data
   random_move = user_actions[random_part].to_a.sample
   #random_move = user_actions[random_part].to_a[1]
   
-  random_estimate = random_part2 = user_actions[:moves_part2].to_a.sample[1][2]['estimation_score'] rescue rand(100)
+  random_estimate = random_part2 = user_actions[:moves_part2].to_a.sample[1][2]['estimation_score'] rescue 0.001
 
   data = {
     user_actions: user_actions,
