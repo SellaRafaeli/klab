@@ -7,7 +7,7 @@ SG_EXCHANGE_RATE = 0.6
 def get_box_val(round_num,opt_num,phase)
   $sg_values ||= SimpleSpreadsheet::Workbook.read("sg_values.xlsx") 
   table = $sg_values
-
+  
   col_offset_from_excel_start = 3
   ev_offset_from_opt_start= 5
   ev_col = col_offset_from_excel_start + (ev_offset_from_opt_start * opt_num)
@@ -42,7 +42,7 @@ def get_box_val(round_num,opt_num,phase)
   environment = table.cell(row,2) 
   ev_type = table.cell(row,3) 
   res = res.to_f.round(2)
-  return res, ev_type, environment, ev1, ev2, ev3, ev4
+  return res, ev_type, environment, ev1, ev2, ev3, ev4, row
 rescue 
   -1 
 end
@@ -138,8 +138,16 @@ get '/sg/move' do
 
   opt_num = game[:btns_order][pr[:box].to_i-1]
   row_num = game[:rounds_order][round]
-  val, ev_type, e, ev1, ev2, ev3, ev4 = get_box_val(row_num,opt_num,phase)
+  
+  val, ev_type, e, ev1, ev2, ev3, ev4, excel_row_num = get_box_val(row_num,opt_num,phase)
 
+  evs = [ev1, ev2, ev3, ev4]
+  viewed_evs = []
+  viewed_evs[0] = evs[game[:btns_order][0]-1]
+  viewed_evs[1] = evs[game[:btns_order][1]-1]
+  viewed_evs[2] = evs[game[:btns_order][2]-1]
+  viewed_evs[3] = evs[game[:btns_order][3]-1]  
+bp
   available_choices = game['roles'][game['user_ids'].index(sesh[:user_id])]
   option_choice = pr[:box].to_i 
   mode = pr[:phase] == 'sample' ? 1 : 2
@@ -154,7 +162,8 @@ get '/sg/move' do
   else 
     round_to_record = round
   end
-  record_sg_move(game, sesh[:user_id], sesh[:age], sesh[:gender], turn, round_to_record, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt) 
+  
+  record_sg_move(game, sesh[:user_id], sesh[:age], sesh[:gender], turn, round_to_record, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt, viewed_evs, excel_row_num) 
 
   practice_over = false
   
@@ -197,7 +206,12 @@ get '/sg/move' do
   {val: val.to_s, game: game}
 end
 
-def record_sg_move(game, user_id, age, gender, turn, round, searches, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt)
+def record_sg_move(game, user_id, age, gender, turn, round, searches, round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, outcome, mode, fopt, viewed_evs = [], excel_row_num)
+
+  ev_l  = viewed_evs[0]
+  ev_lm = viewed_evs[1]
+  ev_rm = viewed_evs[2]
+  ev_r  = viewed_evs[3]
   rd = {}
 
   rd['_id'] = nice_id
@@ -233,9 +247,14 @@ def record_sg_move(game, user_id, age, gender, turn, round, searches, round_time
     oc: option_choice,
     ou: outcome,
     mode: mode,
-    fopt: fopt
+    fopt: fopt,
+    ev_l: ev_l,
+    ev_lm: ev_lm,
+    ev_rm: ev_rm,
+    ev_r: ev_r,
+    excel_row_num: excel_row_num
   }
-
+  
   $sg_moves.add(rd)
 end
 
@@ -248,7 +267,7 @@ get '/sg/game_over' do
   user_id = sesh[:user_id]  
   
   high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id).select {|move| move['ev_type'] == 'HighValues'}.sample['ou']
-  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id).select {|move| move['ev_type'] == 'LowValues'}.sample['ou']
+  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id).select {|move| move['ev_type'] == 'LowValues'}.sample['ou'] rescue 8989
   total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE
   total_payoff = total_payoff.round(2)
   $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
