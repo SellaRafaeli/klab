@@ -6,7 +6,7 @@ if $prod
   T=400
   E=20
 else
-  T=1
+  T=3
   E=5
 end
 # T=200 
