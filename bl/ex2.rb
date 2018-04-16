@@ -27,7 +27,7 @@ get '/ex2/all_payments' do
   attachment 'payoffs.csv'
   csv_string = CSV.generate do |csv|
     csv << ["prolific_id", "payoff"]
-    $ex2results.all.each {|r| csv << ["#{r['_id']}", "#{r['zzz']}"]}
+    $ex2results.all.each {|r| csv << ["#{r['_id']}", "#{r['zzz']-MinimalPay}"]}
   end  
   
 end
