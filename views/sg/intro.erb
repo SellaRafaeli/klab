@@ -17,7 +17,7 @@ Welcome to the sampling game, please input game ID and user ID.
   <label> Gender </label>
     <input type="radio" id="contactChoice1"
      name="gender" value="M" checked>
-    <label for="contactChoice1">Male</label>
+    <label for="contactChoice1" style='width: 50px'>Male</label>
 
     <input type="radio" id="contactChoice2"
      name="gender" value="F">
@@ -25,7 +25,7 @@ Welcome to the sampling game, please input game ID and user ID.
 
   <br/>
   <label> Age </label>
-  <input name=age placeholder='Age' value=<%= $prod ? "" : 30%>>
+  <input required name=age placeholder='Age' value=<%= $prod ? "" : 30%>>
   <br/>
   <button class='btn btn-raised btn-primary'>Submit</button>
 </form>

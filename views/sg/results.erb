@@ -20,7 +20,9 @@
             <tr>
               <% fields.each do |mf| %>
               <%# next if mf.to_s == "0" %>
-              <td> <%=move[mf.to_s]%> </td>
+              <% val = move[mf.to_s] %>
+              <% val = val.to_i+1 if mf.to_s=='round' && val>=0 %>
+              <td> <%=val%> </td>
               <% end %>
             </tr>
         <% end %>

@@ -147,7 +147,7 @@ get '/sg/move' do
   viewed_evs[1] = evs[game[:btns_order][1]-1]
   viewed_evs[2] = evs[game[:btns_order][2]-1]
   viewed_evs[3] = evs[game[:btns_order][3]-1]  
-bp
+
   available_choices = game['roles'][game['user_ids'].index(sesh[:user_id])]
   option_choice = pr[:box].to_i 
   mode = pr[:phase] == 'sample' ? 1 : 2

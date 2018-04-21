@@ -81,9 +81,10 @@
 }
 
 .showRoundOver {
+  text-align: left;
+  padding-left: 10%;
   opacity: 1;
-  background-color: darkgreen;
-  font-weight: bold;
+  /*background-color: darkgreen;*/  
 }
 </style>
 
@@ -106,10 +107,14 @@
       </div>
 </div>
 
-<div class='showRoundOver noDisplay' style='text-align: center; display: none'>
-      <div style='margin-top:100px'>The round is finished, your outcome for the round is <span class='showRoundOverVal'></span>.</div>      
-      <div>In the next round you will be given a new set of buttons.</div>
-      <div><button style='color: black; width: 300px' onclick=$('.showRoundOver').hide() autofocus> OK </button></div>
+<div class='showRoundOver noDisplay' style='text-align: left; font-weight: normal; display: none'>
+      <div style='margin-top:100px'>
+        <div> The round is finished. </div>
+         <div> Your outcome for the round is <span class='showRoundOverVal' style='font-weight: bold;'></span>.</div>      
+      <div>In the next round, </div>
+      <div> you will be given a new set of buttons.</div>
+      <div><button style='margin-top: 20px; background-color: green; color: black; width: 300px' onclick=$('.showRoundOver').hide() autofocus> OK </button></div>
+      </div>
 </div>
 
 <h1> The Sampling Game </h1>
