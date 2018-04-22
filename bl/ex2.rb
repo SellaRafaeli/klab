@@ -16,6 +16,15 @@ PaySign='£'
 ExchangeRate=20
 MinimalPay=2.1
 
+def get_num_results
+  $ex2.count
+end
+
+get '/get_num_results' do
+  {num: get_num_results}
+end
+
+
 get '/ex2_info' do
   {
     T: T, E: E, show_up: ShowUp, pay_sign: PaySign, minimal_pay: MinimalPay
