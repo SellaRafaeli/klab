@@ -1,28 +1,43 @@
 
-<% if pr[:id] %>
-  <% all_info = $ex2results.get(pr[:id]).hwia %>
-  <% data = all_info[:user_actions] %>
-
-<%
-
-x=1
-
+<% if pr[:id] 
+    if pr[:id] == 'altogether' 
+      ids = $ex2results.find({}, {_id:1}).map { |i| i[:_id] }
+    else 
+      ids = [pr[:id]] 
+      id = ids[0]
+    end
 %>
-  <h1> Data for subject <%=pr[:id]%> </h1>  
+
+
+  <% if ids.size == 1 
+  all_info = $ex2results.get(id).hwia
+  data = all_info[:user_actions] 
+  %>
+  <h1> Data for subject <%=id%> </h1>  
   <h4> Random Payoff: Part <%=all_info[:random_part]%>, trial <%=all_info[:random_move]%>, payoff <%=all_info[:rand_payoff]%> </h4>
   <h5> Final random payoff: <%= all_info[:zzz] %> </h5>
   <% if all_info[:comments].present? %><h5> Comments: <%= all_info[:comments] %> </h5><% end %>
-  <% [1,2].each do |part| %>
-    <h2> Part <%=part%> </h2>
-    <table class='table table-striped' id='part<%=part%>'>
+  <% else %>
+  <h1> Data for all users </h1>
+  <% end %>
+  
+  
+    
+    <table class='table table-striped' id='part'>
     <thead>
       <% fields = ['move number','choice','result','estimate'] %>
-      <% fields = [ 'ID', 'age', 'gender', 'trial_num', 'condition', 'problem', 'top', 'safe_right', 'choice_side', 'risk', 'payoff', 'forgone', 'rare_asked', 'p_rare_asked', 'estimation', 'estimation_score'] %>
+      <% fields = [ 'ID', 'part (1/2)', 'age', 'gender', 'trial_num', 'condition', 'problem', 'top', 'safe_right', 'choice_side', 'risk', 'payoff', 'forgone', 'rare_asked', 'p_rare_asked', 'estimation', 'estimation_score'] %>
       <% fields.each do |k| %>
         <th><%= k %></th>  
       <% end %>
     </thead>
     <tbody>
+      <% ids.each do |id| %>
+        <%
+          all_info = $ex2results.get(id).hwia
+          data = all_info[:user_actions] 
+          %>
+      <% [1,2].each do |part| %>
       <% 
         key = 'moves'
         key = 'moves_part2' if part == 2
@@ -33,6 +48,7 @@ x=1
           %>
             <tr>              
               <td> <%=all_info['user_actions']['subject_number'] || 'missing' %> </td>
+              <td> <%=part %> </td>
               <td> <%=all_info['user_actions']['age'] || 'missing' %> </td>
               <td> <%=all_info['user_actions']['gender'] || 'missing' %> </td>
               <td> <%=move_num.to_i+1 %> </td>
@@ -48,12 +64,18 @@ x=1
               <td> <%=md['p_rare_asked'] %> </td>
               <td> <%=md['estimation'] %> </td>
               <td> <%=md['estimation_score'] %> </td>
+              
             </tr>
         <% end %>
-    </tbody>
+      <% end %>
+      <% end %> <%# end foreach ids %>
+    </tbody>    
     </table>
-    <button onclick=tableToExcel('part<%=part%>','data','subject_<%=pr[:id]%>_part_<%=part%>.csv') class='btn btn-primary btn-raised'>Download as excel</button>
-  <% end %>
+    <%
+      filename = (ids.size == 1) ? "subject_#{id}" : "all_subjects"
+    %>
+    <button onclick=tableToExcel('part','data','<%=filename%>.csv') class='btn btn-primary btn-raised'>Download as excel</button>
+  
 
 <a class='btn btn-raised btn-primary' href='/ex2/results'>Back</a>
 <%#= all_info %>
@@ -65,7 +87,8 @@ x=1
   <% end %>
   <div>
   <a class='btn btn-raised btn-primary' href='/ex2'>Home</a>
-  <a class='btn btn-raised btn-primary' href='#' onclick='document.location.href="/ex2/all_payments"'>All Payments CSV</a>
+  <a class='btn btn-raised btn-primary' href='#' onclick='document.location.href="/ex2/all_payments"'>All Final Payments CSV</a>
+  <a class='btn btn-raised btn-primary' href='#' onclick='document.location.href="/ex2/results/altogether"'>All Payments Together, Giant CSV</a>
   </div>
 <% end %>
 
