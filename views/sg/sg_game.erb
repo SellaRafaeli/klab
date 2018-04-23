@@ -89,7 +89,7 @@
 </style>
 
 
-<div class='not_your_turn' style='text-align: center; display: none'>
+<div class='not_your_turn' style='text-align: center; display: none;'>
       <div style='margin-top:100px'>
         Wait for other players to move
       </div>
@@ -319,6 +319,7 @@ function onBoxClick(a) {
       localStorage.myLastChosenVal = r.val;
       r.val = 'Chosen: '+r.val;
     }
+    $('.box'+' .val').html('');
     $('.box.'+id+' .val').html(r.val).addClass(window.phase+'_val').show();
     if (window.phase == 'sample') {
       setTimeout(()=> {
