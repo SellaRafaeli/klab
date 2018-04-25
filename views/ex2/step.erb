@@ -85,9 +85,9 @@
   <% if part2 %>
   <% risky_val_a = potential_risky_val(sesh[:group_num], sesh[:stepNum].to_i) %>
   <% risky_val_b = potential_risky_val(sesh[:group_num], sesh[:stepNum].to_i+1) %>
-    <h5>Part 2 - Trial <span class='stepNum'><%=sesh[:stepNum]+1%></span></h5>
+    <h5>Part 2 - Trial <span class='stepNum'><%=sesh[:stepNum].to_i+1%></span></h5>
   <% else %>
-    <h5>Part 1 - Trial <span class='stepNum'><%=sesh[:stepNum]+1%></span></h5>
+    <h5>Part 1 - Trial <span class='stepNum'><%=sesh[:stepNum].to_i+1%></span></h5>
   <% end %>
     <% if pr[:show_data] || !$prod %>
     <div>Admin Data: <%= sesh.to_h %></div>  
