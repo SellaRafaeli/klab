@@ -113,6 +113,7 @@ get '/sg/state' do
 end
 
 get '/sg/move' do
+  
   game  = $sg_games.get(pr[:game_id])
   turn  = game[:turn]
   round = game[:round]

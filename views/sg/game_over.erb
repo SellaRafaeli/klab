@@ -1,10 +1,13 @@
 <% 
 total = total_payoff
+calculated_total = (SG_EXCHANGE_RATE*game['low_values_rand_payoff'].to_f+SG_EXCHANGE_RATE*game['high_values_rand_payoff'].to_f+15).round(2)
 %>
 <h1> Game Over </h1>
 
-<p> Thank you for playing. </p>
-<p> We have randomly chosen the payoffs of two rounds, and altogether you received <%= total %> points. </p>
+<p> Thanks for playing,  </p>
+<p> You will receive 15 Shekels for participating in the experiment.</p>
+<p> Additionally you will get and additional payment based on two rounds were randomly chosen for you: <%= game['low_values_rand_payoff'] %>, <%= game['high_values_rand_payoff'] %>.</p>
+<p> Your final payment = <%= SG_EXCHANGE_RATE%>*<%= game['low_values_rand_payoff'] %> + <%= SG_EXCHANGE_RATE%>*<%= game['high_values_rand_payoff'] %> + 15 = <%= calculated_total %> shekels. </p>
 
 <% if pr[:v] %>
 game: <%= game %>
