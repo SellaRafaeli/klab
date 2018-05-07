@@ -2,7 +2,7 @@ $sg_games = $mongo.collection('sg_games')
 $sg = $sampling_game = $mongo.collection('sampling_game')
 $sg_moves = $mongo.collection('sg_moves')
 
-SG_EXCHANGE_RATE = 0.6
+SG_EXCHANGE_RATE = 0.2
 
 def get_box_val(round_num,opt_num,phase)
   $sg_values ||= SimpleSpreadsheet::Workbook.read("sg_values.xlsx") 
@@ -267,8 +267,8 @@ get '/sg/game_over' do
   game    = $sg_games.get(sesh[:game_id])
   user_id = sesh[:user_id]  
   
-  high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id).select {|move| move['ev_type'] == 'HighValues'}.sample['ou']
-  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id).select {|move| move['ev_type'] == 'LowValues'}.sample['ou'] rescue 8989
+  high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'HighValues'}.sample['ou']
+  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'LowValues'}.sample['ou'] rescue 8989
   total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE
   total_payoff = total_payoff.round(2)
   $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
