@@ -242,7 +242,9 @@ function refreshData() {
     window.d = data;
     delete data.rounds_order;
     
+    <% if get_setting(:sampling_game_show_data) == 'on' %>
     if (true || localStorage.showData) $('.status').html(JSON.stringify(data))
+    <% end %>
 
     var highlight = false;    
     var round_num_text = parseInt(data.round)+1;

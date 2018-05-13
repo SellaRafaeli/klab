@@ -272,6 +272,8 @@ get '/sg/game_over' do
   total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE
   total_payoff = total_payoff.round(2)
   $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
-
+  game['low_values_rand_payoff']  = low_values_rand_payoff
+  game['high_values_rand_payoff'] = high_values_rand_payoff
+  
   erb :'sg/game_over', locals: {game: game, total_payoff: total_payoff}, layout: :layout
 end

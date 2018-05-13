@@ -1,6 +1,6 @@
 $settings = $mongo.collection('settings')
 
-SETTINGS_FIELDS = [:sampling_game_nrounds]
+SETTINGS_FIELDS = [:sampling_game_nrounds, :sampling_game_show_data]
 
 $settings.update_id(:data,{}, upsert: true)
 get '/settings' do
