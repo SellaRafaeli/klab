@@ -89,20 +89,20 @@
 </style>
 
 
-<div class='not_your_turn' style='text-align: center; display: none; opacity: 1; background-color: transparent;'>
-      <div style='margin-top:100px'>
+<div class='not_your_turn' style='text-align: center; display: none; opacity: 1; background-color: transparent; margin-top:170px'>
+      <div style=''>
         Wait for other players to move
       </div>
 </div>
 
-<div class='wait_for_others_to_join' style='text-align: center;'>
-      <div style='margin-top:100px'>
+<div class='wait_for_others_to_join' style='text-align: center; margin-top:170px'>
+      <div style=''>
         Wait for other players to join
       </div>
 </div>
 
-<div class='wait_for_others_to_approve_practice' style='text-align: center; display: none'>
-      <div style='margin-top:100px'>
+<div class='wait_for_others_to_approve_practice' style='text-align: center; display: none; margin-top: 170px'>
+      <div style=''>
         Wait for other players to start
       </div>
 </div>
@@ -273,6 +273,9 @@ function refreshData() {
       } else if (data.users_sampled.indexOf(user_id)>-1) {
         clickingEnabled = false;      
         $('.not_your_turn').show();  
+      } else {
+        clickingEnabled = true;      
+        $('.not_your_turn').hide();
       }
 
     if (highlight || firstRealRound) {
