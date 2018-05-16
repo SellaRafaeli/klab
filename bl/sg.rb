@@ -277,3 +277,8 @@ get '/sg/game_over' do
   
   erb :'sg/game_over', locals: {game: game, total_payoff: total_payoff}, layout: :layout
 end
+
+get '/sg/delete/:game_id' do
+  $sg_moves.delete_many({game_id: pr[:game_id]})
+  redirect '/sg_admin'
+end
