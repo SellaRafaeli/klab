@@ -34,4 +34,6 @@
 <button class='btn btn-raised btn-primary' onclick=tableToExcel('moves','data','moves_<%=pr[:id]%>.csv')> Download as .CSV </button> 
 <button class='btn btn-raised btn-primary' onclick=tableToExcel('moves','data','moves_<%=pr[:id]%>.xls')> Download as .XLS </button> 
 
-<a href='/sg/delete/<%=pr[:id]%>' class='btn btn-raised btn-danger' onclick='if (!confirm("Are you sure?")) return false;'>Delete</a>  
+<a href='/sg/delete/<%=pr[:id]%>' class='btn btn-raised btn-danger' onclick='if (!confirm("Are you sure?")) return false;'>Delete</a> 
+
+<a href='/sg/skip_round/<%=pr[:id]%>' class='btn btn-raised btn-warning' onclick='if (!confirm("Are you sure?")) return false;'> Skip Round (use if users are blocked) </a> 

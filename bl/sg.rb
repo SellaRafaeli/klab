@@ -112,6 +112,22 @@ get '/sg/state' do
   data
 end
 
+get '/sg/skip_round/:game_id' do
+  flash.message = 'opened blocked round' 
+  game = $sg_games.get(pr[:game_id])
+  round          = game[:round].to_i+1       
+  turn           = 1
+  chosen_buttons = []
+  users_chosen   = []
+  btns_order     = get_btns_order
+  user_ids       = game['user_ids']
+  cur_turn       = user_ids[0]
+  roles          = get_random_roles(round) 
+  users_sampled  = []
+  $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order})  
+  redirect '/sg_admin'
+end
+
 get '/sg/move' do
   
   game  = $sg_games.get(pr[:game_id])
@@ -267,8 +283,8 @@ get '/sg/game_over' do
   game    = $sg_games.get(sesh[:game_id])
   user_id = sesh[:user_id]  
   
-  high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'HighValues'}.sample['ou']
-  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'LowValues'}.sample['ou'] rescue 8989
+  high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'HighValues'}.sample['ou'] rescue 1
+  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'LowValues'}.sample['ou'] rescue 1
   total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE
   total_payoff = total_payoff.round(2)
   $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
