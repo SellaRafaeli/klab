@@ -164,6 +164,10 @@ localStorage.removeItem('myLastChosenVal');
 function showRoundOver() {
   if (localStorage.myLastChosenVal) {
     $('.showRoundOver').show()
+    $('.box').removeClass('disabled').removeClass('blocked')
+    $('.box .val').removeClass('disabled').removeClass('blocked')      
+    window.already_chosen = false;
+    window.clickingEnabled = true;
     $('.showRoundOver .showRoundOverVal').html(localStorage.myLastChosenVal);  
     $("#ok_round_over_btn").focus()
   }  
@@ -182,7 +186,7 @@ function refreshData() {
       document.location.href = '/sg/game_over'
     }
 
-    <% num_users = $prod ? 3 : 1 %>
+    <% num_users = $prod ? 3 : 2 %>
     window.numModUsers=<%= num_users %>;
     log('numModUsers', window.numModUsers)
     if (window.data.user_ids.length % numModUsers != 0 ) {
@@ -262,7 +266,7 @@ function refreshData() {
 
     data.users_sampled = data.users_sampled || [];
     data.users_chosen = data.users_chosen || [];
-    log('data.users_sampled', data.users_sampled)
+    console.log('data.users_sampled', data.users_sampled)
     window.user_has_chosen = data.users_chosen.indexOf(user_id)>-1;
     if (user_has_chosen) {
       clickingEnabled = false;      
