@@ -186,7 +186,7 @@ function refreshData() {
       document.location.href = '/sg/game_over'
     }
 
-    <% num_users = $prod ? 3 : 1 %>
+    <% num_users = $prod ? 3 : 2 %>
     window.numModUsers=<%= num_users %>;
     log('numModUsers', window.numModUsers)
     if (window.data.user_ids.length % numModUsers != 0 ) {

@@ -115,7 +115,8 @@ end
 get '/sg/skip_round/:game_id' do
   flash.message = 'opened blocked round' 
   game = $sg_games.get(pr[:game_id])
-  round          = game[:round].to_i+1       
+  round          = game[:round].to_i
+  next_round     = round
   turn           = 1
   chosen_buttons = []
   users_chosen   = []
@@ -124,7 +125,10 @@ get '/sg/skip_round/:game_id' do
   cur_turn       = user_ids[0]
   roles          = get_random_roles(round) 
   users_sampled  = []
-  $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order})  
+
+  $sg_games.update_id(pr[:game_id], {turn: turn, round: next_round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order})  
+
+   $sg_moves.update_many({game_id: game['_id'], round: round},{'$set' => {mode: 99}}) rescue nil
   redirect '/sg_admin'
 end
 
