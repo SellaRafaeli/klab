@@ -4,6 +4,10 @@ $sg_moves = $mongo.collection('sg_moves')
 
 SG_EXCHANGE_RATE = 0.2
 
+def get_num_players 
+  $prod ? 3 : 2
+end
+
 def get_box_val(round_num,opt_num,phase)
   $sg_values ||= SimpleSpreadsheet::Workbook.read("sg_values.xlsx") 
   table = $sg_values
@@ -187,7 +191,7 @@ get '/sg/move' do
   record_sg_move(game, sesh[:user_id], sesh[:age], sesh[:gender], turn, round_to_record, sesh[:searches], round_time, e, ev_type, ev1, ev2, ev3, ev4, available_choices, option_choice, val, mode, fopt, viewed_evs, excel_row_num) 
 
   practice_over = false
-  
+  awaiting_oks  = 0
   if remaining_users.size == 0    
     round          = round+1       
     turn           = 1
@@ -201,7 +205,8 @@ get '/sg/move' do
     btns_order     = get_btns_order
     cur_turn       = user_ids[0]
     roles          = get_random_roles(round) 
-    users_sampled = []  
+    users_sampled = [] 
+    awaiting_oks  = get_num_players 
   else 
     if user_ids.size == users_chosen.size + users_sampled.size      
       users_chosen.each { |user_id| 
@@ -216,7 +221,7 @@ get '/sg/move' do
 
   users_sampled = [] if (users_sampled + users_chosen).size == user_ids.size 
 
-  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order})  
+  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order, awaiting_oks: awaiting_oks})  
 
   if (practice_over) 
     $sg_games.update_id(pr[:game_id],practice_over: practice_over)  
@@ -301,4 +306,11 @@ end
 get '/sg/delete/:game_id' do
   $sg_moves.delete_many({game_id: pr[:game_id]})
   redirect '/sg_admin'
+end
+
+post '/sg/clicked_ok' do
+  game = $sg_games.get(sesh[:game_id])
+  awaiting_oks = game[:awaiting_oks].to_i
+  $sg_games.update_one({_id: sesh[:game_id]},{'$inc': {awaiting_oks: -1}})
+  {msg: 'ok'}
 end

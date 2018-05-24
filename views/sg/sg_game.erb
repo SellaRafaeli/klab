@@ -68,7 +68,7 @@
   cursor: pointer;
   background-color: whitesmoke;
 }*/
-.not_your_turn, .wait_for_others_to_join, .wait_for_others_to_approve_practice, .showRoundOver {
+.not_your_turn, .wait_for_others_to_join, .wait_for_others_to_approve_practice, .showRoundOver, .awaiting_oks {
   position: absolute;
   height: 100%;
   width: 80%;
@@ -87,6 +87,12 @@
   /*background-color: darkgreen;*/  
 }
 </style>
+
+<div class='awaiting_oks' style='text-align: center; display: none; opacity: 1; background-color: transparent; margin-top:170px'>
+      <div style=''>
+        Wait for everyone to click OK
+      </div>
+</div>
 
 
 <div class='not_your_turn' style='text-align: center; display: none; opacity: 1; background-color: transparent; margin-top:170px'>
@@ -113,7 +119,7 @@
          <div> Your outcome for the round is <span class='showRoundOverVal' style='font-weight: bold;'></span>.</div>      
       <div>In the next round, </div>
       <div> you will be given a new set of buttons.</div>
-      <div><button style='margin-top: 20px; background-color: green; color: black; width: 300px' onclick=$('.showRoundOver').hide() autofocus> OK </button></div>
+      <div><button style='margin-top: 20px; background-color: green; color: black; width: 300px' onclick="$('.showRoundOver').hide(); $.post('/sg/clicked_ok'); if (window.awaiting_oks==1) $('.awaiting_oks').hide()" autofocus> OK </button></div>
       </div>
 </div>
 
@@ -186,7 +192,15 @@ function refreshData() {
       document.location.href = '/sg/game_over'
     }
 
-    <% num_users = $prod ? 3 : 2 %>
+    window.awaiting_oks = r.awaiting_oks;
+    console.log('awaiting oks: ',r.awaiting_oks)
+    if (r.awaiting_oks) {
+      $('.awaiting_oks').show();
+    } else {
+      $('.awaiting_oks').hide();
+    }
+
+    <% num_users = get_num_players %>
     window.numModUsers=<%= num_users %>;
     log('numModUsers', window.numModUsers)
     if (window.data.user_ids.length % numModUsers != 0 ) {
