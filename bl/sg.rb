@@ -129,8 +129,9 @@ get '/sg/skip_round/:game_id' do
   cur_turn       = user_ids[0]
   roles          = get_random_roles(round) 
   users_sampled  = []
+  awaiting_oks   = 0
 
-  $sg_games.update_id(pr[:game_id], {turn: turn, round: next_round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order})  
+  $sg_games.update_id(pr[:game_id], {turn: turn, round: next_round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order, awaiting_oks: awaiting_oks})  
 
    $sg_moves.update_many({game_id: game['_id'], round: round},{'$set' => {mode: 99}}) rescue nil
   redirect '/sg_admin'
