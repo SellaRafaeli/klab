@@ -5,7 +5,7 @@ $sg_moves = $mongo.collection('sg_moves')
 SG_EXCHANGE_RATE = 0.2
 
 def get_num_players 
-  $prod ? 3 : 2
+  $prod ? 3 : 1
 end
 
 def get_box_val(round_num,opt_num,phase)
@@ -117,10 +117,10 @@ get '/sg/state' do
 end
 
 get '/sg/skip_round/:game_id' do
-  flash.message = 'opened blocked round' 
   game = $sg_games.get(pr[:game_id])
   round          = game[:round].to_i
-  next_round     = round
+  next_round     = round+1
+  flash.message = "Opened blocked round #{(round+1).to_s}. New round is #{next_round+1}"
   turn           = 1
   chosen_buttons = []
   users_chosen   = []
@@ -134,7 +134,7 @@ get '/sg/skip_round/:game_id' do
   $sg_games.update_id(pr[:game_id], {turn: turn, round: next_round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order, awaiting_oks: awaiting_oks})  
 
    $sg_moves.update_many({game_id: game['_id'], round: round},{'$set' => {mode: 99}}) rescue nil
-  redirect '/sg_admin'
+  redirect '/sg/results/'+pr[:game_id]
 end
 
 get '/sg/move' do
@@ -160,6 +160,9 @@ get '/sg/move' do
     sesh[:my_chosen_btn] = nil
   end
 
+  chosen_buttons  = chosen_buttons.uniq
+  users_chosen    = users_chosen.uniq
+  users_sampled   = users_sampled.uniq
   remaining_users = user_ids - users_chosen
 
   opt_num = game[:btns_order][pr[:box].to_i-1]
@@ -209,7 +212,7 @@ get '/sg/move' do
     users_sampled = [] 
     awaiting_oks  = get_num_players 
   else 
-    if user_ids.size == users_chosen.size + users_sampled.size      
+    if user_ids.size == users_chosen.uniq.size + users_sampled.uniq.size      
       users_chosen.each { |user_id| 
         #record_sg_move(game, user_id, 'get_last', 'get_last', turn, round, 'get_last', 'n/a', e, ev_type, ev1, ev2, ev3, ev4, [], 'n/a', 'get_last', 0, 'n/a') #if game[:practice_over]
       }      
@@ -222,7 +225,7 @@ get '/sg/move' do
 
   users_sampled = [] if (users_sampled + users_chosen).size == user_ids.size 
 
-  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen, users_sampled: users_sampled, roles: roles, btns_order: btns_order, awaiting_oks: awaiting_oks})  
+  game = $sg_games.update_id(pr[:game_id], {turn: turn, round: round, chosen_buttons: chosen_buttons,cur_turn: cur_turn, users_chosen: users_chosen.uniq, users_sampled: users_sampled.uniq, roles: roles, btns_order: btns_order, awaiting_oks: awaiting_oks})  
 
   if (practice_over) 
     $sg_games.update_id(pr[:game_id],practice_over: practice_over)  
@@ -282,7 +285,10 @@ def record_sg_move(game, user_id, age, gender, turn, round, searches, round_time
     excel_row_num: excel_row_num
   }
   
-  $sg_moves.add(rd)
+  #prevent recording double choices
+  if $sg_moves.count(game_id: game['_id'], round: round, mode: 2, user_id: user_id) == 0
+    $sg_moves.add(rd)
+  end
 end
 
 get '/sg/results/:id' do
@@ -312,6 +318,10 @@ end
 post '/sg/clicked_ok' do
   game = $sg_games.get(sesh[:game_id])
   awaiting_oks = game[:awaiting_oks].to_i
-  $sg_games.update_one({_id: sesh[:game_id]},{'$inc': {awaiting_oks: -1}})
+  if awaiting_oks >= 1
+    $sg_games.update_one({_id: sesh[:game_id]},{'$inc': {awaiting_oks: -1}})
+  else 
+    $sg_games.update_one({_id: sesh[:game_id]},{'$inc': {awaiting_oks: 0}})
+  end
   {msg: 'ok'}
 end

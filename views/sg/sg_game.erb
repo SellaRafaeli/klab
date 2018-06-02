@@ -194,7 +194,7 @@ function refreshData() {
 
     window.awaiting_oks = r.awaiting_oks;
     console.log('awaiting oks: ',r.awaiting_oks)
-    if (r.awaiting_oks) {
+    if (r.awaiting_oks>0) {
       $('.awaiting_oks').show();
     } else {
       $('.awaiting_oks').hide();
