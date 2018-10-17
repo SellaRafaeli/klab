@@ -2,7 +2,7 @@ $sg_games = $mongo.collection('sg_games')
 $sg = $sampling_game = $mongo.collection('sampling_game')
 $sg_moves = $mongo.collection('sg_moves')
 
-SG_EXCHANGE_RATE = 0.2
+SG_EXCHANGE_RATE = 0.5
 
 def get_num_players 
   $prod ? 3 : 1
@@ -93,7 +93,7 @@ get '/sg/game' do
   
   game = $sg_games.update_id(game_id, {}, {upsert: true})
   user_ids = (game['user_ids'] || []).push(sesh[:user_id]).uniq.compact.sort
-  rounds_order = (0..89).to_a.shuffle
+  rounds_order = (0..89).to_a#.shuffle
   if !game['round'] 
     $sg_games.update_id(game_id, {cur_turn: user_ids[0], round: 0, turn: 1, chosen_buttons: [], users_chosen: [], roles: get_random_roles(0), btns_order: get_btns_order, rounds_order: rounds_order, practice_over: false})
   end
@@ -299,8 +299,8 @@ get '/sg/game_over' do
   game    = $sg_games.get(sesh[:game_id])
   user_id = sesh[:user_id]  
   
-  high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'HighValues'}.sample['ou'] rescue 1
-  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).select {|move| move['ev_type'] == 'LowValues'}.sample['ou'] rescue 1
+  high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).sample['ou'] rescue 1
+  low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).sample['ou'] rescue 1
   total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE
   total_payoff = total_payoff.round(2)
   $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
