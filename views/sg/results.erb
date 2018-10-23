@@ -1,5 +1,5 @@
 <%
-  moves = $sg_moves.all(game_id: pr[:id])
+  moves = $sg_moves.all(game_id: pr[:id]).sort_by {|m| m[:round].to_i }
 %>
 <h1> Sampling Game results: game <%= pr[:id] %></h1>
 

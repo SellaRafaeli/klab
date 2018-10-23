@@ -301,7 +301,7 @@ get '/sg/game_over' do
   
   high_values_rand_payoff = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).sample['ou'] rescue 1
   low_values_rand_payoff  = $sg_moves.get_many(game_id: game['_id'], user_id: user_id, mode: 2).sample['ou'] rescue 1
-  total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE
+  total_payoff = (high_values_rand_payoff + low_values_rand_payoff) * SG_EXCHANGE_RATE * 0.5
   total_payoff = total_payoff.round(2)
   $sg_games.update_id(game['_id'], {low_values_rand_payoff: low_values_rand_payoff, high_values_rand_payoff: high_values_rand_payoff, total_payoff: total_payoff})  
   game['low_values_rand_payoff']  = low_values_rand_payoff

@@ -3,7 +3,7 @@ total = total_payoff
 
 low_payment  = (SG_EXCHANGE_RATE*game['low_values_rand_payoff'].to_f).round(2)
 high_payment = (SG_EXCHANGE_RATE*game['high_values_rand_payoff'].to_f).round(2)
-total_payment = (low_payment + high_payment + 37).round(2)
+total_payment = ((low_payment + high_payment)* 0.5 + 37).round(2) 
 %>
 <h1> Game Over </h1>
 
